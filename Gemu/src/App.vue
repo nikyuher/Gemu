@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
 
 </script>
 
@@ -30,7 +29,7 @@ import HelloWorld from './components/HelloWorld.vue'
           <v-icon>mdi-cart</v-icon>
         </div>
         <div class="cuentaUsuario">
-          <RouterLink to="/inicioSesion">InicioSesion</RouterLink>
+          <RouterLink to="/iniciarSesion">InicioSesion</RouterLink>
           <RouterLink to="/registrarse" style="border-left:2px solid white ;">Registrarse</RouterLink>
         </div>
         <div class="vender">
@@ -61,17 +60,17 @@ import HelloWorld from './components/HelloWorld.vue'
       </div>
       <div class="redes">
         <h2>Siguenos</h2>
-        <a href="https://www.youtube.com">
+        <a href="https://www.youtube.com" target="_blank">
           <v-icon>mdi-youtube</v-icon>
         </a>
-        <a href="https://twitter.com/">
+        <a href="https://twitter.com/" target="_blank">
           <v-icon>mdi-twitter</v-icon>
         </a>
-        <a href="https://www.instagram.com">
+        <a href="https://www.instagram.com" target="_blank">
           <v-icon>mdi-instagram</v-icon>
         </a>
-        <a href="https://www.discord.com">
-          <v-icon>mdi-discord</v-icon>
+        <a href="https://www.discord.com" target="_blank">
+          <font-awesome-icon :icon="['fab', 'discord']" class="custom-icon" />
         </a>
       </div>
     </div>
@@ -267,14 +266,24 @@ footer {
   color: white;
   text-decoration: none
 }
+
 .sobre-gemu a:hover {
   color: gray;
 }
+
 .ayuda a {
   color: white;
   text-decoration: none
 }
+
 .ayuda a:hover {
   color: gray;
+}
+
+.custom-icon {
+  font-size: 22px;
+  /* Tamaño del icono */
+  color: white;
+  /* Color del icono */
 }
 </style>

@@ -20,9 +20,14 @@ const router = createRouter({
       component: () => import('../views/ErrorUrlView.vue'), 
     },
     {
-      path: '/inicioSesion',
-      name: 'inicioSesion',
-      component: () => import('../views/AboutView.vue')
+      path: '/registrarse',
+      name: 'registrarse',
+      component: () => import('../views/RegistrarseView.vue')
+    },
+    {
+      path: '/iniciarSesion',
+      name: 'iniciarSesion',
+      component: () => import('../views/IniciarSesionView.vue')
     }
   ]
 })
