@@ -28,6 +28,16 @@ const router = createRouter({
       path: '/iniciarSesion',
       name: 'iniciarSesion',
       component: () => import('../views/IniciarSesionView.vue')
+    },
+    {
+      path: '/ofertas',
+      name: 'ofertas',
+      component: () => import('../views/OfertasView.vue')
+    },
+    {
+      path: '/juegos/:tipo',
+      name: 'juegosTipo',
+      component: () => import('../views/JuegosTipoView.vue')
     }
   ]
 })

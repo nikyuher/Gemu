@@ -6,7 +6,7 @@
     <main>
         <div class="contenedorError">
             <v-empty-state headline="Whoops" title="Parece que la dirección URL no es correcta"
-                image="https://vuetifyjs.b-cdn.net/docs/images/components/v-empty-state/astro-cat.svg">
+                image="https://vuetifyjs.b-cdn.net/docs/images/components/v-empty-state/astro-cat.svg" color="none">
             </v-empty-state>
         </div>
     </main>

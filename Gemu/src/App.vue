@@ -40,8 +40,8 @@ import { RouterLink, RouterView } from 'vue-router'
     <div class="nav-inferior">
       <RouterLink to="/marketplace">Marketplace</RouterLink>
       <RouterLink to="/ofertas">Ofertas</RouterLink>
-      <RouterLink to="/juegosBaratos">Juegos Baratos</RouterLink>
-      <RouterLink to="/juegosPopulares">Más Populares</RouterLink>
+      <RouterLink :to="{ name: 'juegosTipo', params: { tipo: 'Baratos' } }">Juegos Baratos</RouterLink>
+      <RouterLink :to="{ name: 'juegosTipo', params: { tipo: 'Populares' } }">Más Populares</RouterLink>
     </div>
   </header>
 

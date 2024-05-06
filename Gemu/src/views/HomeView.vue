@@ -77,6 +77,10 @@ main {
   margin: auto;
 }
 
+.banner img{
+  width: 100%;
+}
+
 .plataformas {
   display: flex;
   align-items: center;
