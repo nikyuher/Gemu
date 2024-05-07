@@ -44,14 +44,14 @@ watch(route, () => {
           </select>
         </div>
         <div class="carrito">
-          <v-icon>mdi-cart</v-icon>
+          <RouterLink to="/carritoCompra"> <v-icon>mdi-cart</v-icon></RouterLink>
         </div>
         <div class="cuentaUsuario">
           <RouterLink to="/iniciarSesion">InicioSesion</RouterLink>
           <RouterLink to="/registrarse" style="border-left:2px solid white ;">Registrarse</RouterLink>
         </div>
         <div class="vender">
-          <RouterLink to="/vender">Vender</RouterLink>
+          <RouterLink to="/user-menu">Vender</RouterLink>
         </div>
       </div>
     </div>

@@ -19,9 +19,10 @@
 * {
   color: white;
 }
-
+.banner img{
+  width: 100%;
+}
 main {
-  width: 90%;
   margin: auto;
 }
 

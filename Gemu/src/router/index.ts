@@ -43,6 +43,11 @@ const router = createRouter({
       path: '/user-menu',
       name: 'user-menu',
       component: () => import('../views/MenuView.vue')
+    },
+    {
+      path: '/marketplace',
+      name: 'marketplace',
+      component: () => import('../views/MarketplaceView.vue')
     }
   ]
 })
