@@ -38,6 +38,11 @@ const router = createRouter({
       path: '/juegos/:tipo',
       name: 'juegosTipo',
       component: () => import('../views/JuegosTipoView.vue')
+    },
+    {
+      path: '/user-menu',
+      name: 'user-menu',
+      component: () => import('../views/MenuView.vue')
     }
   ]
 })

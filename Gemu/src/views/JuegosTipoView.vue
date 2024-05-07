@@ -2,11 +2,10 @@
 import { ref } from "vue";
 import { useRoute, onBeforeRouteUpdate } from 'vue-router';
 
-const route = useRoute(); // Hook para acceder a la información de la ruta actual
+const route = useRoute(); 
 const tipoJuego = ref(route.params.tipo);
 
 onBeforeRouteUpdate((to) => {
-    // Esta función se ejecuta cuando cambia la ruta
     tipoJuego.value = to.params.tipo;
 });
 </script>

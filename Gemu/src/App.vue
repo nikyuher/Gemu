@@ -1,10 +1,28 @@
 <script setup lang="ts">
+import { ref, watch } from "vue";
 import { RouterLink, RouterView } from 'vue-router'
+import { useRoute } from 'vue-router';
+
+
+// Lista de rutas donde quieres ocultar el header
+const rutasAOcultarHeader = ["/iniciarSesion", "/registrarse", "/user-menu"];
+const rutasOcultarFooter = ["/user-menu"];
+const route = useRoute();
+
+const ocultarHeader = ref(rutasAOcultarHeader.includes(route.path));
+const ocultarFooter = ref(rutasOcultarFooter.includes(route.path));
+
+// Observa cambios en route.path y actualiza shouldHideHeader
+watch(route, () => {
+  ocultarHeader.value = rutasAOcultarHeader.includes(route.path);
+  ocultarFooter.value = rutasOcultarFooter.includes(route.path);
+});
+
 
 </script>
 
 <template>
-  <header>
+  <header :style="{ display: ocultarHeader ? 'none' : 'block' }">
     <div class="nav-superior">
       <div class="logo">
         <RouterLink to="/">
@@ -47,7 +65,7 @@ import { RouterLink, RouterView } from 'vue-router'
 
   <RouterView />
 
-  <footer>
+  <footer :style="{ display: ocultarFooter ? 'none' : 'block' }">
     <div class="footer-superior">
       <div class="sobre-gemu">
         <h2>Sobre Gēmu</h2>
@@ -282,8 +300,6 @@ footer {
 
 .custom-icon {
   font-size: 22px;
-  /* Tamaño del icono */
   color: white;
-  /* Color del icono */
 }
 </style>
