@@ -1,10 +1,10 @@
 import { defineStore } from 'pinia'
 import { TokenStore } from '@/stores/token'
-import { useRouter } from 'vue-router'
+import { jwtDecode } from 'jwt-decode'
+import type { Router } from 'vue-router'
 import urlStore from '@/stores/baseUrl'
 
 const tokenStore = TokenStore()
-const router = useRouter()
 const baseUrl: string = urlStore.baseUrl
 
 interface Usuario {
@@ -19,15 +19,17 @@ interface Usuario {
   saldoActual: number
 }
 
-export const UsuarioApi = defineStore({
-  id: 'usuario',
+interface JwtPayloadConRol {
+  role: string
+}
 
+export const UsuarioApi = defineStore('usuario', {
   state: () => ({
     usuarioId: null as Usuario | null
   }),
 
   actions: {
-    async loginUsuario(login: any) {
+    async loginUsuario(login: any, router: Router) {
       try {
         const response = await fetch(`${baseUrl}/Usuario/login`, {
           method: 'POST',
@@ -42,14 +44,54 @@ export const UsuarioApi = defineStore({
           throw new Error(errorData.message || 'Error al iniciar sesión.')
         }
 
-        // Procesa la respuesta
         const data = await response.json()
         const token = data.token
 
         // Guarda el token usando `TokenStore`
         tokenStore.setToken(token)
+
+        // Decodifica el token para obtener el payload
+        const decoded = jwtDecode<JwtPayloadConRol>(token)
+
+        if (decoded.role === 'Admin') {
+          router.push('/user-menu')
+        } else {
+          router.push('/')
+        }
       } catch (error) {
-        console.error('Error al obtener la obra:', error)
+        console.error('Error al iniciar sesión:', error)
+        throw error
+      }
+    },
+    async registrarse(User: any, router: Router) {
+      try {
+        const response = await fetch(`${baseUrl}/Usuario/registrar`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(User)
+        })
+
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.message || 'error al Crear al usuario.')
+        }
+
+        const data = await response.json()
+        const token = data.token
+
+        tokenStore.setToken(token)
+
+        const decoded = jwtDecode<JwtPayloadConRol>(token)
+
+        if (decoded.role === 'Admin') {
+          router.push('/user-menu')
+        } else {
+          router.push('/')
+        }
+      } catch (error) {
+        console.error(error)
         throw error
       }
     }

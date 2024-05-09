@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { UsuarioApi } from '@/stores/usuarioApi'
+import { useRouter } from 'vue-router';
 
 const store = UsuarioApi();
+const router = useRouter();
 
 const correo = ref('')
 const contraseña = ref('')
@@ -15,7 +17,7 @@ const login = async () => {
             contraseña: contraseña.value
         };
 
-        await store.loginUsuario(login)
+        await store.loginUsuario(login, router)
 
         correo.value = '';
         contraseña.value = '';
@@ -41,14 +43,18 @@ const login = async () => {
         <div>
             <form @submit.prevent="login">
                 <label for="">Correo</label>
-                <input type="text" v-model="correo" placeholder="correo@gmail.com" class="input-diseño" required>
+                <input type="email" v-model="correo" placeholder="correo@gmail.com" class="input-diseño" required>
                 <label for="">Contraseña</label>
-                <input type="text" v-model="contraseña" placeholder="CONTRAseña123@" class="input-diseño" required>
+                <input type="password" v-model="contraseña" placeholder="CONTRAseña123@" class="input-diseño" required>
                 <label for="terminos">
                     <input type="checkbox">Guardar contraseña
                     <RouterLink to="/registrarse" style=" padding-left: 10px;">Registrarse</RouterLink>
                 </label>
                 <input type="submit" value="Crear Cuenta" class="btn-crear-cuenta input-diseño">
+                <v-alert v-if="responseMessage" :value="true"
+                    :type="responseMessage.includes('Correctamente') ? 'success' : 'error'">
+                    {{ responseMessage }}
+                </v-alert>
             </form>
         </div>
     </div>
