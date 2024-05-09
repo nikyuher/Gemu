@@ -15,11 +15,6 @@ const router = createRouter({
       component: () => import('../views/AboutView.vue')
     },
     {
-      path: '/:pathMatch(.*)*',
-      name: 'not-found',
-      component: () => import('../views/ErrorUrlView.vue'), 
-    },
-    {
       path: '/registrarse',
       name: 'registrarse',
       component: () => import('../views/RegistrarseView.vue')
@@ -48,6 +43,16 @@ const router = createRouter({
       path: '/marketplace',
       name: 'marketplace',
       component: () => import('../views/MarketplaceView.vue')
+    },
+    {
+      path: '/reseñas',
+      name: 'reseñas',
+      component: () => import('../views/ReseñasJuegoView.vue')
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'not-found',
+      component: () => import('../views/ErrorUrlView.vue'), 
     }
   ]
 })

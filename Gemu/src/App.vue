@@ -56,10 +56,10 @@ watch(route, () => {
       </div>
     </div>
     <div class="nav-inferior">
-      <RouterLink to="/marketplace">Marketplace</RouterLink>
+      <RouterLink to="/reseñas">Marketplace</RouterLink>
       <RouterLink to="/ofertas">Ofertas</RouterLink>
-      <RouterLink :to="{ name: 'juegosTipo', params: { tipo: 'Baratos' } }">Juegos Baratos</RouterLink>
-      <RouterLink :to="{ name: 'juegosTipo', params: { tipo: 'Populares' } }">Más Populares</RouterLink>
+      <RouterLink :to="{ name: 'juegosTipo', params: { tipo: 'baratos' } }">Juegos Baratos</RouterLink>
+      <RouterLink :to="{ name: 'juegosTipo', params: { tipo: 'populares' } }">Más Populares</RouterLink>
     </div>
   </header>
 
