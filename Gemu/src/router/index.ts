@@ -45,14 +45,14 @@ const router = createRouter({
       component: () => import('../views/MarketplaceView.vue')
     },
     {
-      path: '/reseñas',
-      name: 'reseñas',
+      path: '/resenas',
+      name: 'resenas',
       component: () => import('../views/ReseñasJuegoView.vue')
     },
     {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
-      component: () => import('../views/ErrorUrlView.vue'), 
+      component: () => import('../views/ErrorUrlView.vue')
     }
   ]
 })

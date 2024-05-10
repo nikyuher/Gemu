@@ -9,11 +9,6 @@ import { computed } from 'vue';
 const datosUsuario = UsuarioApi();
 const isAuthenticated = computed(() => datosUsuario.isAuthenticated);
 
-const cerrarSesion = () => {
-  datosUsuario.removeUsuarioid()
-  datosUsuario.removeToken()
-}
-
 const route = useRoute();
 
 const rutasAOcultarHeader = ['/iniciarSesion', '/registrarse', '/user-menu'];
@@ -56,9 +51,9 @@ watch(route, () => {
         </div>
         <div v-if="isAuthenticated" class="cuentaUsuario">
           <RouterLink to="/user-menu">
-            <v-icon>mdi-account-circle</v-icon> {{ datosUsuario.$state.usuarioId?.nombre }}
+            {{ datosUsuario.$state.usuarioId?.nombre }}
+            <v-icon>mdi-account-circle</v-icon>
           </RouterLink>
-          <button @click="cerrarSesion">Cerrar</button>
         </div>
         <div v-else class="cuentaUsuario">
           <RouterLink to="/iniciarSesion">InicioSesion</RouterLink>
@@ -70,7 +65,7 @@ watch(route, () => {
       </div>
     </div>
     <div class="nav-inferior">
-      <RouterLink to="/reseñas">Marketplace</RouterLink>
+      <RouterLink to="/resenas">Marketplace</RouterLink>
       <RouterLink to="/ofertas">Ofertas</RouterLink>
       <RouterLink :to="{ name: 'juegosTipo', params: { tipo: 'baratos' } }">Juegos Baratos</RouterLink>
       <RouterLink :to="{ name: 'juegosTipo', params: { tipo: 'populares' } }">Más Populares</RouterLink>

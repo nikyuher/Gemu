@@ -1,10 +1,18 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed, watchEffect } from "vue";
 import { UsuarioApi } from '@/stores/usuarioApi'
 import { useRouter } from 'vue-router';
 
 const store = UsuarioApi();
 const router = useRouter();
+
+const isAuthenticated = computed(() => store.isAuthenticated);
+
+watchEffect(() => {
+    if (isAuthenticated.value) {
+        router.push('/');
+    }
+});
 
 const correo = ref('')
 const contraseña = ref('')
@@ -38,7 +46,7 @@ const login = async () => {
 </script>
 
 <template>
-    <div class="cont-login">
+    <div v-if="!isAuthenticated" class="cont-login">
         <h1>Iniciar Sesion</h1>
         <div>
             <form @submit.prevent="login">
@@ -50,7 +58,7 @@ const login = async () => {
                     <input type="checkbox">Guardar contraseña
                     <RouterLink to="/registrarse" style=" padding-left: 10px;">Registrarse</RouterLink>
                 </label>
-                <input type="submit" value="Crear Cuenta" class="btn-crear-cuenta input-diseño">
+                <input type="submit" value="Iniciar Sesion" class="btn-crear-cuenta input-diseño">
                 <v-alert v-if="responseMessage" :value="true"
                     :type="responseMessage.includes('Correctamente') ? 'success' : 'error'">
                     {{ responseMessage }}
