@@ -3,22 +3,25 @@ import { ref, watch } from "vue";
 import { RouterLink, RouterView } from 'vue-router'
 import { useRoute } from 'vue-router';
 
+import { UsuarioApi } from '@/stores/usuarioApi';
+import { computed } from 'vue';
 
-// Lista de rutas donde quieres ocultar el header
-const rutasAOcultarHeader = ["/iniciarSesion", "/registrarse", "/user-menu"];
-const rutasOcultarFooter = ["/user-menu"];
+const datosUsuario = UsuarioApi();
+const isAuthenticated = computed(() => datosUsuario.isAuthenticated);
+
 const route = useRoute();
+
+const rutasAOcultarHeader = ['/iniciarSesion', '/registrarse', '/user-menu'];
+const rutasOcultarFooter = ['/user-menu'];
+
 
 const ocultarHeader = ref(rutasAOcultarHeader.includes(route.path));
 const ocultarFooter = ref(rutasOcultarFooter.includes(route.path));
 
-// Observa cambios en route.path y actualiza shouldHideHeader
 watch(route, () => {
   ocultarHeader.value = rutasAOcultarHeader.includes(route.path);
   ocultarFooter.value = rutasOcultarFooter.includes(route.path);
 });
-
-
 </script>
 
 <template>
@@ -46,7 +49,10 @@ watch(route, () => {
         <div class="carrito">
           <RouterLink to="/carritoCompra"> <v-icon>mdi-cart</v-icon></RouterLink>
         </div>
-        <div class="cuentaUsuario">
+        <div v-if="isAuthenticated" class="cuentaUsuario">
+          <RouterLink to="/user-menu">{{ datosUsuario.$state.usuarioId?.nombre }}</RouterLink>
+        </div>
+        <div v-else class="cuentaUsuario">
           <RouterLink to="/iniciarSesion">InicioSesion</RouterLink>
           <RouterLink to="/registrarse" style="border-left:2px solid white ;">Registrarse</RouterLink>
         </div>

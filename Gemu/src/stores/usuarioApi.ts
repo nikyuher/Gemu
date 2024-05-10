@@ -1,10 +1,8 @@
 import { defineStore } from 'pinia'
-import { TokenStore } from '@/stores/token'
-import { jwtDecode } from 'jwt-decode'
 import type { Router } from 'vue-router'
+import { jwtDecode } from 'jwt-decode'
 import urlStore from '@/stores/baseUrl'
 
-const tokenStore = TokenStore()
 const baseUrl: string = urlStore.baseUrl
 
 interface Usuario {
@@ -21,14 +19,51 @@ interface Usuario {
 
 interface JwtPayloadConRol {
   role: string
+  nameid: number
 }
 
 export const UsuarioApi = defineStore('usuario', {
   state: () => ({
+    token: localStorage.getItem('jwtToken') as string | null,
     usuarioId: null as Usuario | null
   }),
 
   actions: {
+    async getUsuarioId(idUsuario: number) {
+      try {
+        const token = this.getToken()
+
+        const response = await fetch(`${baseUrl}/Usuario/${idUsuario}`, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.message || 'error al obtener al usuario.')
+        }
+
+        const data = await response.json()
+
+        const usuario = {
+          idUsuario: data.idUsuario,
+          idRol: data.idRol,
+          rol: data.rol,
+          fotoPerfil: data.fotoPerfil,
+          nombre: data.nombre,
+          correo: data.correo,
+          direccion: data.direccion,
+          codigoPostal: data.codigoPostal,
+          saldoActual: data.saldoActual
+        }
+
+        this.setUsuarioId(usuario)
+      } catch (error) {
+        throw new Error(`Error al obtner al usuario: ${error}`)
+      }
+    },
     async loginUsuario(login: any, router: Router) {
       try {
         const response = await fetch(`${baseUrl}/Usuario/login`, {
@@ -47,11 +82,12 @@ export const UsuarioApi = defineStore('usuario', {
         const data = await response.json()
         const token = data.token
 
-        // Guarda el token usando `TokenStore`
-        tokenStore.setToken(token)
+        this.setToken(token)
 
         // Decodifica el token para obtener el payload
         const decoded = jwtDecode<JwtPayloadConRol>(token)
+
+        this.getUsuarioId(decoded.nameid)
 
         if (decoded.role === 'Admin') {
           router.push('/user-menu')
@@ -81,9 +117,11 @@ export const UsuarioApi = defineStore('usuario', {
         const data = await response.json()
         const token = data.token
 
-        tokenStore.setToken(token)
+        this.setToken(token)
 
         const decoded = jwtDecode<JwtPayloadConRol>(token)
+
+        this.getUsuarioId(decoded.nameid)
 
         if (decoded.role === 'Admin') {
           router.push('/user-menu')
@@ -94,6 +132,25 @@ export const UsuarioApi = defineStore('usuario', {
         console.error(error)
         throw error
       }
+    },
+    setUsuarioId(usuario: Usuario) {
+      this.usuarioId = usuario
+    },
+    setToken(token: string) {
+      this.token = token
+      localStorage.setItem('jwtToken', token)
+    },
+
+    getToken(): string | null {
+      return this.token
+    },
+    removeToken() {
+      this.token = null
+      localStorage.removeItem('jwtToken')
     }
+  },
+  getters: {
+    // Getter para verificar si un usuario está autenticado
+    isAuthenticated: (state) => state.usuarioId !== null
   }
 })
