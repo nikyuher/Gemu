@@ -9,6 +9,11 @@ import { computed } from 'vue';
 const datosUsuario = UsuarioApi();
 const isAuthenticated = computed(() => datosUsuario.isAuthenticated);
 
+const cerrarSesion = () => {
+  datosUsuario.removeUsuarioid()
+  datosUsuario.removeToken()
+}
+
 const route = useRoute();
 
 const rutasAOcultarHeader = ['/iniciarSesion', '/registrarse', '/user-menu'];
@@ -50,7 +55,10 @@ watch(route, () => {
           <RouterLink to="/carritoCompra"> <v-icon>mdi-cart</v-icon></RouterLink>
         </div>
         <div v-if="isAuthenticated" class="cuentaUsuario">
-          <RouterLink to="/user-menu">{{ datosUsuario.$state.usuarioId?.nombre }}</RouterLink>
+          <RouterLink to="/user-menu">
+            <v-icon>mdi-account-circle</v-icon> {{ datosUsuario.$state.usuarioId?.nombre }}
+          </RouterLink>
+          <button @click="cerrarSesion">Cerrar</button>
         </div>
         <div v-else class="cuentaUsuario">
           <RouterLink to="/iniciarSesion">InicioSesion</RouterLink>
@@ -241,6 +249,7 @@ header {
 .cuentaUsuario a:hover {
   color: gray;
 }
+
 
 /* Vender */
 .vender {

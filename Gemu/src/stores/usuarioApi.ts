@@ -25,7 +25,7 @@ interface JwtPayloadConRol {
 export const UsuarioApi = defineStore('usuario', {
   state: () => ({
     token: localStorage.getItem('jwtToken') as string | null,
-    usuarioId: null as Usuario | null
+    usuarioId: JSON.parse(localStorage.getItem('usuarioData') || 'null') as Usuario | null
   }),
 
   actions: {
@@ -135,12 +135,16 @@ export const UsuarioApi = defineStore('usuario', {
     },
     setUsuarioId(usuario: Usuario) {
       this.usuarioId = usuario
+      localStorage.setItem('usuarioData', JSON.stringify(usuario))
+    },
+    removeUsuarioid() {
+      this.usuarioId = null
+      localStorage.removeItem('usuarioData')
     },
     setToken(token: string) {
       this.token = token
       localStorage.setItem('jwtToken', token)
     },
-
     getToken(): string | null {
       return this.token
     },
@@ -150,7 +154,6 @@ export const UsuarioApi = defineStore('usuario', {
     }
   },
   getters: {
-    // Getter para verificar si un usuario está autenticado
     isAuthenticated: (state) => state.usuarioId !== null
   }
 })
