@@ -3,19 +3,14 @@ import { UsuarioApi } from '@/stores/usuarioApi';
 import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { watchEffect } from 'vue';
-import informacionGeneral from '@/components/InformacionGeneral.vue'
+import menuUsuario from '@/components/MenuUsuario.vue'
+import menuAdmin from '@/components/MenuAdmin.vue'
 
 const router = useRouter();
 const datosUsuario = UsuarioApi();
 
-
-const cerrarSesion = () => {
-    datosUsuario.removeUsuarioid()
-    datosUsuario.removeToken()
-    router.push("/")
-}
-
 const isAuthenticated = computed(() => datosUsuario.isAuthenticated);
+const isAdmin = computed(() => datosUsuario.isAdmin);
 watchEffect(() => {
     if (!isAuthenticated.value) {
         router.push('/');
@@ -41,27 +36,12 @@ watchEffect(() => {
         <div class="bloqueInvisible">
             <p>a</p>
         </div>
-        <main>
-            <div class="layout">
-                <div class="Barra">
-                    <div class="mi-cuenta">
-                        <div class="cont-desplegable">
-                            <h3>Mi cuenta</h3>
-                            <v-icon class="icono1">mdi-chevron-up</v-icon>
-                            <v-icon class="icono2">mdi-chevron-down</v-icon>
-                        </div>
-                        <p>Informacion general</p>
-                    </div>
-                    <div class="cerrarSesion" @click="cerrarSesion">
-                        <h3>Cerrar</h3>
-                    </div>
-                </div>
-                <div class="bloqueRelleno">a</div>
-                <div class="contenido">
-                    <informacionGeneral></informacionGeneral>
-                </div>
-            </div>
-        </main>
+        <div v-if="isAdmin">
+            <menuAdmin></menuAdmin>
+        </div>
+        <div v-else>
+            <menuUsuario></menuUsuario>
+        </div>
         <div class="bloqueFooter">
             <div class="footer-superior">
                 <div class="sobre-gemu">
@@ -103,6 +83,7 @@ watchEffect(() => {
 </template>
 
 <style scoped>
+/*Diseño Header */
 .bloqueHeader {
     position: fixed;
     display: flex;
@@ -111,13 +92,6 @@ watchEffect(() => {
     width: 100%;
     background-color: rgb(0, 0, 0);
 }
-
-.bloqueInvisible {
-    width: 100%;
-    height: 170px;
-    background-color: #E0E0E0;
-}
-
 
 .Usuario {
     display: flex;
@@ -149,19 +123,6 @@ watchEffect(() => {
     font-size: 32px;
 }
 
-main {
-    width: 100%;
-    min-height: 600px;
-    background-color: #E0E0E0;
-    margin: 0;
-}
-
-.layout {
-    display: grid;
-    grid-template-columns: 300px 1fr;
-    /* Columna izquierda de 300px, columna derecha ocupando el resto */
-    height: 100%;
-}
 
 /* Logo */
 .logo a {
@@ -178,87 +139,6 @@ main {
 
 .logo p {
     font-size: 32px;
-}
-
-/* Barra Opciones*/
-.bloqueRelleno {
-    width: 250px;
-    height: 100%;
-    background-color: red;
-
-}
-
-.Barra {
-    background-color: #491F6A;
-    width: 250px;
-    height: 100%;
-    position: fixed;
-    top: 118px;
-}
-
-.Barra h3 {
-    margin-left: 40px;
-}
-
-/* Mi cuenta */
-
-.mi-cuenta {
-    min-height: 40px;
-    align-items: center;
-}
-
-.mi-cuenta p {
-    display: none;
-    margin-left: 40px;
-    padding: 20px 20px;
-    font-size: 15px;
-}
-
-.mi-cuenta:hover {
-    background-color: #240C2F;
-    transition: background-color 0.3s ease-in-out;
-}
-
-.mi-cuenta:hover p {
-    display: block;
-    transition: display 0.3s ease-in-out;
-}
-
-.cont-desplegable {
-    display: flex;
-    justify-content: space-between;
-}
-
-.cont-desplegable .v-icon {
-    padding-right: 20px;
-}
-
-.icono2 {
-    display: none;
-}
-
-.mi-cuenta:hover .icono1 {
-    display: none;
-}
-
-.mi-cuenta:hover .icono2 {
-    display: block;
-    padding-right: 35px;
-}
-
-/* Cerrar sesion */
-.cerrarSesion {
-    min-height: 40px;
-    display: flex;
-    align-items: center;
-}
-
-.cerrarSesion:hover {
-    background-color: #240C2F;
-}
-
-.cerrarSesion:active {
-    background-color: #362041;
 }
 
 /* Footer */

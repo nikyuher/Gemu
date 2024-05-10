@@ -154,6 +154,18 @@ export const UsuarioApi = defineStore('usuario', {
     }
   },
   getters: {
-    isAuthenticated: (state) => state.usuarioId !== null
+    isAuthenticated: (state) => state.usuarioId !== null,
+    isAdmin: (state) => {
+      if (!state.token) {
+        return false
+      }
+      try {
+        const decoded = jwtDecode<JwtPayloadConRol>(state.token)
+
+        return decoded.role === 'Admin'
+      } catch (error) {
+        return false
+      }
+    }
   }
 })
