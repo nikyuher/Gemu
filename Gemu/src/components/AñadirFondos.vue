@@ -13,7 +13,6 @@ const cantidad = ref()
 
 const AñadirFondos = async () => {
     try {
-        console.log(idUser)
 
         const newTransaction = {
             idUsuario: idUser,
@@ -31,8 +30,12 @@ const AñadirFondos = async () => {
             responseMessage.value = '';
         }, 3000);
     } catch (error) {
-        throw new Error("Error al añadir fondos: " + error);
 
+        responseMessage.value = '' + error;
+        setTimeout(() => {
+            responseMessage.value = '';
+        }, 3000);
+        console.error('Error al añadir fondos:', error);
     }
 }
 

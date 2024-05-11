@@ -33,8 +33,6 @@ export const transaccionApi = defineStore('transaccion', {
           fecha: fechaActual
         }
 
-        console.log(transaccion)
-
         const response = await fetch(`${baseUrl}/Transaccion/anadir-fondos`, {
           method: 'POST',
           headers: {
@@ -49,7 +47,8 @@ export const transaccionApi = defineStore('transaccion', {
           throw new Error(errorData.message || 'error al añadir fondos response.')
         }
       } catch (error) {
-        throw new Error(`Error en el store: ${error}`)
+        console.error('Error con la api:', error)
+        throw error
       }
     },
     async restarFondos(Transaccion: any) {
@@ -66,8 +65,6 @@ export const transaccionApi = defineStore('transaccion', {
           fecha: fechaActual
         }
 
-        console.log(transaccion)
-
         const response = await fetch(`${baseUrl}/Transaccion/restar-fondos`, {
           method: 'POST',
           headers: {
@@ -82,7 +79,8 @@ export const transaccionApi = defineStore('transaccion', {
           throw new Error(errorData.message || 'error al restar fondos response.')
         }
       } catch (error) {
-        throw new Error(`Error en el store: ${error}`)
+        console.error('Error con la api:', error)
+        throw error
       }
     }
   }

@@ -31,7 +31,7 @@ const removerTokenYUsuarioId = () => {
 
 // Eliminar cada 1 hora
 onMounted(() => {
-  setInterval(removerTokenYUsuarioId, 600000);
+  setInterval(removerTokenYUsuarioId, 3600000);
 });
 </script>
 

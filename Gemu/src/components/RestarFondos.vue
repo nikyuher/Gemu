@@ -13,7 +13,6 @@ const cantidad = ref()
 
 const RestarFondos = async () => {
     try {
-        console.log(idUser)
 
         const newTransaction = {
             idUsuario: idUser,
@@ -31,8 +30,11 @@ const RestarFondos = async () => {
             responseMessage.value = '';
         }, 3000);
     } catch (error) {
-        throw new Error("Error al retar fondos: " + error);
-
+        responseMessage.value = '' + error;
+        setTimeout(() => {
+            responseMessage.value = '';
+        }, 3000);
+        console.error('Error al retirar fondos:', error);
     }
 }
 
