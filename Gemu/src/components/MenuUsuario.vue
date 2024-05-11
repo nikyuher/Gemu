@@ -2,6 +2,8 @@
 import { UsuarioApi } from '@/stores/usuarioApi';
 import { useRouter } from 'vue-router';
 import informacionGeneral from '@/components/InformacionGeneral.vue'
+import AñadirFondos from '@/components/AñadirFondos.vue'
+import RestarFondos from '@/components/RestarFondos.vue'
 import { ref } from 'vue';
 
 const router = useRouter();
@@ -17,6 +19,12 @@ const cerrarSesion = () => {
     router.push("/")
 }
 
+const opcionActual = ref<string>('informacion');
+
+const mostrarView = (view: string) => {
+    opcionActual.value = view;
+};
+
 </script>
 
 <template>
@@ -28,22 +36,24 @@ const cerrarSesion = () => {
             <div class="Barra">
                 <div class=" desplegable mantenerClick" :style="{ backgroundColor: cuentaVisible1 ? '#240C2F' : '' }">
                     <div class="cont-desplegable" :class="{ activo: cuentaVisible1 }"
-                        @click="cuentaVisible1 = !cuentaVisible1">
+                        @click="cuentaVisible1 = !cuentaVisible1; mostrarView('informacion')">
                         <h3>Mi cuenta</h3>
                         <v-icon class="icono1" :class="{ oculto: cuentaVisible1 }">mdi-chevron-up</v-icon>
                         <v-icon class="icono2" :class="{ oculto: !cuentaVisible1 }">mdi-chevron-down</v-icon>
                     </div>
-                    <p :class="{ activo: cuentaVisible1 }">Informacion general</p>
+                    <p :class="{ activo: cuentaVisible1 }" @click="mostrarView('informacion')">Informacion general</p>
                 </div>
                 <div class="desplegable mantenerClick" :style="{ backgroundColor: cuentaVisible2 ? '#240C2F' : '' }">
                     <div class="cont-desplegable" :class="{ activo: cuentaVisible2 }"
-                        @click="cuentaVisible2 = !cuentaVisible2">
+                        @click="cuentaVisible2 = !cuentaVisible2; mostrarView('addFondos')">
                         <h3>Saldo</h3>
                         <v-icon class="icono1" :class="{ oculto: cuentaVisible2 }">mdi-chevron-up</v-icon>
                         <v-icon class="icono2" :class="{ oculto: !cuentaVisible2 }">mdi-chevron-down</v-icon>
                     </div>
-                    <p :class="{ activo: cuentaVisible2 }">Informacion billetera</p>
-                    <p :class="{ activo: cuentaVisible2 }">Añadir fondos</p>
+                    <p :class="{ activo: cuentaVisible2 }" @click="mostrarView('infoBilletera')">Informacion billetera
+                    </p>
+                    <p :class="{ activo: cuentaVisible2 }" @click="mostrarView('addFondos')">Añadir fondos</p>
+                    <p :class="{ activo: cuentaVisible2 }" @click="mostrarView('retirarFondos')">Retirar fondos</p>
                 </div>
                 <div class="desplegable mantenerClick">
                     <h3>Biblioteca</h3>
@@ -67,7 +77,16 @@ const cerrarSesion = () => {
             </div>
             <div class="bloqueRelleno">a</div>
             <div class="contenido">
-                <informacionGeneral></informacionGeneral>
+                <div v-if="opcionActual === 'informacion'">
+                    <informacionGeneral></informacionGeneral>
+                </div>
+                <div v-if="opcionActual === 'infoBilletera'"></div>
+                <div v-if="opcionActual === 'addFondos'">
+                    <AñadirFondos></AñadirFondos>
+                </div>
+                <div v-if="opcionActual === 'retirarFondos'">
+                    <RestarFondos></RestarFondos>
+                </div>
             </div>
         </div>
     </main>
@@ -87,6 +106,7 @@ const cerrarSesion = () => {
     margin-left: 40px;
     padding: 5px 20px;
     font-size: 15px;
+    color: rgb(212, 212, 212);
 }
 
 .desplegable:hover {
