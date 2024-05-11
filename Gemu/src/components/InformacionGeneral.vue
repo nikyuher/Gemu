@@ -1,17 +1,23 @@
 <script setup lang="ts">
 import { UsuarioApi } from '@/stores/usuarioApi';
 import { onMounted } from 'vue';
-const datosUsuario = UsuarioApi();
 
+const datosUsuario = UsuarioApi();
 const IdUsuario = datosUsuario.$state.usuarioId?.idUsuario
+
 onMounted(async () => {
 
-    if (!IdUsuario) {
-        throw new Error("No se pudo obtener el ID");
+    try {
+        if (!IdUsuario) {
+            throw new Error("No se pudo obtener el ID");
 
+        }
+
+        datosUsuario.getUsuarioId(IdUsuario)
+    } catch (error) {
+        console.log(error)
+        throw error
     }
-
-    datosUsuario.getUsuarioId(IdUsuario)
 }) 
 </script>
 

@@ -148,6 +148,7 @@ h5 {
     font-size: 30px;
 }
 
+/* contenedores */
 .cont-Info {
     width: 95%;
 }

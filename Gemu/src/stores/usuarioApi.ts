@@ -25,7 +25,8 @@ interface JwtPayloadConRol {
 export const UsuarioApi = defineStore('usuario', {
   state: () => ({
     token: localStorage.getItem('jwtToken') as string | null,
-    usuarioId: JSON.parse(localStorage.getItem('usuarioData') || 'null') as Usuario | null
+    usuarioId: JSON.parse(localStorage.getItem('usuarioData') || 'null') as Usuario | null,
+    saldoActual: null as number | null
   }),
 
   actions: {
@@ -58,7 +59,7 @@ export const UsuarioApi = defineStore('usuario', {
           codigoPostal: data.codigoPostal,
           saldoActual: data.saldoActual
         }
-
+        this.actualizarSaldoActual(data.saldoActual)
         this.setUsuarioId(usuario)
       } catch (error) {
         throw new Error(`Error al obtner al usuario: ${error}`)
@@ -136,6 +137,9 @@ export const UsuarioApi = defineStore('usuario', {
     setUsuarioId(usuario: Usuario) {
       this.usuarioId = usuario
       localStorage.setItem('usuarioData', JSON.stringify(usuario))
+    },
+    actualizarSaldoActual(nuevoSaldo: number) {
+      this.saldoActual = nuevoSaldo
     },
     removeUsuarioid() {
       this.usuarioId = null

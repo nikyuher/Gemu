@@ -15,7 +15,8 @@ interface Transaccion {
 
 export const transaccionApi = defineStore('transaccion', {
   state: () => ({
-    transaccion: JSON.parse(localStorage.getItem('usuarioData') || 'null') as Transaccion | null
+    transaccion: JSON.parse(localStorage.getItem('usuarioData') || 'null') as Transaccion | null,
+    listaTransacciones: [] as any[]
   }),
 
   actions: {
@@ -46,6 +47,9 @@ export const transaccionApi = defineStore('transaccion', {
           const errorData = await response.json()
           throw new Error(errorData.message || 'error al añadir fondos response.')
         }
+
+        const nuevoSaldo = usarioAPi.$state.saldoActual + Transaccion.cantidad
+        usarioAPi.actualizarSaldoActual(nuevoSaldo)
       } catch (error) {
         console.error('Error con la api:', error)
         throw error
@@ -78,8 +82,42 @@ export const transaccionApi = defineStore('transaccion', {
           const errorData = await response.json()
           throw new Error(errorData.message || 'error al restar fondos response.')
         }
+
+        const nuevoSaldo =
+          usarioAPi.$state.saldoActual !== null
+            ? usarioAPi.$state.saldoActual - Transaccion.cantidad
+            : null
+        if (nuevoSaldo !== null) {
+          usarioAPi.actualizarSaldoActual(nuevoSaldo)
+        } else {
+          throw new Error('El saldo actual es nulo después de restar fondos')
+        }
       } catch (error) {
         console.error('Error con la api:', error)
+        throw error
+      }
+    },
+    async historialTransacciones(idUsuario: number) {
+      try {
+        const token = usarioAPi.getToken()
+
+        const response = await fetch(`${baseUrl}/Transaccion/usuario?idUsuario=${idUsuario}`, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.message || 'error al obtener el historial.')
+        }
+
+        const data = await response.json()
+
+        this.listaTransacciones = data
+      } catch (error) {
+        console.log(error)
         throw error
       }
     }

@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { UsuarioApi } from '@/stores/usuarioApi';
 import { useRouter } from 'vue-router';
+import { ref } from 'vue';
 import informacionGeneral from '@/components/InformacionGeneral.vue'
 import AñadirFondos from '@/components/AñadirFondos.vue'
 import RestarFondos from '@/components/RestarFondos.vue'
-import { ref } from 'vue';
+import infoBilletera from "@/components/InformacionBilletera.vue";
 
 const router = useRouter();
 const datosUsuario = UsuarioApi();
@@ -45,7 +46,7 @@ const mostrarView = (view: string) => {
                 </div>
                 <div class="desplegable mantenerClick" :style="{ backgroundColor: cuentaVisible2 ? '#240C2F' : '' }">
                     <div class="cont-desplegable" :class="{ activo: cuentaVisible2 }"
-                        @click="cuentaVisible2 = !cuentaVisible2; mostrarView('addFondos')">
+                        @click="cuentaVisible2 = !cuentaVisible2; mostrarView('infoBilletera')">
                         <h3>Saldo</h3>
                         <v-icon class="icono1" :class="{ oculto: cuentaVisible2 }">mdi-chevron-up</v-icon>
                         <v-icon class="icono2" :class="{ oculto: !cuentaVisible2 }">mdi-chevron-down</v-icon>
@@ -80,7 +81,9 @@ const mostrarView = (view: string) => {
                 <div v-if="opcionActual === 'informacion'">
                     <informacionGeneral></informacionGeneral>
                 </div>
-                <div v-if="opcionActual === 'infoBilletera'"></div>
+                <div v-if="opcionActual === 'infoBilletera'">
+                    <infoBilletera></infoBilletera>
+                </div>
                 <div v-if="opcionActual === 'addFondos'">
                     <AñadirFondos></AñadirFondos>
                 </div>
