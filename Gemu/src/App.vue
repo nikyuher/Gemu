@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { ref, watch, onMounted } from "vue";
 import { RouterLink, RouterView } from 'vue-router'
 import { useRoute } from 'vue-router';
 
@@ -21,6 +21,17 @@ const ocultarFooter = ref(rutasOcultarFooter.includes(route.path));
 watch(route, () => {
   ocultarHeader.value = rutasAOcultarHeader.includes(route.path);
   ocultarFooter.value = rutasOcultarFooter.includes(route.path);
+});
+
+// Función para remover el token y el usuario ID
+const removerTokenYUsuarioId = () => {
+  datosUsuario.removeToken();
+  datosUsuario.removeUsuarioid();
+};
+
+// Eliminar cada 1 hora
+onMounted(() => {
+  setInterval(removerTokenYUsuarioId, 600000);
 });
 </script>
 
