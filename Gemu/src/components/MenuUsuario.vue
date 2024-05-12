@@ -2,11 +2,12 @@
 import { UsuarioApi } from '@/stores/usuarioApi';
 import { useRouter } from 'vue-router';
 import { ref } from 'vue';
-import informacionGeneral from '@/components/InformacionGeneral.vue'
+import informacionGeneral from '@/components/InforGeneral.vue'
 import AñadirFondos from '@/components/AñadirFondos.vue'
 import RestarFondos from '@/components/RestarFondos.vue'
-import infoBilletera from "@/components/InformacionBilletera.vue";
+import infoBilletera from "@/components/InforBilletera.vue";
 import Ajustes from "@/components/AjustesUsuario.vue";
+import Biblioteca from "@/components/BibliotecaUsuario.vue";
 
 const router = useRouter();
 const datosUsuario = UsuarioApi();
@@ -14,6 +15,8 @@ const datosUsuario = UsuarioApi();
 const cuentaVisible1 = ref(false);
 const cuentaVisible2 = ref(false);
 const cuentaVisible3 = ref(false);
+const cuentaVisible4 = ref(false);
+const cuentaVisible5 = ref(false);
 
 const cerrarSesion = () => {
     datosUsuario.removeUsuarioid()
@@ -38,7 +41,7 @@ const mostrarView = (view: string) => {
             <div class="Barra">
                 <div class=" desplegable mantenerClick" :style="{ backgroundColor: cuentaVisible1 ? '#240C2F' : '' }">
                     <div class="cont-desplegable" :class="{ activo: cuentaVisible1 }"
-                        @click="cuentaVisible1 = !cuentaVisible1; mostrarView('informacion')">
+                        @click="cuentaVisible1 = !cuentaVisible1">
                         <h3>Mi cuenta</h3>
                         <v-icon class="icono1" :class="{ oculto: cuentaVisible1 }">mdi-chevron-up</v-icon>
                         <v-icon class="icono2" :class="{ oculto: !cuentaVisible1 }">mdi-chevron-down</v-icon>
@@ -47,31 +50,43 @@ const mostrarView = (view: string) => {
                 </div>
                 <div class="desplegable mantenerClick" :style="{ backgroundColor: cuentaVisible2 ? '#240C2F' : '' }">
                     <div class="cont-desplegable" :class="{ activo: cuentaVisible2 }"
-                        @click="cuentaVisible2 = !cuentaVisible2; mostrarView('infoBilletera')">
+                        @click="cuentaVisible2 = !cuentaVisible2">
                         <h3>Saldo</h3>
                         <v-icon class="icono1" :class="{ oculto: cuentaVisible2 }">mdi-chevron-up</v-icon>
                         <v-icon class="icono2" :class="{ oculto: !cuentaVisible2 }">mdi-chevron-down</v-icon>
                     </div>
-                    <p :class="{ activo: cuentaVisible2 }" @click="mostrarView('infoBilletera')">Informacion billetera
+                    <p :class="{ activo: cuentaVisible2 }" @click="mostrarView('infoBilletera')">Informacion saldo
                     </p>
                     <p :class="{ activo: cuentaVisible2 }" @click="mostrarView('addFondos')">Añadir fondos</p>
                     <p :class="{ activo: cuentaVisible2 }" @click="mostrarView('retirarFondos')">Retirar fondos</p>
                 </div>
-                <div class="desplegable mantenerClick">
-                    <h3>Biblioteca</h3>
-                </div>
                 <div class="desplegable mantenerClick" :style="{ backgroundColor: cuentaVisible3 ? '#240C2F' : '' }">
                     <div class="cont-desplegable" :class="{ activo: cuentaVisible3 }"
                         @click="cuentaVisible3 = !cuentaVisible3">
-                        <h3>Anuncios</h3>
+                        <h3>Mi biblioteca</h3>
                         <v-icon class="icono1" :class="{ oculto: cuentaVisible3 }">mdi-chevron-up</v-icon>
                         <v-icon class="icono2" :class="{ oculto: !cuentaVisible3 }">mdi-chevron-down</v-icon>
                     </div>
-                    <p :class="{ activo: cuentaVisible3 }">Crear anuncio</p>
-                    <p :class="{ activo: cuentaVisible3 }">Mis anuncios</p>
+                    <p :class="{ activo: cuentaVisible3 }" @click="mostrarView('biblioteca')">Mis compras</p>
                 </div>
-                <div class="desplegable mantenerClick" @click="mostrarView('ajustes')">
-                    <h3>Ajustes</h3>
+                <div class="desplegable mantenerClick" :style="{ backgroundColor: cuentaVisible4 ? '#240C2F' : '' }">
+                    <div class="cont-desplegable" :class="{ activo: cuentaVisible4 }"
+                        @click="cuentaVisible4 = !cuentaVisible4">
+                        <h3>Anuncios</h3>
+                        <v-icon class="icono1" :class="{ oculto: cuentaVisible4 }">mdi-chevron-up</v-icon>
+                        <v-icon class="icono2" :class="{ oculto: !cuentaVisible4 }">mdi-chevron-down</v-icon>
+                    </div>
+                    <p :class="{ activo: cuentaVisible4 }" @click="mostrarView('crearAnuncio')">Crear anuncio</p>
+                    <p :class="{ activo: cuentaVisible4 }" @click="mostrarView('misAnuncios')">Mis anuncios</p>
+                </div>
+                <div class="desplegable mantenerClick" :style="{ backgroundColor: cuentaVisible5 ? '#240C2F' : '' }">
+                    <div class="cont-desplegable" :class="{ activo: cuentaVisible5 }"
+                        @click="cuentaVisible5 = !cuentaVisible5">
+                        <h3>Ajustes</h3>
+                        <v-icon class="icono1" :class="{ oculto: cuentaVisible5 }">mdi-chevron-up</v-icon>
+                        <v-icon class="icono2" :class="{ oculto: !cuentaVisible5 }">mdi-chevron-down</v-icon>
+                    </div>
+                    <p :class="{ activo: cuentaVisible5 }" @click="mostrarView('ajustes')">Actualizar informacion</p>
                 </div>
                 <div class="mantenerClick desplegable" @click="cerrarSesion">
                     <h3>Cerrar</h3>
@@ -90,6 +105,9 @@ const mostrarView = (view: string) => {
                 </div>
                 <div v-if="opcionActual === 'retirarFondos'">
                     <RestarFondos></RestarFondos>
+                </div>
+                <div v-if="opcionActual === 'biblioteca'">
+                    <Biblioteca></Biblioteca>
                 </div>
                 <div v-if="opcionActual === 'ajustes'">
                     <Ajustes></Ajustes>
@@ -149,6 +167,10 @@ const mostrarView = (view: string) => {
 
 .desplegable .icono2.oculto {
     display: block;
+}
+
+.cont-desplegable h3 {
+    width: 80%;
 }
 
 /* Cerrar sesion */

@@ -2,7 +2,7 @@
 import { UsuarioApi } from '@/stores/usuarioApi';
 import { useRouter } from 'vue-router';
 import { ref } from 'vue';
-import informacionGeneral from '@/components/InformacionGeneral.vue'
+import informacionGeneral from '@/components/InforGeneral.vue'
 
 const router = useRouter();
 const datosUsuario = UsuarioApi();

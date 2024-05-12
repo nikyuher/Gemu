@@ -37,7 +37,7 @@ onMounted(async () => {
             </div>
             <div class="cajas">
                 <p>Saldo actual: </p>
-                <p class="saldo">€ {{ saldoActual }}</p>
+                <p class="saldo"> {{ saldoActual }} €</p>
             </div>
         </div>
         <div class="bloque">
@@ -45,7 +45,7 @@ onMounted(async () => {
                 <h2>Historial</h2>
             </div>
             <div class="cajas2">
-                <div class="anotaciones">
+                <div class="anotaciones top-tabla">
                     <h3>Total</h3>
                     <h3>Fecha</h3>
                     <h3>Cantidad</h3>
@@ -57,9 +57,9 @@ onMounted(async () => {
                 <div v-else>
                     <div v-for=" transaccion of historial" :key="transaccion.idTransaccion">
                         <div class="anotaciones">
-                            <p>€ {{ transaccion.total }}</p>
+                            <p> {{ transaccion.total }} €</p>
                             <p>{{ formatoFecha(transaccion.fecha) }}</p>
-                            <p>€ {{ transaccion.cantidad }}</p>
+                            <p> {{ transaccion.cantidad }} €</p>
                             <p>{{ transaccion.nota }}</p>
                         </div>
                     </div>
@@ -70,6 +70,10 @@ onMounted(async () => {
 </template>
 
 <style scoped>
+.top-tabla {
+    background-color: #DFC0F6;
+}
+
 /* Anotaciones */
 .anotaciones {
     display: grid;
