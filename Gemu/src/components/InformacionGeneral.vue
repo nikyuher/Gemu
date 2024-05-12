@@ -48,7 +48,7 @@ onMounted(async () => {
             </div>
             <div class="cajas">
                 <p>Saldo actual: </p>
-                <p class="saldo">$ {{ datosUsuario.$state.usuarioId?.saldoActual }}</p>
+                <p class="saldo">€ {{ datosUsuario.$state.usuarioId?.saldoActual }}</p>
             </div>
         </div>
 
