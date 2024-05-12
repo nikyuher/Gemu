@@ -34,7 +34,7 @@ watchEffect(() => {
             </div>
         </div>
         <div class="bloqueInvisible">
-            <p>a</p>
+            <p></p>
         </div>
         <div v-if="isAdmin">
             <menuAdmin></menuAdmin>

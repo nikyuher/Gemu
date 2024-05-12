@@ -22,7 +22,7 @@ const cerrarSesion = () => {
 
 <template>
     <div class="bloqueInvisible">
-        <p>a</p>
+        <p></p>
     </div>
     <main>
         <div class="layout">
@@ -153,7 +153,7 @@ const cerrarSesion = () => {
 .bloqueRelleno {
     width: 250px;
     height: 100%;
-    background-color: red;
+    background-color: #491F6A;
 
 }
 

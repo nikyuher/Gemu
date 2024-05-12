@@ -6,6 +6,7 @@ import informacionGeneral from '@/components/InformacionGeneral.vue'
 import AñadirFondos from '@/components/AñadirFondos.vue'
 import RestarFondos from '@/components/RestarFondos.vue'
 import infoBilletera from "@/components/InformacionBilletera.vue";
+import Ajustes from "@/components/AjustesUsuario.vue";
 
 const router = useRouter();
 const datosUsuario = UsuarioApi();
@@ -30,7 +31,7 @@ const mostrarView = (view: string) => {
 
 <template>
     <div class="bloqueInvisible">
-        <p>a</p>
+        <p></p>
     </div>
     <main>
         <div class="layout">
@@ -69,7 +70,7 @@ const mostrarView = (view: string) => {
                     <p :class="{ activo: cuentaVisible3 }">Crear anuncio</p>
                     <p :class="{ activo: cuentaVisible3 }">Mis anuncios</p>
                 </div>
-                <div class="desplegable mantenerClick">
+                <div class="desplegable mantenerClick" @click="mostrarView('ajustes')">
                     <h3>Ajustes</h3>
                 </div>
                 <div class="mantenerClick desplegable" @click="cerrarSesion">
@@ -89,6 +90,9 @@ const mostrarView = (view: string) => {
                 </div>
                 <div v-if="opcionActual === 'retirarFondos'">
                     <RestarFondos></RestarFondos>
+                </div>
+                <div v-if="opcionActual === 'ajustes'">
+                    <Ajustes></Ajustes>
                 </div>
             </div>
         </div>
@@ -167,7 +171,7 @@ const mostrarView = (view: string) => {
 .bloqueRelleno {
     width: 250px;
     height: 100%;
-    background-color: red;
+    background-color: #491F6A;
 
 }
 

@@ -81,6 +81,10 @@ onMounted(async () => {
     color: #7852A9;
 }
 
+.anotaciones p {
+    margin-top: 10px;
+}
+
 /* Saldo Actual */
 p {
     color: black;

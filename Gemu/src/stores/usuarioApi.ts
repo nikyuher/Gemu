@@ -134,6 +134,80 @@ export const UsuarioApi = defineStore('usuario', {
         throw error
       }
     },
+    async updateDireccion(DatosUser: any) {
+      try {
+        const token = this.getToken()
+
+        const newDatos = {
+          idUsuario: DatosUser.idUsuario,
+          direccion: DatosUser.direccion,
+          codigoPostal: DatosUser.codigoPostal
+        }
+
+        const usuarioActual = this.usuarioId
+        if (!usuarioActual) {
+          throw new Error('No se encontró ningún usuario almacenado en el localStorage.')
+        }
+        usuarioActual.direccion = DatosUser.direccion
+        usuarioActual.codigoPostal = DatosUser.codigoPostal
+
+        const response = await fetch(`${baseUrl}/Usuario/${DatosUser.idUsuario}/direccion`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify(newDatos)
+        })
+
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.message || 'error al actualizar datos.')
+        }
+
+        this.setUsuarioId(usuarioActual)
+      } catch (error) {
+        console.log(error)
+        throw error
+      }
+    },
+    async updateDatos(DatosUser: any) {
+      try {
+        const token = this.getToken()
+
+        const newDatos = {
+          idUsuario: DatosUser.idUsuario,
+          nombre: DatosUser.nombre,
+          correo: DatosUser.correo
+        }
+
+        const usuarioActual = this.usuarioId
+        if (!usuarioActual) {
+          throw new Error('No se encontró ningún usuario almacenado en el localStorage.')
+        }
+        usuarioActual.nombre = DatosUser.nombre
+        usuarioActual.correo = DatosUser.correo
+
+        const response = await fetch(`${baseUrl}/Usuario/${DatosUser.idUsuario}/datos`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify(newDatos)
+        })
+
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.message || 'error al actualizar datos.')
+        }
+
+        this.setUsuarioId(usuarioActual)
+      } catch (error) {
+        console.log(error)
+        throw error
+      }
+    },
     setUsuarioId(usuario: Usuario) {
       this.usuarioId = usuario
       localStorage.setItem('usuarioData', JSON.stringify(usuario))
