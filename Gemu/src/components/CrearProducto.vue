@@ -1,21 +1,36 @@
 <script setup lang="ts">
 import { UsuarioApi } from '@/stores/usuarioApi';
-import { transaccionApi } from '@/stores/transacciones';
+import { ProductoApi } from '@/stores/productoApi';
 import { ref } from 'vue'
 
 const datosUsuario = UsuarioApi();
 
 const idUser = datosUsuario.$state.usuarioId?.idUsuario
+const storeProducto = ProductoApi()
 const responseMessage = ref('');
 
 const nombreProducto = ref()
+const imagenes = ref<string[]>([])
 const precio = ref()
 const descripcion = ref()
+const estado = ref()
+const cantidad = ref()
 
+const fileInputRef = ref<HTMLInputElement | null>(null);
 const AñadirFondos = async () => {
     try {
+        const newProducto = {
+            nombre: nombreProducto.value,
+            precio: precio.value,
+            descripcion: descripcion.value,
+            estado: estado.value,
+            cantidad: cantidad.value
+        }
 
 
+        await storeProducto.CrearProducto(newProducto)
+
+        await storeProducto.ImagenesJuego(1, imagenes.value.map(img => img.split(',')[1]))
 
         responseMessage.value = 'Publicado exitosamente';
 
@@ -31,6 +46,33 @@ const AñadirFondos = async () => {
         console.error('Error al añadir fondos:', error);
     }
 }
+
+
+const handleFileInput = (event: Event) => {
+    const target = event.target as HTMLInputElement;
+    const files = target.files;
+    if (files) {
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const reader = new FileReader();
+
+            reader.onload = (e) => {
+                const base64String = e.target?.result as string;
+                imagenes.value.push(base64String);
+            };
+            const fileInput = fileInputRef.value as HTMLInputElement;
+            fileInput.value = '';
+            reader.readAsDataURL(file);
+            storeProducto.guardarImagenes(imagenes.value)
+        }
+    }
+};
+
+const eliminarImagen = (index: number) => {
+    imagenes.value.splice(index, 1);
+    const fileInput = fileInputRef.value as HTMLInputElement;
+    fileInput.value = '';
+};
 
 </script>
 
@@ -52,17 +94,29 @@ const AñadirFondos = async () => {
                 <div class="cajas">
                     <div class="cajas2">
                         <h3>Fotos</h3>
+                        <input ref="fileInputRef" type="file" multiple @change="handleFileInput" style="color: black;">
+                        <div class="imagenes-container">
+                            <div v-for="(imagen, index) in imagenes" :key="index" class="imagen-container">
+                                <img :src="imagen" class="imagen" alt="Imagen" width="80">
+                                <v-icon @click="eliminarImagen(index)"
+                                    style="color: #722121; font-size: 40px;">mdi-delete</v-icon>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="cajas">
                     <div class="cajas2">
                         <h3>Describe el estado</h3>
-                        <select>
+                        <select v-model="estado">
                             <option value="nuevo">Nuevo</option>
                             <option value="casiNuevo">Casi nuevo</option>
                             <option value="buenEstado">Buen estado</option>
                             <option value="usado">Usado</option>
                         </select>
+                        <div class="conInput">
+                            <input type="number" class="cont-numero" v-model="cantidad"
+                                placeholder="Numero de productos">
+                        </div>
                         <h3>Proporcion mas detalles del producto</h3>
                         <textarea name="descripcion" v-model="descripcion"
                             placeholder="Proporciona más detalles del producto" maxlength="500" rows="4"
@@ -97,6 +151,16 @@ const AñadirFondos = async () => {
     </div>
 </template>
 <style scoped>
+.imagenes-container {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.imagen-container {
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
 .cajas2 select,
 option {
     color: black;
