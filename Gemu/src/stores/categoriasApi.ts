@@ -7,16 +7,52 @@ const usarioAPi = UsuarioApi()
 
 export const CategoriaApi = defineStore('categoria', {
   state: () => ({
-    listaImagenes: [] as any[]
+    listaCategoriaSeccion: [] as any[]
   }),
 
   actions: {
-    async guardarImagenes(imagenes: string[]) {
+    async GetCategoriaSeccion(seccion: string) {
       try {
-        this.listaImagenes = imagenes
+        const token = usarioAPi.getToken()
+
+        const response = await fetch(`${baseUrl}/Categoria/seccion?nombre=${seccion}`, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.message || 'error al obtener categorias.')
+        }
+
+        const data = await response.json()
+
+        this.listaCategoriaSeccion = data
       } catch (error) {
-        console.error('Error al guardar las imágenes:', error)
-        throw error
+        throw new Error(`Error al obtner las categorias: ${error}`)
+      }
+    },
+    async AsignarCategoriaProducto(idProducto: number, idsCategoria: number[]) {
+      try {
+        const token = usarioAPi.getToken()
+
+        const response = await fetch(`${baseUrl}/Producto/${idProducto}/añadir-categorias`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify(idsCategoria)
+        })
+
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.message || 'error al asignar las categorias.')
+        }
+      } catch (error) {
+        throw new Error(`Error al asignar las categorias: ${error}`)
       }
     }
   }

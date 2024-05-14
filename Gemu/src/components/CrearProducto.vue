@@ -1,23 +1,60 @@
 <script setup lang="ts">
 import { UsuarioApi } from '@/stores/usuarioApi';
 import { ProductoApi } from '@/stores/productoApi';
-import { ref } from 'vue'
+import { ImagenesApi } from '@/stores/imagenesApi';
+import { CategoriaApi } from '@/stores/categoriasApi';
+import { ref, onMounted } from 'vue'
 
-const datosUsuario = UsuarioApi();
-
-const idUser = datosUsuario.$state.usuarioId?.idUsuario
+const storeUsuario = UsuarioApi();
 const storeProducto = ProductoApi()
+const storeImagenes = ImagenesApi()
+const storeCategoria = CategoriaApi()
+
+const idUser = storeUsuario.$state.usuarioId?.idUsuario
+const idProducto = ref<number | null>(null);
+const categoriasApi = ref<any[]>([])
 const responseMessage = ref('');
 
 const nombreProducto = ref()
 const imagenes = ref<string[]>([])
 const precio = ref()
 const descripcion = ref()
-const estado = ref()
+const estado = ref('nuevo')
 const cantidad = ref()
+const categoriasSelecionadas = ref<number[]>([])
 
+const mostrarEtiquetas = ref<string>('')
 const fileInputRef = ref<HTMLInputElement | null>(null);
-const AñadirFondos = async () => {
+
+const limpiarDatos = () => {
+    nombreProducto.value = ''
+    imagenes.value = []
+    estado.value = 'nuevo'
+    descripcion.value = ''
+    cantidad.value = 0
+    precio.value = 0
+    categoriasSelecionadas.value = []
+    mostrarEtiquetas.value = ''
+}
+
+onMounted(async () => {
+    try {
+
+        await storeCategoria.GetCategoriaSeccion('marketplace')
+
+        categoriasApi.value = storeCategoria.listaCategoriaSeccion
+
+    } catch (error) {
+        console.log('No se pudo obtener el id');
+        responseMessage.value = 'Hubo un problema al cargar las categorias';
+        limpiarDatos()
+        setTimeout(() => {
+            responseMessage.value = '';
+        }, 3000);
+    }
+})
+
+const CrearProducto = async () => {
     try {
         const newProducto = {
             nombre: nombreProducto.value,
@@ -27,28 +64,59 @@ const AñadirFondos = async () => {
             cantidad: cantidad.value
         }
 
-
         await storeProducto.CrearProducto(newProducto)
+        idProducto.value = storeProducto.producto?.idProducto ?? null;
 
-        await storeProducto.ImagenesJuego(1, imagenes.value.map(img => img.split(',')[1]))
+        if (idProducto.value) {
+            await storeImagenes.ImagenesProducto(idProducto.value, imagenes.value.map(img => img.split(',')[1]))
+            await storeCategoria.AsignarCategoriaProducto(idProducto.value, categoriasSelecionadas.value)
+        } else {
+            console.log('No se pudo obtener el id');
+            responseMessage.value = 'Hubo un problema al incluir las imagenes';
+            setTimeout(() => {
+                responseMessage.value = '';
+            }, 3000);
+        }
 
         responseMessage.value = 'Publicado exitosamente';
+
+        limpiarDatos()
 
         setTimeout(() => {
             responseMessage.value = '';
         }, 3000);
     } catch (error) {
-
-        responseMessage.value = '' + error;
-        setTimeout(() => {
-            responseMessage.value = '';
-        }, 3000);
-        console.error('Error al añadir fondos:', error);
+        if (error instanceof Error) {
+            console.error(error);
+            responseMessage.value = error.message || 'Error al crear el producto.';
+            setTimeout(() => {
+                responseMessage.value = '';
+            }, 3000);
+        } else {
+            throw new Error(String(error));
+        }
     }
 }
 
+const cambiarCategoria = (categoria: any) => {
+    const index = categoriasSelecionadas.value.indexOf(categoria.idCategoria)
+    if (index === -1) {
+        // Si la categoría no está seleccionada, la añade
+        categoriasSelecionadas.value.push(categoria.idCategoria)
+        // Añadir el nombre de la categoría a etiquetasSeleccionadas
+        mostrarEtiquetas.value += (mostrarEtiquetas.value ? ', ' : '') + categoria.nombre
+    } else {
+        // Si la categoría ya está seleccionada, la elimina
+        categoriasSelecionadas.value.splice(index, 1)
+        // Eliminar el nombre de la categoría de etiquetasSeleccionadas
+        mostrarEtiquetas.value = mostrarEtiquetas.value
+            .split(', ')
+            .filter(nombre => nombre !== categoria.nombre)
+            .join(', ')
+    }
+}
 
-const handleFileInput = (event: Event) => {
+const SelectorImagenes = (event: Event) => {
     const target = event.target as HTMLInputElement;
     const files = target.files;
     if (files) {
@@ -63,7 +131,7 @@ const handleFileInput = (event: Event) => {
             const fileInput = fileInputRef.value as HTMLInputElement;
             fileInput.value = '';
             reader.readAsDataURL(file);
-            storeProducto.guardarImagenes(imagenes.value)
+            storeImagenes.guardarImagenes(imagenes.value)
         }
     }
 };
@@ -79,22 +147,22 @@ const eliminarImagen = (index: number) => {
 <template>
     <div class="cont-Info">
         <h2>Crear anuncio</h2>
-
         <div class="bloque">
-            <form @submit.prevent="AñadirFondos()">
+            <form @submit.prevent="CrearProducto()">
                 <div class="cajas">
                     <div class="conInput">
-                        <div class="cajas2">
+                        <div style="width: 300px;">
                             <h3>Nombre del producto</h3>
                             <input type="text" class="cont-numero" v-model="nombreProducto"
-                                placeholder="Nombre del producto">
+                                placeholder="Nombre del producto" required>
                         </div>
                     </div>
                 </div>
-                <div class="cajas">
+                <div class="cajas" style="padding-bottom: 20px;">
                     <div class="cajas2">
                         <h3>Fotos</h3>
-                        <input ref="fileInputRef" type="file" multiple @change="handleFileInput" style="color: black;">
+                        <h4 style="color: orange;">La primera imagen sera considerada portada</h4>
+                        <input ref="fileInputRef" type="file" multiple @change="SelectorImagenes" style="color: black;">
                         <div class="imagenes-container">
                             <div v-for="(imagen, index) in imagenes" :key="index" class="imagen-container">
                                 <img :src="imagen" class="imagen" alt="Imagen" width="80">
@@ -107,27 +175,29 @@ const eliminarImagen = (index: number) => {
                 <div class="cajas">
                     <div class="cajas2">
                         <h3>Describe el estado</h3>
-                        <select v-model="estado">
+                        <select v-model="estado" required>
                             <option value="nuevo">Nuevo</option>
                             <option value="casiNuevo">Casi nuevo</option>
                             <option value="buenEstado">Buen estado</option>
                             <option value="usado">Usado</option>
                         </select>
+                        <h3>Cantidad</h3>
                         <div class="conInput">
                             <input type="number" class="cont-numero" v-model="cantidad"
-                                placeholder="Numero de productos">
+                                placeholder="Numero de productos" required>
                         </div>
-                        <h3>Proporcion mas detalles del producto</h3>
+                        <h4 style="color: gray;">Proporcion mas detalles del producto</h4>
                         <textarea name="descripcion" v-model="descripcion"
                             placeholder="Proporciona más detalles del producto" maxlength="500" rows="4"
-                            style="color: black; width: 500px; max-height: 200px; resize: none;"></textarea>
+                            style="color: black; width: 500px; max-height: 200px; resize: none;" required
+                            class="diseño-Text-Area"></textarea>
                     </div>
                 </div>
                 <div class="cajas">
                     <div class="caja2">
                         <h3>Precio</h3>
                         <div class="conInput">
-                            <input type="number" class="cont-numero" v-model="precio">
+                            <input type="number" class="cont-numero" v-model="precio" required>
                             <div class="tipoMoneda">
                                 <p>Euro(€)</p>
                             </div>
@@ -135,8 +205,19 @@ const eliminarImagen = (index: number) => {
                     </div>
                 </div>
                 <div class="cajas">
-                    <div class="cajas2">
+                    <div>
                         <h3>Etiquetas</h3>
+                        <div class="diseño-input-etiquetas">
+                            <input type="text" v-model="mostrarEtiquetas">
+                        </div>
+                        <div class="cont-etiquetas">
+                            <div v-for="categoria of categoriasApi" :key="categoria.idCategoria"
+                                @click="cambiarCategoria(categoria)">
+                                <div class="etiqueta">
+                                    <p>{{ categoria.nombre }}</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <v-alert v-if="responseMessage" :value="true"
@@ -151,6 +232,62 @@ const eliminarImagen = (index: number) => {
     </div>
 </template>
 <style scoped>
+.diseño-input-etiquetas {
+    border: 2px solid #9D60BA;
+    margin-bottom: 10px;
+
+}
+
+.diseño-input-etiquetas input {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+
+    outline: none;
+
+    width: 90%;
+    background-color: transparent;
+    height: 15px;
+    color: black;
+    padding-left: 10px;
+    margin: 10px;
+}
+
+.cont-etiquetas {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+
+    outline: none;
+    border: 2px solid #9D60BA;
+    text-align: center;
+}
+
+option {
+    color: black;
+}
+
+.etiqueta {
+    background-color: #421452;
+    border-radius: 10px;
+    height: 30px;
+    text-align: center;
+    align-items: center;
+    display: flex;
+    min-width: 50px;
+    padding: 0 10px 0 10px;
+}
+
+.etiqueta p {
+    color: white;
+}
+
+/* Imagenes */
 .imagenes-container {
     display: flex;
     flex-wrap: wrap;
@@ -170,7 +307,7 @@ option {
 /* Vender */
 .tipoMoneda {
     color: black;
-    border: 2px solid #714FAA;
+    border: 2px solid #9D60BA;
     height: 30px;
     width: 100px;
     text-align: center;
@@ -182,6 +319,16 @@ option {
     margin: 10px 0;
 }
 
+.diseño-Text-Area {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+
+    outline: none;
+    border: 2px solid #9D60BA;
+}
+
+
 .cont-numero {
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -191,7 +338,7 @@ option {
 
     width: 90%;
     background-color: transparent;
-    border: 2px solid #714FAA;
+    border: 2px solid #9D60BA;
     height: 30px;
     color: black;
 }
