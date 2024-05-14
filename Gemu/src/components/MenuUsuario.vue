@@ -9,6 +9,7 @@ import infoBilletera from "@/components/InforBilletera.vue";
 import Ajustes from "@/components/AjustesUsuario.vue";
 import Biblioteca from "@/components/BibliotecaUsuario.vue";
 import crearProducto from "@/components/CrearProducto.vue";
+import MisAnuncios from "@/components/AnunciosUsuario.vue";
 
 const router = useRouter();
 const datosUsuario = UsuarioApi();
@@ -109,6 +110,9 @@ const mostrarView = (view: string) => {
                 </div>
                 <div v-if="opcionActual === 'biblioteca'">
                     <Biblioteca></Biblioteca>
+                </div>
+                <div v-if="opcionActual === 'misAnuncios'">
+                    <MisAnuncios></MisAnuncios>
                 </div>
                 <div v-if="opcionActual === 'crearAnuncio'">
                     <crearProducto></crearProducto>
