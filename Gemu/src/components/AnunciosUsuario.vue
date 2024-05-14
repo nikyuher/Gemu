@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
-import { BibliotecaApi } from '@/stores/bibliotecaAPI';
 import { UsuarioApi } from '@/stores/usuarioApi';
+import { AnuncioApi } from '@/stores/anuncioApi';
 
+const storeAnuncio = AnuncioApi()
 const datosUsuario = UsuarioApi();
-const bibliotecaStore = BibliotecaApi();
 
 const IdUsuario = datosUsuario.$state.usuarioId?.idUsuario
 const historial = ref<any[]>([]);
@@ -18,10 +18,10 @@ const getImagenURL = (base64StringArray: any) => {
 onMounted(async () => {
     try {
         if (IdUsuario) {
-            await bibliotecaStore.historialBiblioteca(IdUsuario);
-            historial.value = bibliotecaStore.listabiblioteca;
+            await storeAnuncio.GetAnunciosUsuario(IdUsuario);
+            historial.value = storeAnuncio.listaAnuncios;
         } else {
-            console.error('IdUsuario is not defined');
+            console.error('IdUsuario no definido');
         }
     } catch (error) {
         console.log(error)
@@ -29,28 +29,30 @@ onMounted(async () => {
 })
 
 
-const juegosFiltrados = computed(() => {
+const historialFiltrado = computed(() => {
     if (!terminosBusqueda.value) {
         return historial.value;
     } else {
-        return historial.value.map(biblioteca => {
-            const juegosFiltrados = biblioteca.juegos.filter((juego: any) =>
-                matchesSearch(juego.titulo.toLowerCase(), terminosBusqueda.value.toLowerCase())
-            );
-            return { ...biblioteca, juegos: juegosFiltrados };
-        }).filter(biblioteca => biblioteca.juegos.length > 0);
+        const filtro = terminosBusqueda.value.toLowerCase();
+        return historial.value.filter(anuncio => {
+            return anuncio.producto.nombre.toLowerCase().includes(filtro);
+        });
     }
 });
 
-const matchesSearch = (title: string, search: string) => {
-    return title.toLowerCase().includes(search);
-};
+const formatoFecha = (fecha: string) => {
+    const date = new Date(fecha);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear().toString().slice(-2);
+    return `${month}/${day}/${year}`;
+}
 
 </script>
 
 <template>
     <div class="cont-Info">
-        <h2>Mi biblioteca</h2>
+        <h2>Mis anuncios</h2>
         <div class="bloque">
             <div class="cajas">
                 <div class="search">
@@ -62,35 +64,28 @@ const matchesSearch = (title: string, search: string) => {
             <div class="cajas2">
                 <div class="anotaciones top-tabla">
                     <h3>Portada</h3>
+                    <h3>Fecha</h3>
                     <h3>Nombre producto</h3>
                     <h3>Precio</h3>
-                    <h3>Clave</h3>
                 </div>
                 <div v-if="historial" style="padding-bottom: 30px;">
-                    <div v-for="biblioteca of juegosFiltrados" :key="biblioteca.idBiblioteca">
-                        <div v-for="(juego, index) of biblioteca.juegos" :key="index" class="anotaciones">
-                            <img :src="getImagenURL(juego.imgsJuego)" style="width: 70px; margin: auto;">
-                            <p>{{ juego.titulo }}</p>
-                            <p>{{ juego.precio }} €</p>
-                            <v-dialog max-width="500">
-                                <template v-slot:activator="{ props: activatorProps }">
-                                    <v-btn v-bind="activatorProps" rounded color="purple">
-                                        <v-icon size="25">mdi-key-variant</v-icon>
-                                    </v-btn>
-                                </template>
-                                <template v-slot:default>
-                                    <div class="caja-key">
-                                        <h2>Clave de Juego</h2>
-                                        <h2>{{ juego.titulo }}</h2>
-                                        <p>{{ juego.codigoJuego }}</p>
-                                    </div>
-                                </template>
-                            </v-dialog>
-                        </div>
-                        <div v-for="(producto, index) of biblioteca.productos" :key="index">
-                            <p>Id del Producto: {{ producto.id }}</p>
-                            <p>Nombre del Producto: {{ producto.nombre }}</p>
-                        </div>
+                    <div v-for="anuncio of historialFiltrado" :key="anuncio.idAnuncio" class="anotaciones">
+                        <img :src="getImagenURL(anuncio.producto.imgsProducto)" style="width: 70px; margin: auto;">
+                        <p>{{ formatoFecha(anuncio.fecha) }}</p>
+                        <p>{{ anuncio.producto.nombre }}</p>
+                        <p>{{ anuncio.producto.precio }} €</p>
+                        <v-dialog width="100px">
+                            <template v-slot:activator="{ props: activatorProps }">
+                                <v-btn v-bind="activatorProps" rounded color="purple">
+                                    <v-icon size="25">mdi-pencil</v-icon>
+                                </v-btn>
+                            </template>
+                            <template v-slot:default>
+                                <div class="caja-key">
+                                    <h2>Clave de Juego</h2>
+                                </div>
+                            </template>
+                        </v-dialog>
                     </div>
                 </div>
                 <div v-else>
@@ -149,7 +144,7 @@ const matchesSearch = (title: string, search: string) => {
 /* Anotaciones */
 .anotaciones {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     text-align: center;
     align-items: center;
 }

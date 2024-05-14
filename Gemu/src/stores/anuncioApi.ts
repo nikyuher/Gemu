@@ -56,7 +56,7 @@ export const AnuncioApi = defineStore('anuncio', {
 
         const data = await response.json()
 
-        this.listaAnuncios = [data]
+        this.listaAnuncios = data
       } catch (error) {
         console.log(error)
         throw error

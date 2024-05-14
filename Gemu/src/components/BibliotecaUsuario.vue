@@ -21,7 +21,7 @@
                 await bibliotecaStore.historialBiblioteca(IdUsuario);
                 historial.value = bibliotecaStore.listabiblioteca;
             } else {
-                console.error('IdUsuario is not defined');
+                console.error('IdUsuario no definido');
             }
         } catch (error) {
             console.log(error)
