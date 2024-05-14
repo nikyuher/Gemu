@@ -3,12 +3,14 @@ import { UsuarioApi } from '@/stores/usuarioApi';
 import { ProductoApi } from '@/stores/productoApi';
 import { ImagenesApi } from '@/stores/imagenesApi';
 import { CategoriaApi } from '@/stores/categoriasApi';
+import { AnuncioApi } from '@/stores/anuncioApi';
 import { ref, onMounted } from 'vue'
 
 const storeUsuario = UsuarioApi();
 const storeProducto = ProductoApi()
 const storeImagenes = ImagenesApi()
 const storeCategoria = CategoriaApi()
+const storeAnuncio = AnuncioApi()
 
 const idUser = storeUsuario.$state.usuarioId?.idUsuario
 const idProducto = ref<number | null>(null);
@@ -70,6 +72,7 @@ const CrearProducto = async () => {
         if (idProducto.value) {
             await storeImagenes.ImagenesProducto(idProducto.value, imagenes.value.map(img => img.split(',')[1]))
             await storeCategoria.AsignarCategoriaProducto(idProducto.value, categoriasSelecionadas.value)
+            idUser && await storeAnuncio.crearAnuncio(idUser, idProducto.value)
         } else {
             console.log('No se pudo obtener el id');
             responseMessage.value = 'Hubo un problema al incluir las imagenes';
@@ -116,7 +119,7 @@ const cambiarCategoria = (categoria: any) => {
     }
 }
 
-const SelectorImagenes = (event: Event) => {
+const ConvertorImgBase64 = (event: Event) => {
     const target = event.target as HTMLInputElement;
     const files = target.files;
     if (files) {
@@ -162,7 +165,8 @@ const eliminarImagen = (index: number) => {
                     <div class="cajas2">
                         <h3>Fotos</h3>
                         <h4 style="color: orange;">La primera imagen sera considerada portada</h4>
-                        <input ref="fileInputRef" type="file" multiple @change="SelectorImagenes" style="color: black;">
+                        <input ref="fileInputRef" type="file" multiple @change="ConvertorImgBase64"
+                            style="color: black;">
                         <div class="imagenes-container">
                             <div v-for="(imagen, index) in imagenes" :key="index" class="imagen-container">
                                 <img :src="imagen" class="imagen" alt="Imagen" width="80">
@@ -188,7 +192,7 @@ const eliminarImagen = (index: number) => {
                         </div>
                         <h4 style="color: gray;">Proporcion mas detalles del producto</h4>
                         <textarea name="descripcion" v-model="descripcion"
-                            placeholder="Proporciona más detalles del producto" maxlength="500" rows="4"
+                            placeholder="Escribir un minimo de 300 caracteres" maxlength="500" rows="4"
                             style="color: black; width: 500px; max-height: 200px; resize: none;" required
                             class="diseño-Text-Area"></textarea>
                     </div>
@@ -204,7 +208,7 @@ const eliminarImagen = (index: number) => {
                         </div>
                     </div>
                 </div>
-                <div class="cajas">
+                <div class="cajas" style="padding-bottom: 10px;">
                     <div>
                         <h3>Etiquetas</h3>
                         <div class="diseño-input-etiquetas">
@@ -406,7 +410,9 @@ h5 {
     align-items: center;
     margin: 6px 0 6px 0;
     display: flex;
-    padding-left: 30px
+    padding-left: 30px;
+    padding-bottom: 10px;
+    padding-top: 10px;
 }
 
 .cajas .v-icon {
