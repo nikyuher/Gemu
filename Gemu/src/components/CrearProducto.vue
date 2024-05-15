@@ -212,7 +212,7 @@ const eliminarImagen = (index: number) => {
                     <div>
                         <h3>Etiquetas</h3>
                         <div class="diseño-input-etiquetas">
-                            <input type="text" v-model="mostrarEtiquetas">
+                            <input type="text" v-model="mostrarEtiquetas" disabled>
                         </div>
                         <div class="cont-etiquetas">
                             <div v-for="categoria of categoriasApi" :key="categoria.idCategoria"

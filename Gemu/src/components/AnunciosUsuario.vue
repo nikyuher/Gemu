@@ -35,11 +35,17 @@ onMounted(async () => {
 const EliminarProducto = async (idProducto: number) => {
 
     if (idProducto && IdUsuario) {
+        try {
+            await storeProducto.EliminarProducto(idProducto);
 
-        await storeProducto.EliminarProducto(idProducto)
+            const index = historial.value.findIndex(anuncio => anuncio.producto.idProducto === idProducto);
+            if (index !== -1) {
+                historial.value.splice(index, 1);
+            }
+        } catch (error) {
+            console.error('Error al eliminar el producto:', error);
+        }
     }
-
-
 }
 
 const historialFiltrado = computed(() => {
