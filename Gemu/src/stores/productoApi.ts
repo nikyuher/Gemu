@@ -53,6 +53,30 @@ export const ProductoApi = defineStore('producto', {
         console.log(error)
         throw error
       }
+    },
+    async EliminarProducto(idProducto: number) {
+      try {
+        const token = usarioAPi.getToken()
+
+        const response = await fetch(`${baseUrl}/Producto/${idProducto} `, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify(idProducto)
+        })
+
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.message || 'error al eliminar el producto.')
+        }
+
+        console.log('se elimino el producto')
+      } catch (error) {
+        console.log(error)
+        throw error
+      }
     }
   }
 })

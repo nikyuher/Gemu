@@ -2,9 +2,13 @@
 import { ref, onMounted, computed } from 'vue';
 import { UsuarioApi } from '@/stores/usuarioApi';
 import { AnuncioApi } from '@/stores/anuncioApi';
+// import { ImagenesApi } from '@/stores/imagenesApi';
+import { ProductoApi } from '@/stores/productoApi';
 
-const storeAnuncio = AnuncioApi()
+const storeAnuncio = AnuncioApi();
 const datosUsuario = UsuarioApi();
+// const storeImagen = ImagenesApi();
+const storeProducto = ProductoApi()
 
 const IdUsuario = datosUsuario.$state.usuarioId?.idUsuario
 const historial = ref<any[]>([]);
@@ -28,6 +32,15 @@ onMounted(async () => {
     }
 })
 
+const EliminarProducto = async (idProducto: number) => {
+
+    if (idProducto && IdUsuario) {
+
+        await storeProducto.EliminarProducto(idProducto)
+    }
+
+
+}
 
 const historialFiltrado = computed(() => {
     if (!terminosBusqueda.value) {
@@ -63,6 +76,7 @@ const formatoFecha = (fecha: string) => {
         <div class="bloque">
             <div class="cajas2">
                 <div class="anotaciones top-tabla">
+                    <h3> </h3>
                     <h3>Portada</h3>
                     <h3>Fecha</h3>
                     <h3>Nombre producto</h3>
@@ -70,13 +84,18 @@ const formatoFecha = (fecha: string) => {
                 </div>
                 <div v-if="historial" style="padding-bottom: 30px;">
                     <div v-for="anuncio of historialFiltrado" :key="anuncio.idAnuncio" class="anotaciones">
+                        <v-btn @click="EliminarProducto(anuncio.producto.idProducto)" color="red"
+                            style="width: 5px; margin: auto;">
+                            <v-icon size="25">mdi-delete</v-icon>
+                        </v-btn>
                         <img :src="getImagenURL(anuncio.producto.imgsProducto)" style="width: 70px; margin: auto;">
                         <p>{{ formatoFecha(anuncio.fecha) }}</p>
                         <p>{{ anuncio.producto.nombre }}</p>
                         <p>{{ anuncio.producto.precio }} €</p>
-                        <v-dialog width="100px">
+                        <v-dialog max-width="600px">
                             <template v-slot:activator="{ props: activatorProps }">
-                                <v-btn v-bind="activatorProps" rounded color="purple">
+                                <v-btn v-bind="activatorProps" rounded color="purple"
+                                    style="width: 100px; margin: auto;">
                                     <v-icon size="25">mdi-pencil</v-icon>
                                 </v-btn>
                             </template>
@@ -144,7 +163,7 @@ const formatoFecha = (fecha: string) => {
 /* Anotaciones */
 .anotaciones {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(6, 1fr);
     text-align: center;
     align-items: center;
 }

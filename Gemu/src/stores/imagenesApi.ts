@@ -39,11 +39,35 @@ export const ImagenesApi = defineStore('imagenes', {
         throw error
       }
     },
+    async EliminarImagenesProducto(idProducto: number) {
+      try {
+        const token = usarioAPi.getToken()
+
+        const response = await fetch(`${baseUrl}/Imagen/producto `, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify(idProducto)
+        })
+
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.message || 'error al eliminar las imagenes.')
+        }
+
+        console.log('se elimino las imagenes')
+      } catch (error) {
+        console.log(error)
+        throw error
+      }
+    },
     async guardarImagenes(imagenes: string[]) {
       try {
         this.listaImagenes = imagenes
       } catch (error) {
-        console.error('Error al asignar las imágenes:', error)
+        console.error('Error al eliminar las imágenes:', error)
         throw error
       }
     }
