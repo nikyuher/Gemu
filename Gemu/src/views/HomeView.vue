@@ -72,11 +72,16 @@
   color: white;
 }
 
+article {
+  width: 95%;
+  margin: auto;
+}
+
 main {
   margin: auto;
 }
 
-.banner img{
+.banner img {
   width: 100%;
 }
 
@@ -98,7 +103,7 @@ main {
   font-size: 90px;
 }
 
-.ProximosLanzamientos{
+.ProximosLanzamientos {
   background-color: #412360;
 }
 </style>

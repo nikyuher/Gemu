@@ -2,12 +2,11 @@
 import { ref, onMounted, computed } from 'vue';
 import { UsuarioApi } from '@/stores/usuarioApi';
 import { AnuncioApi } from '@/stores/anuncioApi';
-// import { ImagenesApi } from '@/stores/imagenesApi';
 import { ProductoApi } from '@/stores/productoApi';
+import UpdateProducto from '@/components/UpdateProducto.vue'
 
 const storeAnuncio = AnuncioApi();
 const datosUsuario = UsuarioApi();
-// const storeImagen = ImagenesApi();
 const storeProducto = ProductoApi()
 
 const IdUsuario = datosUsuario.$state.usuarioId?.idUsuario
@@ -88,7 +87,7 @@ const formatoFecha = (fecha: string) => {
                     <h3>Nombre producto</h3>
                     <h3>Precio</h3>
                 </div>
-                <div v-if="historial" style="padding-bottom: 30px;">
+                <div v-if="historialFiltrado.length > 0" style="padding-bottom: 30px;">
                     <div v-for="anuncio of historialFiltrado" :key="anuncio.idAnuncio" class="anotaciones">
                         <v-btn @click="EliminarProducto(anuncio.producto.idProducto)" color="red"
                             style="width: 5px; margin: auto;">
@@ -98,7 +97,7 @@ const formatoFecha = (fecha: string) => {
                         <p>{{ formatoFecha(anuncio.fecha) }}</p>
                         <p>{{ anuncio.producto.nombre }}</p>
                         <p>{{ anuncio.producto.precio }} €</p>
-                        <v-dialog max-width="600px">
+                        <v-dialog max-width="500">
                             <template v-slot:activator="{ props: activatorProps }">
                                 <v-btn v-bind="activatorProps" rounded color="purple"
                                     style="width: 100px; margin: auto;">
@@ -106,8 +105,8 @@ const formatoFecha = (fecha: string) => {
                                 </v-btn>
                             </template>
                             <template v-slot:default>
-                                <div class="caja-key">
-                                    <h2>Clave de Juego</h2>
+                                <div class="caja-key update-producto-container">
+                                    <UpdateProducto :id-producto="anuncio.producto.idProducto"></UpdateProducto>
                                 </div>
                             </template>
                         </v-dialog>
@@ -122,6 +121,16 @@ const formatoFecha = (fecha: string) => {
 </template>
 
 <style scoped>
+.update-producto-container {
+    max-height: 600px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.update-producto-container::-webkit-scrollbar {
+    display: none;
+}
+
 /* Search */
 .search {
     border: 2px solid #714FAA;
@@ -146,10 +155,11 @@ const formatoFecha = (fecha: string) => {
 /* Boton key juego */
 .caja-key {
     background-color: #491F6A;
-    height: 300px;
+    max-width: 600px;
     text-align: center;
     align-items: center;
     border-radius: 20px;
+    margin: auto
 }
 
 .caja-key p {

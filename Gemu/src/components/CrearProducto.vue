@@ -70,7 +70,7 @@ const CrearProducto = async () => {
         idProducto.value = storeProducto.producto?.idProducto ?? null;
 
         if (idProducto.value) {
-            await storeImagenes.ImagenesProducto(idProducto.value, imagenes.value.map(img => img.split(',')[1]))
+            await storeImagenes.AddImagenesProducto(idProducto.value, imagenes.value.map(img => img.split(',')[1]))
             await storeCategoria.AsignarCategoriaProducto(idProducto.value, categoriasSelecionadas.value)
             idUser && await storeAnuncio.crearAnuncio(idUser, idProducto.value)
         } else {
@@ -104,14 +104,10 @@ const CrearProducto = async () => {
 const cambiarCategoria = (categoria: any) => {
     const index = categoriasSelecionadas.value.indexOf(categoria.idCategoria)
     if (index === -1) {
-        // Si la categoría no está seleccionada, la añade
         categoriasSelecionadas.value.push(categoria.idCategoria)
-        // Añadir el nombre de la categoría a etiquetasSeleccionadas
         mostrarEtiquetas.value += (mostrarEtiquetas.value ? ', ' : '') + categoria.nombre
     } else {
-        // Si la categoría ya está seleccionada, la elimina
         categoriasSelecionadas.value.splice(index, 1)
-        // Eliminar el nombre de la categoría de etiquetasSeleccionadas
         mostrarEtiquetas.value = mostrarEtiquetas.value
             .split(', ')
             .filter(nombre => nombre !== categoria.nombre)

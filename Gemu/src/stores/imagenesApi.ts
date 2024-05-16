@@ -7,11 +7,12 @@ const usarioAPi = UsuarioApi()
 
 export const ImagenesApi = defineStore('imagenes', {
   state: () => ({
-    listaImagenes: [] as any[]
+    listaImagenes: [] as any[],
+    imagenesProductos: [] as any[]
   }),
 
   actions: {
-    async ImagenesProducto(idJuego: number, imagenes: string[]) {
+    async AddImagenesProducto(idJuego: number, imagenes: string[]) {
       try {
         const token = usarioAPi.getToken()
 
@@ -39,6 +40,30 @@ export const ImagenesApi = defineStore('imagenes', {
         throw error
       }
     },
+    async GetImagenesProducto(idProducto: number) {
+      try {
+        const token = usarioAPi.getToken()
+
+        const response = await fetch(`${baseUrl}/Imagen/producto?id=${idProducto}`, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.message || 'error al obtener las imagenes.')
+        }
+
+        const data = await response.json()
+
+        this.imagenesProductos = data
+      } catch (error) {
+        console.log(error)
+        throw error
+      }
+    },
     async EliminarImagenesProducto(idProducto: number) {
       try {
         const token = usarioAPi.getToken()
@@ -56,8 +81,6 @@ export const ImagenesApi = defineStore('imagenes', {
           const errorData = await response.json()
           throw new Error(errorData.message || 'error al eliminar las imagenes.')
         }
-
-        console.log('se elimino las imagenes')
       } catch (error) {
         console.log(error)
         throw error

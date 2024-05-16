@@ -66,7 +66,7 @@
                         <h3>Precio</h3>
                         <h3>Clave</h3>
                     </div>
-                    <div v-if="historial" style="padding-bottom: 30px;">
+                    <div v-if="juegosFiltrados.length > 0" style="padding-bottom: 30px;">
                         <div v-for="biblioteca of juegosFiltrados" :key="biblioteca.idBiblioteca">
                             <div v-for="(juego, index) of biblioteca.juegos" :key="index" class="anotaciones">
                                 <img :src="getImagenURL(juego.imgsJuego)" style="width: 70px; margin: auto;">
