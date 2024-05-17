@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import CategoriasHome from '@/components/CategoriasHome.vue';
+
 
 </script>
 
@@ -38,25 +40,7 @@
         <h2>Productos en Venta</h2>
       </article>
       <article>
-        <h2>Categorias</h2>
-        <div class="plataformas">
-          <div class="caja">
-            <v-icon>mdi-alien</v-icon>
-            <p>Terror</p>
-          </div>
-          <div class="caja">
-            <v-icon>mdi-robot-dead</v-icon>
-            <p>Aventura</p>
-          </div>
-          <div class="caja">
-            <v-icon>mdi-kabaddi</v-icon>
-            <p>Accion</p>
-          </div>
-          <div class="caja">
-            <v-icon>mdi-car-light-high</v-icon>
-            <p>Fps</p>
-          </div>
-        </div>
+        <CategoriasHome></CategoriasHome>
       </article>
       <article>
         <div class="ProximosLanzamientos">

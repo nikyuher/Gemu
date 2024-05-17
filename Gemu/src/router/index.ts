@@ -35,6 +35,11 @@ const router = createRouter({
       component: () => import('../views/JuegosTipoView.vue')
     },
     {
+      path: '/:producto/:id',
+      name: 'vistaProducto',
+      component: () => import('../views/ProductoView.vue')
+    },
+    {
       path: '/user-menu',
       name: 'user-menu',
       component: () => import('../views/MenuView.vue')

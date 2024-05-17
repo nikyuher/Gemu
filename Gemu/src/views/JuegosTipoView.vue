@@ -2,7 +2,7 @@
 import { ref } from "vue";
 import { useRoute, onBeforeRouteUpdate } from 'vue-router';
 
-const route = useRoute(); 
+const route = useRoute();
 const tipoJuego = ref(route.params.tipo);
 
 onBeforeRouteUpdate((to) => {

@@ -33,6 +33,8 @@ const fileInputRef = ref<HTMLInputElement | null>(null);
 onMounted(async () => {
     try {
 
+        responseMessage.value = '';
+
         await storeCategoria.GetCategoriaSeccion('marketplace')
         await storeCategoria.GetCategoriasProducto(props.idProducto)
         await storeProducto.GetProducto(props.idProducto)
@@ -56,9 +58,6 @@ onMounted(async () => {
         if (error instanceof Error) {
             console.error(error);
             responseMessage.value = error.message || 'Error al cargar datos del producto.';
-            setTimeout(() => {
-                responseMessage.value = '';
-            }, 3000);
         } else {
             throw new Error(String(error));
         }
@@ -85,9 +84,6 @@ const ActualizarProducto = async () => {
         } else {
             console.log('No se pudo obtener el id');
             responseMessage.value = 'Hubo un problema al incluir las imagenes';
-            setTimeout(() => {
-                responseMessage.value = '';
-            }, 3000);
         }
 
         responseMessage.value = 'Actualizado exitosamente';
@@ -99,9 +95,6 @@ const ActualizarProducto = async () => {
         if (error instanceof Error) {
             console.error(error);
             responseMessage.value = error.message || 'Error al actualizar el producto.';
-            setTimeout(() => {
-                responseMessage.value = '';
-            }, 3000);
         } else {
             throw new Error(String(error));
         }
@@ -157,6 +150,7 @@ const ConvertorImgBase64 = (event: Event) => {
 
 <template>
     <div class="bloque">
+        {{ idProducto }}
         <form @submit.prevent="ActualizarProducto()">
             <div class="cajas">
                 <div class="conInput">
