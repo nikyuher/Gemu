@@ -17,7 +17,7 @@ const RestarFondos = async () => {
         const newTransaction = {
             idUsuario: idUser,
             cantidad: cantidad.value,
-            nota: "Descarga"
+            nota: "Retiro"
         }
 
         await transacciones.restarFondos(newTransaction)

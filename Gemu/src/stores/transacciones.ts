@@ -89,7 +89,7 @@ export const transaccionApi = defineStore('transaccion', {
         if (nuevoSaldo !== null) {
           usarioAPi.actualizarSaldoActual(nuevoSaldo)
         } else {
-          throw new Error('El saldo actual es nulo después de restar fondos')
+          throw new Error('Ha superado el saldo de su cuenta')
         }
       } catch (error) {
         console.error('Error con la api:', error)

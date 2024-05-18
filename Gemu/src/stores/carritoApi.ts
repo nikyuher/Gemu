@@ -85,6 +85,31 @@ export const CarritoApi = defineStore('carrito', {
       } catch (error) {
         throw new Error(`Error al eliminar el producto: ${error}`)
       }
+    },
+    async DeleteProductosCompra(idsProducto: number[], idUsuario: number) {
+      try {
+        const token = usarioAPi.getToken()
+        const idCarrito = usarioAPi.$state.usuarioId?.idCarrito
+        for (const idProducto of idsProducto) {
+          const response = await fetch(
+            `${baseUrl}/Carrito/${idCarrito}/usuario/${idUsuario}/producto`,
+            {
+              method: 'DELETE',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`
+              },
+              body: JSON.stringify(idProducto)
+            }
+          )
+          if (!response.ok) {
+            const errorData = await response.json()
+            throw new Error(errorData.message || 'error al eliminar el producto.')
+          }
+        }
+      } catch (error) {
+        throw new Error(`Error al eliminar el producto: ${error}`)
+      }
     }
   }
 })

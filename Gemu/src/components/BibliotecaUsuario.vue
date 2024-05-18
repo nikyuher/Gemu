@@ -28,23 +28,25 @@
         }
     })
 
+    const matchesSearch = (titulo: string, terminos: string) => {
+        return titulo.includes(terminos);
+    };
 
     const juegosFiltrados = computed(() => {
         if (!terminosBusqueda.value) {
             return historial.value;
         } else {
             return historial.value.map(biblioteca => {
-                const juegosFiltrados = biblioteca.juegos.filter((juego: any) =>
-                    matchesSearch(juego.titulo.toLowerCase(), terminosBusqueda.value.toLowerCase())
-                );
-                return { ...biblioteca, juegos: juegosFiltrados };
-            }).filter(biblioteca => biblioteca.juegos.length > 0);
+                if (biblioteca && biblioteca.bibliotecaJuegos) {
+                    const juegosFiltrados = biblioteca.bibliotecaJuegos.filter((juegoBiblioteca: any) =>
+                        matchesSearch(juegoBiblioteca.juego.titulo.toLowerCase(), terminosBusqueda.value.toLowerCase())
+                    );
+                    return { ...biblioteca, bibliotecaJuegos: juegosFiltrados };
+                }
+                return { ...biblioteca, bibliotecaJuegos: [] };
+            }).filter(biblioteca => biblioteca.bibliotecaJuegos.length > 0);
         }
     });
-
-    const matchesSearch = (title: string, search: string) => {
-        return title.toLowerCase().includes(search);
-    };
 
 </script>
 
@@ -68,10 +70,12 @@
                     </div>
                     <div v-if="juegosFiltrados.length > 0" style="padding-bottom: 30px;">
                         <div v-for="biblioteca of juegosFiltrados" :key="biblioteca.idBiblioteca">
-                            <div v-for="(juego, index) of biblioteca.juegos" :key="index" class="anotaciones">
-                                <img :src="getImagenURL(juego.imgsJuego)" style="width: 70px; margin: auto;">
-                                <p>{{ juego.titulo }}</p>
-                                <p>{{ juego.precio }} €</p>
+                            <div v-for="juegoBilioteca in biblioteca.bibliotecaJuegos"
+                                :key="juegoBilioteca.bibliotecaJuegoId" class="anotaciones">
+                                <img :src="getImagenURL(juegoBilioteca.juego.imgsJuego)"
+                                    style="width: 70px; margin: auto;">
+                                <p>{{ juegoBilioteca.juego.titulo }}</p>
+                                <p>{{ juegoBilioteca.juego.precio }} €</p>
                                 <v-dialog max-width="500">
                                     <template v-slot:activator="{ props: activatorProps }">
                                         <v-btn v-bind="activatorProps" rounded color="purple">
@@ -81,8 +85,8 @@
                                     <template v-slot:default>
                                         <div class="caja-key">
                                             <h2>Clave de Juego</h2>
-                                            <h2>{{ juego.titulo }}</h2>
-                                            <p>{{ juego.codigoJuego }}</p>
+                                            <h2>{{ juegoBilioteca.juego.titulo }}</h2>
+                                            <p>{{ juegoBilioteca.juego.codigoJuego }}</p>
                                         </div>
                                     </template>
                                 </v-dialog>

@@ -34,6 +34,37 @@ export const BibliotecaApi = defineStore('biblioteca', {
         console.log(error)
         throw error
       }
+    },
+    async AñadirProductoBiblioteca(idUsuario: number, idProdcuto: number[]) {
+      try {
+        const token = usarioAPi.getToken()
+
+        const idCarrito = usarioAPi.$state.usuarioId?.idBiblioteca
+
+        console.log(idProdcuto)
+
+        const response = await fetch(
+          `${baseUrl}/Biblioteca/${idCarrito}/usuario/${idUsuario}/añadir-producto`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify(idProdcuto)
+          }
+        )
+
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.message || 'error al comprar el producto.')
+        }
+
+        console.log('Comprado exitosamente')
+      } catch (error) {
+        console.log(error)
+        throw error
+      }
     }
   }
 })
