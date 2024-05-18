@@ -56,7 +56,7 @@ export const ProductoApi = defineStore('producto', {
           cantidad: producto.cantidad
         }
 
-        const response = await fetch(`${baseUrl}/Producto/crear `, {
+        const response = await fetch(`${baseUrl}/Producto/crear`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

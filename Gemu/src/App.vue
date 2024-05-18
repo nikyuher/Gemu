@@ -2,7 +2,6 @@
 import { ref, watch, onMounted } from "vue";
 import { RouterLink, RouterView } from 'vue-router'
 import { useRoute } from 'vue-router';
-
 import { UsuarioApi } from '@/stores/usuarioApi';
 import { computed } from 'vue';
 
@@ -11,7 +10,7 @@ const isAuthenticated = computed(() => datosUsuario.isAuthenticated);
 
 const route = useRoute();
 
-const rutasAOcultarHeader = ['/iniciarSesion', '/registrarse', '/user-menu'];
+const rutasAOcultarHeader = ['/iniciarSesion', '/registrarse', '/user-menu', '/carritoCompra'];
 const rutasOcultarFooter = ['/user-menu'];
 
 

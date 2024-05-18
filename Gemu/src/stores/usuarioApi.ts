@@ -15,6 +15,8 @@ interface Usuario {
   direccion: string
   codigoPostal: number
   saldoActual: number
+  idCarrito: number
+  idBiblioteca: number
 }
 
 interface JwtPayloadConRol {
@@ -57,7 +59,9 @@ export const UsuarioApi = defineStore('usuario', {
           correo: data.correo,
           direccion: data.direccion,
           codigoPostal: data.codigoPostal,
-          saldoActual: data.saldoActual
+          saldoActual: data.saldoActual,
+          idCarrito: data.idCarrito,
+          idBiblioteca: data.idBiblioteca
         }
         this.actualizarSaldoActual(data.saldoActual)
         this.setUsuarioId(usuario)

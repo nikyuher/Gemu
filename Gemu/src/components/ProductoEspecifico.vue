@@ -3,18 +3,23 @@ import { ref, onMounted } from "vue";
 import { ProductoApi } from '@/stores/productoApi'
 import { ImagenesApi } from '@/stores/imagenesApi';
 import { CategoriaApi } from '@/stores/categoriasApi';
+import { CarritoApi } from '@/stores/carritoApi';
+import { UsuarioApi } from '@/stores/usuarioApi';
 import ErrorUrlView from "@/views/ErrorUrlView.vue";
-
 const props = defineProps<{
     idProducto: number;
 }>();
 
 const storeProducto = ProductoApi()
 const storeImagenes = ImagenesApi()
+const storeUsuario = UsuarioApi();
 const storeCategoria = CategoriaApi()
+const storeCarrito = CarritoApi()
+
 
 const responseMessage = ref('');
 
+const IdUsuario = storeUsuario.$state.usuarioId?.idUsuario
 const ID = ref<number>()
 const nombreProducto = ref()
 const imagenes = ref<string[]>([])
@@ -58,6 +63,32 @@ onMounted(async () => {
     }
 })
 
+const addProductoCarrito = async () => {
+    try {
+
+        if (IdUsuario && ID.value) {
+
+            await storeCarrito.AñadirProducto(IdUsuario, ID.value)
+        }
+
+        responseMessage.value = 'Añadido correctamente'
+        setTimeout(() => {
+            responseMessage.value = '';
+        }, 3000);
+    } catch (error) {
+        if (error instanceof Error) {
+            console.error(error);
+            responseMessage.value = error.message || 'Error al actualizar el producto.';
+            setTimeout(() => {
+                responseMessage.value = '';
+            }, 3000);
+        } else {
+            throw new Error(String(error));
+        }
+
+    }
+}
+
 </script>
 
 <template>
@@ -73,15 +104,26 @@ onMounted(async () => {
                 <p>nombre: {{ nombreProducto }}</p>
             </div>
             <div class="cont-info-compra">
-                <h2>Titulo: {{ nombreProducto }}</h2>
-                <h2>Estado: {{ estado }}</h2>
-                <h2>Precio: {{ precio }} €</h2>
+                <div style="text-align: left;">
+                    <h3>Titulo: {{ nombreProducto }}</h3>
+                    <h3>Estado: {{ estado }}</h3>
+                    <h3>Precio: {{ precio }} €</h3>
+                </div>
+                <button class="boton-compra">Comprar ahora</button>
+                <button class="boton-carrito" @click="addProductoCarrito()">Añadir al carrito</button>
+                <v-alert v-if="responseMessage" :value="true"
+                    :type="responseMessage.includes('correctamente') ? 'success' : 'error'">
+                    {{ responseMessage }}
+                </v-alert>
             </div>
         </div>
         <div class="cont-img-muestra">
             <div v-for="(imagen, index) in imagenes.slice(1)" :key="index">
                 <img :src="imagen" alt="" style="width: 100px;">
             </div>
+        </div>
+        <div class="producto-relacionado">
+            <h2>Productos relacionados</h2>
         </div>
     </div>
 </template>
@@ -114,6 +156,32 @@ onMounted(async () => {
 /* Diseño compra */
 .cont-info-compra {
     background-color: #491F6A;
+    padding: 20px;
+    min-width: 200px;
+    align-items: center;
+    text-align: center;
+}
+
+.boton-carrito {
+    margin: auto;
+    border: 2px solid #FFFFFF;
+    width: 100%;
+}
+
+.boton-compra {
+    background-color: #F8C032;
+    color: #000000;
+    width: 100%;
+    margin: 20px 0;
+}
+
+.boton-compra:hover {
+    background-color: #9e7323;
+    color: #FFFFFF;
+}
+
+.boton-carrito:hover {
+    background-color: #2c123f;
 }
 
 /* Img Muestra */

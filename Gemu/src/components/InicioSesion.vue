@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watchEffect } from "vue";
+import { RouterLink } from 'vue-router'
 import { UsuarioApi } from '@/stores/usuarioApi'
 import { useRouter } from 'vue-router';
 
