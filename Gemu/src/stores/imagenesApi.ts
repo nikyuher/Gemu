@@ -8,7 +8,8 @@ const usarioAPi = UsuarioApi()
 export const ImagenesApi = defineStore('imagenes', {
   state: () => ({
     listaImagenes: [] as any[],
-    imagenesProductos: [] as any[]
+    imagenesProductos: [] as any[],
+    imagenesJuegos: [] as any[]
   }),
 
   actions: {
@@ -59,6 +60,30 @@ export const ImagenesApi = defineStore('imagenes', {
         const data = await response.json()
 
         this.imagenesProductos = data
+      } catch (error) {
+        console.log(error)
+        throw error
+      }
+    },
+    async GetImagenesJuego(idJuego: number) {
+      try {
+        const token = usarioAPi.getToken()
+
+        const response = await fetch(`${baseUrl}/Imagen/juego?id=${idJuego}`, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.message || 'error al obtener las imagenes.')
+        }
+
+        const data = await response.json()
+
+        this.imagenesJuegos = data
       } catch (error) {
         console.log(error)
         throw error

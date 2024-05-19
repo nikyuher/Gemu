@@ -28,7 +28,7 @@ export const UsuarioApi = defineStore('usuario', {
   state: () => ({
     token: localStorage.getItem('jwtToken') as string | null,
     usuarioId: JSON.parse(localStorage.getItem('usuarioData') || 'null') as Usuario | null,
-    saldoActual: null as number | null
+    saldoActual: 0 as number
   }),
 
   actions: {
@@ -218,6 +218,9 @@ export const UsuarioApi = defineStore('usuario', {
     },
     actualizarSaldoActual(nuevoSaldo: number) {
       this.saldoActual = nuevoSaldo
+    },
+    getSaldoActual(): number | 0 {
+      return this.saldoActual
     },
     removeUsuarioid() {
       this.usuarioId = null

@@ -7,7 +7,8 @@ import AñadirFondos from '@/components/AñadirFondos.vue'
 import RestarFondos from '@/components/RestarFondos.vue'
 import infoBilletera from "@/components/InforBilletera.vue";
 import Ajustes from "@/components/AjustesUsuario.vue";
-import Biblioteca from "@/components/BibliotecaUsuario.vue";
+import JuegosComprados from "@/components/JuegosComprados.vue";
+import ProductosComprados from "@/components/ProductosComprados.vue";
 import crearProducto from "@/components/CrearProducto.vue";
 import MisAnuncios from "@/components/AnunciosUsuario.vue";
 
@@ -69,7 +70,8 @@ const mostrarView = (view: string) => {
                         <v-icon class="icono1" :class="{ oculto: cuentaVisible3 }">mdi-chevron-up</v-icon>
                         <v-icon class="icono2" :class="{ oculto: !cuentaVisible3 }">mdi-chevron-down</v-icon>
                     </div>
-                    <p :class="{ activo: cuentaVisible3 }" @click="mostrarView('biblioteca')">Mis compras</p>
+                    <p :class="{ activo: cuentaVisible3 }" @click="mostrarView('juegos')">Juegos comprados</p>
+                    <p :class="{ activo: cuentaVisible3 }" @click="mostrarView('productos')">Productos comprados</p>
                 </div>
                 <div class="desplegable mantenerClick" :style="{ backgroundColor: cuentaVisible4 ? '#240C2F' : '' }">
                     <div class="cont-desplegable" :class="{ activo: cuentaVisible4 }"
@@ -108,8 +110,11 @@ const mostrarView = (view: string) => {
                 <div v-if="opcionActual === 'retirarFondos'">
                     <RestarFondos></RestarFondos>
                 </div>
-                <div v-if="opcionActual === 'biblioteca'">
-                    <Biblioteca></Biblioteca>
+                <div v-if="opcionActual === 'juegos'">
+                    <JuegosComprados></JuegosComprados>
+                </div>
+                <div v-if="opcionActual === 'productos'">
+                    <ProductosComprados></ProductosComprados>
                 </div>
                 <div v-if="opcionActual === 'misAnuncios'">
                     <MisAnuncios></MisAnuncios>

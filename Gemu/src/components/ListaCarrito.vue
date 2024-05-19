@@ -1,20 +1,15 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { CarritoApi } from "@/stores/carritoApi";
 import { UsuarioApi } from '@/stores/usuarioApi';
-import { BibliotecaApi } from '@/stores/bibliotecaAPI';
-import { transaccionApi } from '@/stores/transacciones';
 
-const storetransacciones = transaccionApi()
-const storeBiblioteca = BibliotecaApi();
 const storeUsuario = UsuarioApi();
 const storeCarrito = CarritoApi()
 
 const IdUsuario = storeUsuario.$state.usuarioId?.idUsuario
-const listaCarrito = ref<any[]>([])
+const listaCarrito = computed(() => storeCarrito.listaCarrito);
 const idsProducto = ref<number[]>([])
-const saldoActual = ref(storeUsuario.$state.saldoActual)
-const responseMessage = ref('')
+const idsJuego = ref<number[]>([])
 
 onMounted(async () => {
     try {
@@ -23,15 +18,17 @@ onMounted(async () => {
             storeUsuario.getUsuarioId(IdUsuario)
             await storeCarrito.ListaCarrito(IdUsuario)
 
-            listaCarrito.value = storeCarrito.listaCarrito
+            // listaCarrito.value = storeCarrito.listaCarrito
             idsProducto.value = listaCarrito.value.flatMap(carrito =>
                 carrito.carritoProductos.map((productoCarrito: any) => productoCarrito.productoId)
+            );
+            idsJuego.value = listaCarrito.value.flatMap(carrito =>
+                carrito.carritoJuegos.map((juegoCarrito: any) => juegoCarrito.juegoId)
             );
 
         }
     } catch (error) {
         console.log(error);
-
     }
 })
 
@@ -40,6 +37,7 @@ const EliminarProducto = async (idLista: number, productoId: number) => {
     try {
         if (IdUsuario) {
             await storeCarrito.DeleteProductoCarrito(idLista, IdUsuario)
+            await storeCarrito.ListaCarrito(IdUsuario);
             listaCarrito.value.forEach((carrito: any) => {
                 const index = carrito.carritoProductos.findIndex((productoCarrito: any) => productoCarrito.carritoProductoId === idLista);
                 if (index !== -1) {
@@ -54,62 +52,53 @@ const EliminarProducto = async (idLista: number, productoId: number) => {
         }
     } catch (error) {
         console.log(error);
-
     }
 }
 
-const comprarProducto = async () => {
+const EliminarJuego = async (idLista: number, juegoId: number) => {
     try {
+        if (IdUsuario) {
+            await storeCarrito.DeleteJuegoCarrito(idLista, IdUsuario)
+            await storeCarrito.ListaCarrito(IdUsuario);
+            listaCarrito.value.forEach((carrito: any) => {
+                const index = carrito.carritoJuegos.findIndex((juegoCarrito: any) => juegoCarrito.carritoJuegoId === idLista);
+                if (index !== -1) {
+                    carrito.carritoJuegos.splice(index, 1);
 
-        if (totalCantidad.value > 0) {
-
-            const nota = totalCantidad.value > 1 ? 'Compra productos' : "Compra producto"
-
-            const transaccion = {
-                idUsuario: IdUsuario,
-                cantidad: totalPrecio.value,
-                nota: nota
-            }
-
-
-            if (IdUsuario && idsProducto.value != null) {
-                const idsCarrito = listaCarrito.value.flatMap(carrito =>
-                    carrito.carritoProductos.map((productoCarrito: any) => productoCarrito.carritoProductoId)
-                );
-
-                await storetransacciones.restarFondos(transaccion)
-                await storeBiblioteca.AñadirProductoBiblioteca(IdUsuario, idsProducto.value)
-                await storeCarrito.DeleteProductosCompra(idsCarrito, IdUsuario)
-
-                listaCarrito.value = []
-            }
-            responseMessage.value = 'Compra exitosa';
-
-            setTimeout(() => {
-                responseMessage.value = '';
-            }, 3000);
-
+                    const idIndex = idsJuego.value.indexOf(juegoId);
+                    if (idIndex !== -1) {
+                        idsJuego.value.splice(idIndex, 1);
+                    }
+                }
+            });
         }
-
     } catch (error) {
-        responseMessage.value = '' + error;
-        setTimeout(() => {
-            responseMessage.value = '';
-        }, 3000);
-        console.error('Error al comprar producto:', error);
+        console.log(error);
     }
 }
 
 const totalCantidad = computed(() => {
     return listaCarrito.value.reduce((total: number, carrito: any) => {
-        return total + carrito.carritoProductos.length;
+        const cantidadProducto = carrito.carritoProductos.length
+        const cantidadJuego = carrito.carritoJuegos.length
+        return total + cantidadProducto + cantidadJuego;
     }, 0);
 });
 
 const totalPrecio = computed(() => {
     return listaCarrito.value.reduce((total: number, carrito: any) => {
-        return total + carrito.carritoProductos.reduce((sum: number, producto: any) => sum + producto.producto.precio, 0);
+        const totalJuego = carrito.carritoJuegos.reduce((sum: number, juego: any) => sum + juego.juego.precio, 0)
+        const totalProducto = carrito.carritoProductos.reduce((sum: number, producto: any) => sum + producto.producto.precio, 0)
+        return total + totalProducto + totalJuego;
     }, 0);
+});
+
+watch(totalCantidad, (newVal) => {
+    storeCarrito.setCatidadCarrito(newVal);
+});
+
+watch(totalPrecio, (newVal) => {
+    storeCarrito.setTotalPrecio(newVal);
 });
 </script>
 
@@ -125,7 +114,8 @@ const totalPrecio = computed(() => {
                                 alt="Imagen del producto">
                             <div>
                                 <p style="padding-left: 10px;">{{ productoCarrito.producto.nombre }}</p>
-                                <p style="margin-top: 71px; padding-left: 10px;">Apartado:</p>
+                                <p style="margin-top: 71px; padding-left: 10px;">Apartado: {{
+                                    productoCarrito.carritoProductoId }}</p>
                             </div>
                         </div>
                         <div style="text-align: center;">
@@ -138,63 +128,27 @@ const totalPrecio = computed(() => {
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-        <div class="info">
-            <h2>Resumen</h2>
-            <h2>Cantidad: {{ totalCantidad }} </h2>
-            <h2>Total: {{ totalPrecio }} €</h2>
-            <button>Continuar con la compra</button>
-        </div>
-    </div>
-    <div class="pago">
-        <div class="forma-pago">
-            <h2> Gēmu
-                ゲーム
-            </h2>
-            <div>
-                <p>Billetera Gēmu </p>
-                <p>Saldo total disponible: {{ saldoActual }} $</p>
-            </div>
-            <v-icon>mdi-circle-slice-8</v-icon>
-        </div>
-        <div style="max-width: 460px;">
-            <div class="lista">
-                <div v-for="carrito of listaCarrito" :key="carrito.idCarrito">
-                    <div v-for="productoCarrito in carrito.carritoProductos" :key="productoCarrito.carritoProductoId">
-                        <div class="caja-producto">
-                            <div style="display: flex;">
-                                <img :src="'data:image/png;base64,' + productoCarrito.producto.imgsProducto[0].datos"
-                                    alt="Imagen del producto">
-                                <div>
-                                    <p style="padding-left: 10px;">{{ productoCarrito.producto.nombre }}</p>
-                                    <p style="margin-top: 71px; padding-left: 10px;">Apartado:</p>
-                                </div>
+                <div v-for="juegoCarrito in carrito.carritoJuegos" :key="juegoCarrito.carritoJuegoId">
+                    <div class="caja-producto">
+                        <div style="display: flex;">
+                            <img :src="'data:image/png;base64,' + juegoCarrito.juego.imgsJuego[0].datos"
+                                alt="Imagen del producto">
+                            <div>
+                                <p style="padding-left: 10px;">{{ juegoCarrito.juego.titulo }}</p>
+                                <p style="margin-top: 71px; padding-left: 10px;">Plataforma:{{
+                                    juegoCarrito.juego.plataforma }}
+                                </p>
                             </div>
-                            <div style="text-align: center;">
-                                <v-btn
-                                    @click="EliminarProducto(productoCarrito.carritoProductoId, productoCarrito.productoId)"
-                                    color="transparent" style="width: 5px; margin: auto;">
-                                    <v-icon size="25">mdi-delete</v-icon>
-                                </v-btn>
-                                <p style="margin-top: 60px ;">{{ productoCarrito.producto.precio }} €</p>
-                            </div>
+                        </div>
+                        <div style="text-align: center;">
+                            <v-btn @click="EliminarJuego(juegoCarrito.carritoJuegoId, juegoCarrito.juegoId)"
+                                color="transparent" style="width: 5px; margin: auto;">
+                                <v-icon size="25">mdi-delete</v-icon>
+                            </v-btn>
+                            <p style="margin-top: 60px ;">{{ juegoCarrito.juego.precio }} €</p>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="info" style="margin: 20px 0; max-width: 440px; ">
-                <h2>Cantidad: {{ totalCantidad }} </h2>
-                <h2>Total: {{ totalPrecio }} €</h2>
-                <button @click="comprarProducto()">Comprar</button>
-                <v-alert v-if="responseMessage" :value="true"
-                    :type="responseMessage.includes('exitosa') ? 'success' : 'error'">
-                    {{ responseMessage }}
-                </v-alert>
-                <h5 style="margin-top: 20px;">Al hacer clic en "Continuar", admito que he leído y aceptado los
-                    Términos y condiciones incluida la Política de privacidad y los
-                    Cookies.
-                </h5>
             </div>
         </div>
     </div>

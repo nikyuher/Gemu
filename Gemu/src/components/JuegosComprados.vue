@@ -52,7 +52,7 @@
 
     <template>
         <div class="cont-Info">
-            <h2>Mi biblioteca</h2>
+            <h2>Mis juegos comprados</h2>
             <div class="bloque">
                 <div class="cajas">
                     <div class="search">

@@ -8,7 +8,8 @@ const usarioAPi = UsuarioApi()
 export const CategoriaApi = defineStore('categoria', {
   state: () => ({
     listaCategoriaSeccion: [] as any[],
-    listCategoriasProducto: [] as any[]
+    listCategoriasProducto: [] as any[],
+    listCategoriasJuego: [] as any[]
   }),
 
   actions: {
@@ -32,7 +33,30 @@ export const CategoriaApi = defineStore('categoria', {
 
         this.listCategoriasProducto = data
       } catch (error) {
-        throw new Error(`Error al obtner las categorias: ${error}`)
+        throw new Error(`Error al obtener las categorias: ${error}`)
+      }
+    },
+    async GetCategoriasJuego(idProducto: number) {
+      try {
+        const token = usarioAPi.getToken()
+
+        const response = await fetch(`${baseUrl}/Juego/${idProducto}/categorias`, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.message || 'error al obtener categorias.')
+        }
+
+        const data = await response.json()
+
+        this.listCategoriasJuego = data
+      } catch (error) {
+        throw new Error(`Error al obtener las categorias: ${error}`)
       }
     },
     async GetCategoriaSeccion(seccion: string) {

@@ -20,13 +20,15 @@ const storeCarrito = CarritoApi()
 const responseMessage = ref('');
 
 const IdUsuario = storeUsuario.$state.usuarioId?.idUsuario
+
 const ID = ref<number>()
 const nombreProducto = ref()
-const imagenes = ref<string[]>([])
 const precio = ref()
 const descripcion = ref()
 const estado = ref<string>('nuevo')
 const cantidad = ref()
+
+const imagenes = ref<string[]>([])
 const mostrarEtiquetas = ref<any>()
 const categoriasApi = ref<any[]>([])
 
@@ -47,8 +49,8 @@ onMounted(async () => {
         }
 
         cantidad.value = storeProducto.producto?.cantidad
-        categoriasApi.value = storeCategoria.listaCategoriaSeccion
 
+        categoriasApi.value = storeCategoria.listaCategoriaSeccion
         mostrarEtiquetas.value = storeCategoria.listCategoriasProducto;
 
         imagenes.value = storeImagenes.imagenesProductos.map(d => 'data:image/png;base64,' + d.datos)
@@ -101,7 +103,7 @@ const addProductoCarrito = async () => {
                 <div class="cont-img-portada">
                     <img :src="imagenes[0]" alt="">
                 </div>
-                <p>nombre: {{ nombreProducto }}</p>
+                <p style="margin-left: 20px;">{{ nombreProducto }}</p>
             </div>
             <div class="cont-info-compra">
                 <div style="text-align: left;">

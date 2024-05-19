@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { UsuarioApi } from '@/stores/usuarioApi';
 import { computed } from 'vue';
-import ListaCarrito from '@/components/ListaCarrito.vue'
+import ComprasCarrito from '@/components/ComprasCarrito.vue'
 import ErrorUrlView from './ErrorUrlView.vue';
 
 const datosUsuario = UsuarioApi();
@@ -18,7 +18,7 @@ const isAuthenticated = computed(() => datosUsuario.isAuthenticated);
     </header>
     <main>
         <div v-if="isAuthenticated">
-            <ListaCarrito></ListaCarrito>
+            <ComprasCarrito></ComprasCarrito>
         </div>
         <div v-else>
             <ErrorUrlView></ErrorUrlView>
