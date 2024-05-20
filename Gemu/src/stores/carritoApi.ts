@@ -1,21 +1,22 @@
 import { defineStore } from 'pinia'
-import { UsuarioApi } from '@/stores/usuarioApi'
 import urlStore from '@/stores/baseUrl'
 
 const baseUrl: string = urlStore.baseUrl
-const usarioAPi = UsuarioApi()
 
 export const CarritoApi = defineStore('carrito', {
   state: () => ({
     listaCarrito: [] as any[],
     CantidadCarrito: 0 as number,
+    idsProducto: [] as number[],
+    idsJuego: [] as number[],
     TotalPrecio: 0 as number
   }),
 
   actions: {
-    async ListaCarrito(idUsuario: number) {
+    async ListaCarrito(datosUser: any) {
       try {
-        const token = usarioAPi.getToken()
+        const token = datosUser.token
+        const idUsuario = datosUser.idUsuario
 
         const response = await fetch(`${baseUrl}/Carrito/usuario?id=${idUsuario}`, {
           method: 'GET',
@@ -31,17 +32,33 @@ export const CarritoApi = defineStore('carrito', {
 
         const data = await response.json()
 
+        const cantidadProductos = data.carritoProductos?.length || 0
+        const cantidadJuegos = data.carritoJuegos?.length || 0
+
+        const precioJuego = data.carritoJuegos.reduce(
+          (sum: number, juego: any) => sum + juego.juego.precio,
+          0
+        )
+        const precioProducto = data.carritoProductos.reduce(
+          (sum: number, producto: any) => sum + producto.producto.precio,
+          0
+        )
+
+        this.setCatidadCarrito(cantidadProductos + cantidadJuegos)
+        this.setTotalPrecio(precioJuego + precioProducto)
+
         this.listaCarrito = [data]
       } catch (error) {
         console.log(error)
         throw error
       }
     },
-    async AñadirProducto(idUsuario: number, idProdcuto: number) {
+    async AñadirProducto(idProdcuto: number, datosUser: any) {
       try {
-        const token = usarioAPi.getToken()
+        const token = datosUser.token
 
-        const idCarrito = usarioAPi.$state.usuarioId?.idCarrito
+        const idCarrito = datosUser.idCarrito
+        const idUsuario = datosUser.idUsuario
 
         const response = await fetch(
           `${baseUrl}/Carrito/${idCarrito}/usuario/${idUsuario}/añadir-producto`,
@@ -64,11 +81,12 @@ export const CarritoApi = defineStore('carrito', {
         throw error
       }
     },
-    async AñadirJuego(idUsuario: number, idJuego: number) {
+    async AñadirJuego(idJuego: number, datosUser: any) {
       try {
-        const token = usarioAPi.getToken()
+        const token = datosUser.token
 
-        const idCarrito = usarioAPi.$state.usuarioId?.idCarrito
+        const idCarrito = datosUser.idCarrito
+        const idUsuario = datosUser.idUsuario
 
         const response = await fetch(
           `${baseUrl}/Carrito/${idCarrito}/usuario/${idUsuario}/añadir-juego`,
@@ -91,10 +109,12 @@ export const CarritoApi = defineStore('carrito', {
         throw error
       }
     },
-    async DeleteProductoCarrito(idProducto: number, idUsuario: number) {
+    async DeleteProductoCarrito(idProducto: number, datosUser: any) {
       try {
-        const token = usarioAPi.getToken()
-        const idCarrito = usarioAPi.$state.usuarioId?.idCarrito
+        const token = datosUser.token
+
+        const idCarrito = datosUser.idCarrito
+        const idUsuario = datosUser.idUsuario
         const response = await fetch(
           `${baseUrl}/Carrito/${idCarrito}/usuario/${idUsuario}/producto`,
           {
@@ -115,10 +135,12 @@ export const CarritoApi = defineStore('carrito', {
         throw new Error(`Error al eliminar el producto: ${error}`)
       }
     },
-    async DeleteJuegoCarrito(idProducto: number, idUsuario: number) {
+    async DeleteJuegoCarrito(idProducto: number, datosUser: any) {
       try {
-        const token = usarioAPi.getToken()
-        const idCarrito = usarioAPi.$state.usuarioId?.idCarrito
+        const token = datosUser.token
+
+        const idCarrito = datosUser.idCarrito
+        const idUsuario = datosUser.idUsuario
         const response = await fetch(`${baseUrl}/Carrito/${idCarrito}/usuario/${idUsuario}/juego`, {
           method: 'DELETE',
           headers: {
@@ -136,10 +158,12 @@ export const CarritoApi = defineStore('carrito', {
         throw new Error(`Error al eliminar el producto: ${error}`)
       }
     },
-    async DeleteProductosCompra(idsProducto: number[], idUsuario: number) {
+    async DeleteProductosCompra(idsProducto: number[], datosUser: any) {
       try {
-        const token = usarioAPi.getToken()
-        const idCarrito = usarioAPi.$state.usuarioId?.idCarrito
+        const token = datosUser.token
+
+        const idCarrito = datosUser.idCarrito
+        const idUsuario = datosUser.idUsuario
         for (const idProducto of idsProducto) {
           const response = await fetch(
             `${baseUrl}/Carrito/${idCarrito}/usuario/${idUsuario}/producto`,
@@ -161,10 +185,12 @@ export const CarritoApi = defineStore('carrito', {
         throw new Error(`Error al eliminar el producto: ${error}`)
       }
     },
-    async DeleteJuegosCompra(idsJuego: number[], idUsuario: number) {
+    async DeleteJuegosCompra(idsJuego: number[], datosUser: any) {
       try {
-        const token = usarioAPi.getToken()
-        const idCarrito = usarioAPi.$state.usuarioId?.idCarrito
+        const token = datosUser.token
+
+        const idCarrito = datosUser.idCarrito
+        const idUsuario = datosUser.idUsuario
         for (const idJuego of idsJuego) {
           const response = await fetch(
             `${baseUrl}/Carrito/${idCarrito}/usuario/${idUsuario}/juego`,
@@ -191,6 +217,18 @@ export const CarritoApi = defineStore('carrito', {
     },
     getTotalPrecio(): number | 0 {
       return this.TotalPrecio
+    },
+    getIdsJuego(): number[] | [] {
+      return this.idsJuego
+    },
+    getIdsProducto(): number[] | [] {
+      return this.idsProducto
+    },
+    setIdsJuego(lista: any[]) {
+      this.idsJuego = lista
+    },
+    setIdsProducto(lista: any[]) {
+      this.idsProducto = lista
     },
     setCatidadCarrito(cantidad: number) {
       this.CantidadCarrito = cantidad

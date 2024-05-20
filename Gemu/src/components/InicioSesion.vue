@@ -85,6 +85,7 @@ const login = async () => {
     background-color: #491F6A;
     border: 1px solid #D550F6;
     height: 50px;
+    padding-left: 10px;
 }
 
 .btn-crear-cuenta {

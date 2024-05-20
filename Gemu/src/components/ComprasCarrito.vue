@@ -13,30 +13,37 @@ const storeCarrito = CarritoApi()
 
 const IdUsuario = storeUsuario.$state.usuarioId?.idUsuario
 const listaCarrito = ref<any[]>([])
-const idsProducto = ref<number[]>([])
-const idsJuego = ref<number[]>([])
+const idsProducto = computed(() => storeCarrito.getIdsProducto());
+const idsJuego = computed(() => storeCarrito.getIdsJuego());
 const saldoActual = computed(() => storeUsuario.getSaldoActual());
 
 const totalCantidad = computed(() => storeCarrito.getCatidadCarrito());
 const totalPrecio = computed(() => storeCarrito.getTotalPrecio());
 
+const direccionUser = ref<string>()
+const codigoPostalUsuer = ref<number>()
+
 const responseMessage = ref('')
+const showCarrito = ref(true);
+const showDireccion = ref(true);
+
+const datosUser = {
+    idUsuario: IdUsuario,
+    token: storeUsuario.getToken(),
+    idCarrito: storeUsuario.$state.usuarioId?.idCarrito
+}
 
 onMounted(async () => {
     try {
 
         if (IdUsuario) {
             storeUsuario.getUsuarioId(IdUsuario)
-            await storeCarrito.ListaCarrito(IdUsuario)
+            await storeCarrito.ListaCarrito(datosUser)
 
             listaCarrito.value = storeCarrito.listaCarrito
 
-            idsProducto.value = listaCarrito.value.flatMap(carrito =>
-                carrito.carritoProductos.map((productoCarrito: any) => productoCarrito.productoId)
-            );
-            idsJuego.value = listaCarrito.value.flatMap(carrito =>
-                carrito.carritoJuegos.map((juegoCarrito: any) => juegoCarrito.juegoId)
-            );
+            direccionUser.value = storeUsuario.$state.usuarioId ? storeUsuario.$state.usuarioId?.direccion : ''
+            codigoPostalUsuer.value = storeUsuario.$state.usuarioId?.codigoPostal
         }
     } catch (error) {
         console.log(error);
@@ -56,8 +63,7 @@ const comprarProducto = async () => {
                 nota: nota
             }
 
-
-            if (IdUsuario && idsProducto.value != null) {
+            if (idsProducto.value.length != 0 || idsJuego.value.length != 0) {
 
                 const idsCarritoProducto = listaCarrito.value.flatMap(carrito =>
                     carrito.carritoProductos.map((productoCarrito: any) => productoCarrito.carritoProductoId)
@@ -68,21 +74,21 @@ const comprarProducto = async () => {
 
                 await storetransacciones.restarFondos(transaccion)
 
-                await storeBiblioteca.AñadirProductoBiblioteca(IdUsuario, idsProducto.value)
-                await storeBiblioteca.AñadirJuegosBiblioteca(IdUsuario, idsJuego.value)
+                IdUsuario && await storeBiblioteca.AñadirProductoBiblioteca(IdUsuario, idsProducto.value)
+                IdUsuario && await storeBiblioteca.AñadirJuegosBiblioteca(IdUsuario, idsJuego.value)
 
-                await storeCarrito.DeleteProductosCompra(idsCarritoProducto, IdUsuario)
-                await storeCarrito.DeleteJuegosCompra(idsCarritoJuego, IdUsuario)
+                IdUsuario && await storeCarrito.DeleteProductosCompra(idsCarritoProducto, datosUser)
+                IdUsuario && await storeCarrito.DeleteJuegosCompra(idsCarritoJuego, datosUser)
 
-                await storeCarrito.ListaCarrito(IdUsuario);
-                storeUsuario.getUsuarioId(IdUsuario)
+                IdUsuario && await storeCarrito.ListaCarrito(datosUser);
+                IdUsuario && storeUsuario.getUsuarioId(IdUsuario)
                 listaCarrito.value = []
-            }
-            responseMessage.value = 'Compra exitosa';
+                responseMessage.value = 'Compra exitosa';
 
-            setTimeout(() => {
-                responseMessage.value = '';
-            }, 3000);
+                setTimeout(() => {
+                    responseMessage.value = '';
+                }, 3000);
+            }
 
         }
 
@@ -95,19 +101,41 @@ const comprarProducto = async () => {
     }
 }
 
+
+const continuarCompra1 = () => {
+    showCarrito.value = false;
+}
+const continuarCompra2 = () => {
+    showDireccion.value = false;
+}
 </script>
 
 <template>
-    <div class="carrito">
+    <div v-if="showCarrito" class="carrito">
         <ListaCarrito></ListaCarrito>
         <div class="info">
             <h2>Resumen</h2>
             <h2>Cantidad: {{ totalCantidad }} </h2>
             <h2>Total: {{ totalPrecio }} €</h2>
-            <button>Continuar con la compra</button>
+            <button @click="continuarCompra1()">Continuar</button>
         </div>
     </div>
-    <div class="pago">
+    <div v-else-if="idsProducto.length > 0 && showDireccion" class="direccion">
+        <div class="diseño-direccion">
+            <h2>Direccion</h2>
+            <div>
+                <p>Direccion </p>
+                <input type="text" v-model="direccionUser" placeholder="direccion" required>
+                <p>Codigo postal </p>
+                <input type="number" v-model="codigoPostalUsuer" placeholder="codigo postal" required>
+            </div>
+        </div>
+        <div>
+            <ListaCarrito></ListaCarrito>
+            <button @click="continuarCompra2()">Continuar</button>
+        </div>
+    </div>
+    <div v-else class="pago">
         <div class="forma-pago">
             <h2> Gēmu
                 ゲーム
@@ -140,6 +168,34 @@ const comprarProducto = async () => {
 <style scoped>
 .pago {
     display: flex;
+}
+
+.direccion {
+    display: flex;
+}
+
+.diseño-direccion {
+    background-color: #491F6A;
+    margin-right: 40px;
+    min-width: 300px;
+    max-height: 300px;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.diseño-direccion input {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+
+    outline: none;
+
+    width: 90%;
+    background-color: rgb(213, 200, 236);
+    height: 30px;
+    color: black;
+    padding-left: 10px;
+    margin: 10px;
 }
 
 .forma-pago {
@@ -186,7 +242,7 @@ const comprarProducto = async () => {
 
 }
 
-.info button {
+button {
     background-color: #F8C032;
     border-radius: 3px;
     color: black;

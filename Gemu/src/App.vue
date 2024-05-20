@@ -1,15 +1,17 @@
 <script setup lang="ts">
-import { ref, watch, onMounted } from "vue";
-import { RouterLink, RouterView } from 'vue-router'
+import { ref, watch, onMounted, computed } from "vue";
+import { RouterLink, RouterView, useRouter } from 'vue-router'
 import { useRoute } from 'vue-router';
 import { UsuarioApi } from '@/stores/usuarioApi';
-import { computed } from 'vue';
+import { CarritoApi } from "@/stores/carritoApi";
 
+const storeCarrito = CarritoApi()
 const datosUsuario = UsuarioApi();
 const isAuthenticated = computed(() => datosUsuario.isAuthenticated);
 
+const totalCantidad = computed(() => storeCarrito.getCatidadCarrito());
 const route = useRoute();
-
+const router = useRouter();
 const rutasAOcultarHeader = ['/iniciarSesion', '/registrarse', '/user-menu', '/carritoCompra'];
 const rutasOcultarFooter = ['/user-menu'];
 
@@ -24,13 +26,22 @@ watch(route, () => {
 
 // Función para remover el token y el usuario ID
 const removerTokenYUsuarioId = () => {
+  storeCarrito.setCatidadCarrito(0)
+  storeCarrito.setTotalPrecio(0)
   datosUsuario.removeToken();
   datosUsuario.removeUsuarioid();
+  router.push("/")
 };
 
 // Eliminar cada 1 hora
-onMounted(() => {
+onMounted(async () => {
   if (datosUsuario.getToken()) {
+    const datosUser = {
+      idUsuario: datosUsuario.$state.usuarioId?.idUsuario,
+      token: datosUsuario.getToken(),
+      idCarrito: datosUsuario.$state.usuarioId?.idCarrito
+    }
+    await storeCarrito.ListaCarrito(datosUser)
     setInterval(removerTokenYUsuarioId, 3600000);
   }
 
@@ -60,7 +71,9 @@ onMounted(() => {
           </select>
         </div>
         <div class="carrito">
-          <RouterLink to="/carritoCompra"> <v-icon>mdi-cart</v-icon></RouterLink>
+          <v-badge :content="totalCantidad" color="red">
+            <RouterLink to="/carritoCompra"> <v-icon>mdi-cart</v-icon></RouterLink>
+          </v-badge>
         </div>
         <div v-if="isAuthenticated" class="cuentaUsuario">
           <RouterLink to="/user-menu">
@@ -81,7 +94,6 @@ onMounted(() => {
       <RouterLink to="/resenas">Marketplace</RouterLink>
       <RouterLink to="/ofertas">Ofertas</RouterLink>
       <RouterLink :to="{ name: 'juegosTipo', params: { tipo: 'baratos' } }">Juegos Baratos</RouterLink>
-      <RouterLink :to="{ name: 'juegosTipo', params: { tipo: 'populares' } }">Más Populares</RouterLink>
     </div>
   </header>
 

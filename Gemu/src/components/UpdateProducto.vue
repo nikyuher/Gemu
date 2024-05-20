@@ -49,8 +49,10 @@ onMounted(async () => {
         cantidad.value = storeProducto.producto?.cantidad
         categoriasApi.value = storeCategoria.listaCategoriaSeccion
 
-        mostrarEtiquetas.value = storeCategoria.listCategoriasProducto.productoCategorias.map(pc => pc.categoria.nombre).join(', ');
-        categoriasSelecionadas.value = storeCategoria.listCategoriasProducto.productoCategorias.map(pc => pc.categoria.idCategoria)
+        mostrarEtiquetas.value = storeCategoria.listCategoriasProducto
+            .map(pc => pc.categoria.nombre)
+            .join(', ');
+        categoriasSelecionadas.value = storeCategoria.listCategoriasProducto.map(pc => pc.categoria.idCategoria)
 
         imagenes.value = storeImagenes.imagenesProductos.map(d => 'data:image/png;base64,' + d.datos)
 

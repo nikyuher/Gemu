@@ -11,9 +11,11 @@ import JuegosComprados from "@/components/JuegosComprados.vue";
 import ProductosComprados from "@/components/ProductosComprados.vue";
 import crearProducto from "@/components/CrearProducto.vue";
 import MisAnuncios from "@/components/AnunciosUsuario.vue";
+import { CarritoApi } from "@/stores/carritoApi";
 
 const router = useRouter();
 const datosUsuario = UsuarioApi();
+const storeCarrito = CarritoApi()
 
 const cuentaVisible1 = ref(false);
 const cuentaVisible2 = ref(false);
@@ -22,6 +24,8 @@ const cuentaVisible4 = ref(false);
 const cuentaVisible5 = ref(false);
 
 const cerrarSesion = () => {
+    storeCarrito.setCatidadCarrito(0)
+    storeCarrito.setTotalPrecio(0)
     datosUsuario.removeUsuarioid()
     datosUsuario.removeToken()
     router.push("/")

@@ -6,26 +6,21 @@ import { UsuarioApi } from '@/stores/usuarioApi';
 const storeUsuario = UsuarioApi();
 const storeCarrito = CarritoApi()
 
-const IdUsuario = storeUsuario.$state.usuarioId?.idUsuario
+const IdUsuario = storeUsuario.$state.usuarioId ? storeUsuario.$state.usuarioId?.idUsuario : 0
 const listaCarrito = computed(() => storeCarrito.listaCarrito);
-const idsProducto = ref<number[]>([])
-const idsJuego = ref<number[]>([])
+
+
+const datosUser = {
+    idUsuario: IdUsuario,
+    token: storeUsuario.getToken(),
+    idCarrito: storeUsuario.$state.usuarioId?.idCarrito
+}
 
 onMounted(async () => {
     try {
-
         if (IdUsuario) {
             storeUsuario.getUsuarioId(IdUsuario)
-            await storeCarrito.ListaCarrito(IdUsuario)
-
-            // listaCarrito.value = storeCarrito.listaCarrito
-            idsProducto.value = listaCarrito.value.flatMap(carrito =>
-                carrito.carritoProductos.map((productoCarrito: any) => productoCarrito.productoId)
-            );
-            idsJuego.value = listaCarrito.value.flatMap(carrito =>
-                carrito.carritoJuegos.map((juegoCarrito: any) => juegoCarrito.juegoId)
-            );
-
+            await storeCarrito.ListaCarrito(datosUser)
         }
     } catch (error) {
         console.log(error);
@@ -36,8 +31,8 @@ const EliminarProducto = async (idLista: number, productoId: number) => {
 
     try {
         if (IdUsuario) {
-            await storeCarrito.DeleteProductoCarrito(idLista, IdUsuario)
-            await storeCarrito.ListaCarrito(IdUsuario);
+            await storeCarrito.DeleteProductoCarrito(idLista, datosUser)
+            await storeCarrito.ListaCarrito(datosUser);
             listaCarrito.value.forEach((carrito: any) => {
                 const index = carrito.carritoProductos.findIndex((productoCarrito: any) => productoCarrito.carritoProductoId === idLista);
                 if (index !== -1) {
@@ -58,8 +53,8 @@ const EliminarProducto = async (idLista: number, productoId: number) => {
 const EliminarJuego = async (idLista: number, juegoId: number) => {
     try {
         if (IdUsuario) {
-            await storeCarrito.DeleteJuegoCarrito(idLista, IdUsuario)
-            await storeCarrito.ListaCarrito(IdUsuario);
+            await storeCarrito.DeleteJuegoCarrito(idLista, datosUser)
+            await storeCarrito.ListaCarrito(datosUser);
             listaCarrito.value.forEach((carrito: any) => {
                 const index = carrito.carritoJuegos.findIndex((juegoCarrito: any) => juegoCarrito.carritoJuegoId === idLista);
                 if (index !== -1) {
@@ -76,6 +71,18 @@ const EliminarJuego = async (idLista: number, juegoId: number) => {
         console.log(error);
     }
 }
+
+
+const idsProducto = computed(() => {
+    return listaCarrito.value.flatMap(carrito =>
+        carrito.carritoProductos.map((productoCarrito: any) => productoCarrito.productoId)
+    );
+});
+const idsJuego = computed(() => {
+    return listaCarrito.value.flatMap(carrito =>
+        carrito.carritoJuegos.map((juegoCarrito: any) => juegoCarrito.juegoId)
+    );
+});
 
 const totalCantidad = computed(() => {
     return listaCarrito.value.reduce((total: number, carrito: any) => {
@@ -96,9 +103,14 @@ const totalPrecio = computed(() => {
 watch(totalCantidad, (newVal) => {
     storeCarrito.setCatidadCarrito(newVal);
 });
-
 watch(totalPrecio, (newVal) => {
     storeCarrito.setTotalPrecio(newVal);
+});
+watch(idsProducto, (newVal) => {
+    storeCarrito.setIdsProducto(newVal)
+});
+watch(idsJuego, (newVal) => {
+    storeCarrito.setIdsJuego(newVal)
 });
 </script>
 
@@ -114,8 +126,8 @@ watch(totalPrecio, (newVal) => {
                                 alt="Imagen del producto">
                             <div>
                                 <p style="padding-left: 10px;">{{ productoCarrito.producto.nombre }}</p>
-                                <p style="margin-top: 71px; padding-left: 10px;">Apartado: {{
-                                    productoCarrito.carritoProductoId }}</p>
+                                <p style="margin-top: 71px; padding-left: 10px;">Estado: {{
+                                    productoCarrito.producto.estado }} </p>
                             </div>
                         </div>
                         <div style="text-align: center;">

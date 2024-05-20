@@ -31,7 +31,7 @@ export const CategoriaApi = defineStore('categoria', {
 
         const data = await response.json()
 
-        this.listCategoriasProducto = data
+        this.listCategoriasProducto = data.productoCategorias
       } catch (error) {
         throw new Error(`Error al obtener las categorias: ${error}`)
       }
@@ -54,7 +54,7 @@ export const CategoriaApi = defineStore('categoria', {
 
         const data = await response.json()
 
-        this.listCategoriasJuego = data
+        this.listCategoriasJuego = data.juegoCategorias
       } catch (error) {
         throw new Error(`Error al obtener las categorias: ${error}`)
       }

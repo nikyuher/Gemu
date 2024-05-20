@@ -70,7 +70,21 @@ const addProductoCarrito = async () => {
 
         if (IdUsuario && ID.value) {
 
-            await storeCarrito.AñadirProducto(IdUsuario, ID.value)
+            const datosUser = {
+                idUsuario: IdUsuario,
+                token: storeUsuario.getToken(),
+                idCarrito: storeUsuario.$state.usuarioId?.idCarrito
+            }
+
+
+            await storeCarrito.AñadirProducto(ID.value, datosUser)
+
+            const cantidad = storeCarrito.getCatidadCarrito() + 1;
+            const sumaPrecio = precio.value ? precio.value : 0
+
+            const total = storeCarrito.getTotalPrecio() + sumaPrecio;
+            await storeCarrito.setCatidadCarrito(cantidad)
+            await storeCarrito.setTotalPrecio(total)
         }
 
         responseMessage.value = 'Añadido correctamente'
@@ -103,7 +117,7 @@ const addProductoCarrito = async () => {
                 <div class="cont-img-portada">
                     <img :src="imagenes[0]" alt="">
                 </div>
-                <p style="margin-left: 20px;">{{ nombreProducto }}</p>
+                <h2 style="margin-left: 20px;">{{ nombreProducto }}</h2>
             </div>
             <div class="cont-info-compra">
                 <div style="text-align: left;">
@@ -120,16 +134,57 @@ const addProductoCarrito = async () => {
             </div>
         </div>
         <div class="cont-img-muestra">
-            <div v-for="(imagen, index) in imagenes.slice(1)" :key="index">
-                <img :src="imagen" alt="" style="width: 100px;">
-            </div>
+            <v-sheet elevation="8" max-width="800" style="background-color: transparent; box-shadow: none !important ;">
+                <v-slide-group class="pa-4" center-active show-arrows>
+                    <v-slide-group-item v-for="(imagen, index) in imagenes.slice(1)" :key="index"
+                        v-slot="{ isSelected, toggle }">
+                        <v-card :color="isSelected ? 'primary' : 'grey-lighten-1'" class="ma-4" @click="toggle">
+                            <img :src="imagen" alt="imagen producto" style="height: 150px;">
+                        </v-card>
+                    </v-slide-group-item>
+                </v-slide-group>
+            </v-sheet>
         </div>
         <div class="producto-relacionado">
             <h2>Productos relacionados</h2>
         </div>
+        <div class="productos-Reseñas">
+            <h2>Reseñas</h2>
+        </div>
+        <div class="productos-descripcion">
+            <h2>Descripción</h2>
+            <div class="categorias">
+                <div v-for="categoria of mostrarEtiquetas" :key="categoria.idProducto">
+                    <p>{{ categoria.categoria.nombre }}</p>
+                </div>
+            </div>
+            <div class="contenido-desc">
+                <p>{{ descripcion }}</p>
+            </div>
+        </div>
     </div>
 </template>
 <style scoped>
+.contenido-desc {
+    background-color: #491F6A;
+    padding: 20px;
+    min-height: 200px;
+    margin-bottom: 20px;
+}
+
+.categorias {
+    display: flex;
+}
+
+.categorias p {
+    background-color: #491F6A;
+    border: 1px solid white;
+    padding: 5px;
+    min-width: 80px;
+    text-align: center;
+    margin: 10px 10px 20px 0;
+}
+
 /* Contenedor global */
 .prodcuto {
     width: 90%;
@@ -140,6 +195,7 @@ const addProductoCarrito = async () => {
 .cont-portada {
     display: flex;
     justify-content: space-between;
+    margin-top: 50px;
 }
 
 /* Img y nombre */
