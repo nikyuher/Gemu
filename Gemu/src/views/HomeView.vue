@@ -35,6 +35,7 @@ import CategoriasHome from '@/components/CategoriasHome.vue';
       </article>
       <article>
         <h2>Juegos Gratuitos</h2>
+
       </article>
       <article>
         <h2>Productos en Venta</h2>

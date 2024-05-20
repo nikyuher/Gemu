@@ -40,7 +40,7 @@ const router = createRouter({
       component: () => import('../views/ProductoView.vue')
     },
     {
-      path: '/user-menu',
+      path: '/user-menu/:opcion?',
       name: 'user-menu',
       component: () => import('../views/MenuView.vue')
     },

@@ -10,13 +10,21 @@ interface Juego {
   titulo: string
   descripcion: string
   precio: number
-  descuento: number
+  precioFinal: number
   plataforma: string
+  descuento: number
+  fecha: string
+  codigoJuego: string
+  calificacionPromedio: number
 }
-
 export const JuegoApi = defineStore('juego', {
   state: () => ({
-    juego: null as Juego | null
+    juego: null as Juego | null,
+    juegos: [] as any[],
+    currentPage: 1,
+    pageSize: 1,
+    hasMore: true,
+    loading: false
   }),
 
   actions: {
@@ -42,6 +50,43 @@ export const JuegoApi = defineStore('juego', {
       } catch (error) {
         console.log(error)
         throw error
+      }
+    },
+    async GetJuegosPaginados() {
+      if (this.loading) return
+
+      this.loading = true
+      try {
+        const token = usarioAPi.getToken()
+        const response = await fetch(
+          `${baseUrl}/Juego/paginados?pageNumber=${this.currentPage}&pageSize=${this.pageSize}`,
+          {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
+        )
+
+        if (!response.ok) {
+          const errorText = await response.text()
+          console.log('Error Response Text:', errorText)
+          throw new Error('Error al obtener los juegos.')
+        }
+
+        const data = await response.json()
+
+        if (data.length < this.pageSize) {
+          this.hasMore = false
+        }
+
+        this.juegos = [...this.juegos, ...data]
+        this.currentPage += 1
+      } catch (error) {
+        console.log(error)
+        throw error
+      } finally {
+        this.loading = false
       }
     },
     async CrearProducto(producto: any) {

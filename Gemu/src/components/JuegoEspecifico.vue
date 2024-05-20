@@ -6,6 +6,7 @@ import { CategoriaApi } from '@/stores/categoriasApi';
 import { CarritoApi } from '@/stores/carritoApi';
 import { UsuarioApi } from '@/stores/usuarioApi';
 import ErrorUrlView from "@/views/ErrorUrlView.vue";
+import Juegos from '@/components/JuegosTodos.vue'
 const props = defineProps<{
     idJuego: number;
 }>();
@@ -142,6 +143,7 @@ const addJuegoCarrito = async () => {
         </div>
         <div class="producto-relacionado">
             <h2>Productos relacionados</h2>
+            <Juegos></Juegos>
         </div>
         <div class="juegos-Reseñas">
             <h2>Reseñas</h2>

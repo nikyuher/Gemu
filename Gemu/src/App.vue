@@ -12,8 +12,8 @@ const isAuthenticated = computed(() => datosUsuario.isAuthenticated);
 const totalCantidad = computed(() => storeCarrito.getCatidadCarrito());
 const route = useRoute();
 const router = useRouter();
-const rutasAOcultarHeader = ['/iniciarSesion', '/registrarse', '/user-menu', '/carritoCompra'];
-const rutasOcultarFooter = ['/user-menu'];
+const rutasAOcultarHeader = ['/iniciarSesion', '/registrarse', '/user-menu', '/carritoCompra', '/user-menu/crearAnuncio'];
+const rutasOcultarFooter = ['/user-menu', '/user-menu/crearAnuncio'];
 
 
 const ocultarHeader = ref(rutasAOcultarHeader.includes(route.path));
@@ -86,7 +86,7 @@ onMounted(async () => {
           <RouterLink to="/registrarse" style="border-left:2px solid white ;">Registrarse</RouterLink>
         </div>
         <div class="vender">
-          <RouterLink to="/user-menu">Vender</RouterLink>
+          <RouterLink :to="{ name: 'user-menu', params: { opcion: 'crearAnuncio' } }">Vender</RouterLink>
         </div>
       </div>
     </div>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { UsuarioApi } from '@/stores/usuarioApi';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute, onBeforeRouteUpdate } from 'vue-router';
 import { ref } from 'vue';
 import informacionGeneral from '@/components/InforGeneral.vue'
 import AñadirFondos from '@/components/AñadirFondos.vue'
@@ -12,6 +12,13 @@ import ProductosComprados from "@/components/ProductosComprados.vue";
 import crearProducto from "@/components/CrearProducto.vue";
 import MisAnuncios from "@/components/AnunciosUsuario.vue";
 import { CarritoApi } from "@/stores/carritoApi";
+
+const route = useRoute();
+const opcion = ref<string | undefined>(route.params.opcion as string | undefined);
+
+onBeforeRouteUpdate((to) => {
+    opcion.value = to.params.opcion as string | undefined;
+});
 
 const router = useRouter();
 const datosUsuario = UsuarioApi();
@@ -31,7 +38,7 @@ const cerrarSesion = () => {
     router.push("/")
 }
 
-const opcionActual = ref<string>('informacion');
+const opcionActual = ref<string>(opcion.value || 'informacion');
 
 const mostrarView = (view: string) => {
     opcionActual.value = view;
