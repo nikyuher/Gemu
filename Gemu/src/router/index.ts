@@ -36,7 +36,7 @@ const router = createRouter({
     },
     {
       path: '/:producto/:id',
-      name: 'vistaProducto',
+      name: 'producto',
       component: () => import('../views/ProductoView.vue')
     },
     {

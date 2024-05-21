@@ -4,16 +4,16 @@ import { useRoute, onBeforeRouteUpdate } from 'vue-router';
 import JuegoEspecifico from "@/components/JuegoEspecifico.vue";
 import ProductoEspecifico from "@/components/ProductoEspecifico.vue";
 import ErrorUrlView from "./ErrorUrlView.vue";
-
 const route = useRoute();
 
 const tipoJuego = ref(route.params.producto);
 const idProducto = ref(route.params.id);
 
 onBeforeRouteUpdate((to) => {
-    tipoJuego.value = to.params.tipo;
+    tipoJuego.value = to.params.producto;
     idProducto.value = to.params.id;
 });
+
 </script>
 
 <template>

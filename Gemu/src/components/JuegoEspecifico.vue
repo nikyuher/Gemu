@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { JuegoApi } from '@/stores/juegoApi'
 import { ImagenesApi } from '@/stores/imagenesApi';
 import { CategoriaApi } from '@/stores/categoriasApi';
 import { CarritoApi } from '@/stores/carritoApi';
 import { UsuarioApi } from '@/stores/usuarioApi';
 import ErrorUrlView from "@/views/ErrorUrlView.vue";
-import Juegos from '@/components/JuegosTodos.vue'
+import Juegos from '@/components/JuegosCategoriaPaginado.vue'
+
 const props = defineProps<{
     idJuego: number;
 }>();
@@ -22,6 +23,7 @@ const responseMessage = ref('');
 
 const IdUsuario = storeUsuario.$state.usuarioId?.idUsuario
 
+
 const ID = ref<number>()
 const nombreJuego = ref()
 const descripcion = ref()
@@ -29,16 +31,26 @@ const precio = ref<number>()
 const descuento = ref<number>()
 const plataforma = ref<string>()
 
+const idsCategoria = ref<number[]>([])
 const imagenes = ref<string[]>([])
 const mostrarEtiquetas = ref<any>()
 const categoriasApi = ref<any[]>([])
 
-onMounted(async () => {
+onMounted(() => {
+    fetchData(props.idJuego);
+});
+
+watch(() => props.idJuego, (newVal) => {
+    fetchData(newVal);
+});
+
+const fetchData = async (idJuego: number) => {
     try {
+
         await storeCategoria.GetCategoriaSeccion('juegos')
-        await storeCategoria.GetCategoriasJuego(props.idJuego)
-        await storeJuego.GetJuego(props.idJuego)
-        await storeImagenes.GetImagenesJuego(props.idJuego)
+        await storeCategoria.GetCategoriasJuego(idJuego)
+        await storeJuego.GetJuego(idJuego)
+        await storeImagenes.GetImagenesJuego(idJuego)
 
         ID.value = storeJuego.juego?.idJuego
         nombreJuego.value = storeJuego.juego?.titulo
@@ -50,6 +62,7 @@ onMounted(async () => {
         categoriasApi.value = storeCategoria.listaCategoriaSeccion
         mostrarEtiquetas.value = storeCategoria.listCategoriasJuego;
 
+        idsCategoria.value = storeCategoria.listCategoriasJuego.map(categoria => categoria.categoriaId)
         imagenes.value = storeImagenes.imagenesJuegos.map(d => 'data:image/png;base64,' + d.datos)
 
     } catch (error) {
@@ -60,7 +73,7 @@ onMounted(async () => {
             throw new Error(String(error));
         }
     }
-})
+}
 
 const addJuegoCarrito = async () => {
     try {
@@ -143,7 +156,7 @@ const addJuegoCarrito = async () => {
         </div>
         <div class="producto-relacionado">
             <h2>Productos relacionados</h2>
-            <Juegos></Juegos>
+            <Juegos :ids-categorias="idsCategoria"></Juegos>
         </div>
         <div class="juegos-Reseñas">
             <h2>Reseñas</h2>
