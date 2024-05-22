@@ -36,6 +36,8 @@ export const ImagenesApi = defineStore('imagenes', {
           const errorData = await response.json()
           throw new Error(errorData.message || 'error al asignar las imagenes.')
         }
+
+        console.log('Imagenes agregadas correctamente')
       } catch (error) {
         console.log(error)
         throw error

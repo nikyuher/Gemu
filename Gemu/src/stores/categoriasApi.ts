@@ -1,9 +1,7 @@
 import { defineStore } from 'pinia'
-import { UsuarioApi } from '@/stores/usuarioApi'
 import urlStore from '@/stores/baseUrl'
 
 const baseUrl: string = urlStore.baseUrl
-const usarioAPi = UsuarioApi()
 
 export const CategoriaApi = defineStore('categoria', {
   state: () => ({
@@ -15,13 +13,9 @@ export const CategoriaApi = defineStore('categoria', {
   actions: {
     async GetCategoriasProducto(idProducto: number) {
       try {
-        const token = usarioAPi.getToken()
-
         const response = await fetch(`${baseUrl}/Producto/${idProducto}/categorias`, {
           method: 'GET',
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
+          headers: {}
         })
 
         if (!response.ok) {
@@ -38,13 +32,9 @@ export const CategoriaApi = defineStore('categoria', {
     },
     async GetCategoriasJuego(idProducto: number) {
       try {
-        const token = usarioAPi.getToken()
-
         const response = await fetch(`${baseUrl}/Juego/${idProducto}/categorias`, {
           method: 'GET',
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
+          headers: {}
         })
 
         if (!response.ok) {
@@ -61,13 +51,9 @@ export const CategoriaApi = defineStore('categoria', {
     },
     async GetCategoriaSeccion(seccion: string) {
       try {
-        const token = usarioAPi.getToken()
-
         const response = await fetch(`${baseUrl}/Categoria/seccion?nombre=${seccion}`, {
           method: 'GET',
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
+          headers: {}
         })
 
         if (!response.ok) {
@@ -82,10 +68,8 @@ export const CategoriaApi = defineStore('categoria', {
         throw new Error(`Error al obtner las categorias: ${error}`)
       }
     },
-    async DeleteCategoriasProducto(idProducto: number, idsCategoria: number[]) {
+    async DeleteCategoriasProducto(idProducto: number, token: string, idsCategoria: number[]) {
       try {
-        const token = usarioAPi.getToken()
-
         const response = await fetch(`${baseUrl}/Producto/${idProducto}/categorias`, {
           method: 'DELETE',
           headers: {
@@ -103,10 +87,8 @@ export const CategoriaApi = defineStore('categoria', {
         throw new Error(`Error al eliminar las categorias: ${error}`)
       }
     },
-    async AsignarCategoriaProducto(idProducto: number, idsCategoria: number[]) {
+    async AsignarCategoriaProducto(idProducto: number, token: string, idsCategoria: number[]) {
       try {
-        const token = usarioAPi.getToken()
-
         const response = await fetch(`${baseUrl}/Producto/${idProducto}/añadir-categorias`, {
           method: 'POST',
           headers: {
@@ -120,6 +102,7 @@ export const CategoriaApi = defineStore('categoria', {
           const errorData = await response.json()
           throw new Error(errorData.message || 'error al asignar las categorias.')
         }
+        console.log('Categorias agregadas correctamente')
       } catch (error) {
         throw new Error(`Error al asignar las categorias: ${error}`)
       }

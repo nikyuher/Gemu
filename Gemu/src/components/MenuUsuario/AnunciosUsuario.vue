@@ -3,13 +3,16 @@ import { ref, onMounted, computed } from 'vue';
 import { UsuarioApi } from '@/stores/usuarioApi';
 import { AnuncioApi } from '@/stores/anuncioApi';
 import { ProductoApi } from '@/stores/productoApi';
-import UpdateProducto from '@/components/UpdateProducto.vue'
+import UpdateProducto from '@/components/MenuUsuario/UpdateProducto.vue'
 
 const storeAnuncio = AnuncioApi();
-const datosUsuario = UsuarioApi();
+const storeUsuario = UsuarioApi();
 const storeProducto = ProductoApi()
 
-const IdUsuario = datosUsuario.$state.usuarioId?.idUsuario
+const token = storeUsuario.getToken()
+
+
+const IdUsuario = storeUsuario.$state.usuarioId?.idUsuario
 const historial = ref<any[]>([]);
 const terminosBusqueda = ref('');
 
@@ -33,9 +36,9 @@ onMounted(async () => {
 
 const EliminarProducto = async (idProducto: number) => {
 
-    if (idProducto && IdUsuario) {
+    if (idProducto && IdUsuario && token) {
         try {
-            await storeProducto.EliminarProducto(idProducto);
+            await storeProducto.EliminarProducto(idProducto, token);
 
             const index = historial.value.findIndex(anuncio => anuncio.producto.idProducto === idProducto);
             if (index !== -1) {

@@ -3,19 +3,22 @@ import { ProductoApi } from '@/stores/productoApi';
 import { ImagenesApi } from '@/stores/imagenesApi';
 import { CategoriaApi } from '@/stores/categoriasApi';
 import { ref, onMounted } from 'vue'
-
+import { UsuarioApi } from '@/stores/usuarioApi'
 const props = defineProps<{
     idProducto: number;
 }>();
 
 const idProducto = ref(props.idProducto);
 
+const usarioAPi = UsuarioApi()
 const storeProducto = ProductoApi()
 const storeImagenes = ImagenesApi()
 const storeCategoria = CategoriaApi()
 
 const categoriasApi = ref<any[]>([])
 const responseMessage = ref('');
+
+const token = usarioAPi.getToken()
 
 const nombreProducto = ref()
 const imagenes = ref<string[]>([])
@@ -77,12 +80,12 @@ const ActualizarProducto = async () => {
             cantidad: cantidad.value
         }
 
-        await storeProducto.UpdateDatosProducto(newProducto)
 
-        if (idProducto.value) {
+        if (idProducto.value && token) {
+            await storeProducto.UpdateDatosProducto(newProducto, token)
             await storeImagenes.EliminarImagenesProducto(idProducto.value)
             await storeImagenes.AddImagenesProducto(idProducto.value, imagenes.value.map(img => img.split(',')[1]))
-            await storeCategoria.AsignarCategoriaProducto(idProducto.value, categoriasSelecionadas.value)
+            await storeCategoria.AsignarCategoriaProducto(idProducto.value, token, categoriasSelecionadas.value)
         } else {
             console.log('No se pudo obtener el id');
             responseMessage.value = 'Hubo un problema al incluir las imagenes';

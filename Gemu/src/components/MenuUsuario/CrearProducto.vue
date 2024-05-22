@@ -17,6 +17,8 @@ const idProducto = ref<number | null>(null);
 const categoriasApi = ref<any[]>([])
 const responseMessage = ref('');
 
+const token = storeUsuario.getToken()
+
 const nombreProducto = ref()
 const imagenes = ref<string[]>([])
 const precio = ref()
@@ -66,12 +68,12 @@ const CrearProducto = async () => {
             cantidad: cantidad.value
         }
 
-        await storeProducto.CrearProducto(newProducto)
         idProducto.value = storeProducto.producto?.idProducto ?? null;
 
-        if (idProducto.value) {
+        if (idProducto.value && token) {
+            await storeProducto.CrearProducto(newProducto, token)
             await storeImagenes.AddImagenesProducto(idProducto.value, imagenes.value.map(img => img.split(',')[1]))
-            await storeCategoria.AsignarCategoriaProducto(idProducto.value, categoriasSelecionadas.value)
+            await storeCategoria.AsignarCategoriaProducto(idProducto.value, token, categoriasSelecionadas.value)
             idUser && await storeAnuncio.crearAnuncio(idUser, idProducto.value)
         } else {
             console.log('No se pudo obtener el id');

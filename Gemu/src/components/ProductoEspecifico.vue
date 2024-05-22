@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { ProductoApi } from '@/stores/productoApi'
 import { ImagenesApi } from '@/stores/imagenesApi';
 import { CategoriaApi } from '@/stores/categoriasApi';
 import { CarritoApi } from '@/stores/carritoApi';
 import { UsuarioApi } from '@/stores/usuarioApi';
 import ErrorUrlView from "@/views/ErrorUrlView.vue";
+import ProductosCtegoriaPaginado from "@/components/Paginados/ProductosCtegoriaPaginado.vue";
+
 const props = defineProps<{
     idProducto: number;
 }>();
@@ -28,16 +30,25 @@ const descripcion = ref()
 const estado = ref<string>('nuevo')
 const cantidad = ref()
 
+const idsCategoria = ref<number[]>([])
 const imagenes = ref<string[]>([])
 const mostrarEtiquetas = ref<any>()
 const categoriasApi = ref<any[]>([])
 
-onMounted(async () => {
+onMounted(() => {
+    fetchData(props.idProducto);
+});
+
+watch(() => props.idProducto, (newVal) => {
+    fetchData(newVal);
+});
+
+const fetchData = async (idProducto: number) => {
     try {
         await storeCategoria.GetCategoriaSeccion('marketplace')
-        await storeCategoria.GetCategoriasProducto(props.idProducto)
-        await storeProducto.GetProducto(props.idProducto)
-        await storeImagenes.GetImagenesProducto(props.idProducto)
+        await storeCategoria.GetCategoriasProducto(idProducto)
+        await storeProducto.GetProducto(idProducto)
+        await storeImagenes.GetImagenesProducto(idProducto)
 
         ID.value = storeProducto.producto?.idProducto
         nombreProducto.value = storeProducto.producto?.nombre
@@ -53,6 +64,7 @@ onMounted(async () => {
         categoriasApi.value = storeCategoria.listaCategoriaSeccion
         mostrarEtiquetas.value = storeCategoria.listCategoriasProducto;
 
+        idsCategoria.value = storeCategoria.listCategoriasProducto.map(categoria => categoria.categoriaId)
         imagenes.value = storeImagenes.imagenesProductos.map(d => 'data:image/png;base64,' + d.datos)
 
     } catch (error) {
@@ -63,7 +75,7 @@ onMounted(async () => {
             throw new Error(String(error));
         }
     }
-})
+}
 
 const addProductoCarrito = async () => {
     try {
@@ -85,12 +97,17 @@ const addProductoCarrito = async () => {
             const total = storeCarrito.getTotalPrecio() + sumaPrecio;
             await storeCarrito.setCatidadCarrito(cantidad)
             await storeCarrito.setTotalPrecio(total)
+            responseMessage.value = 'Añadido correctamente'
+            setTimeout(() => {
+                responseMessage.value = '';
+            }, 3000);
+        } else {
+            responseMessage.value = 'No estas registrado'
+            setTimeout(() => {
+                responseMessage.value = '';
+            }, 3000);
         }
 
-        responseMessage.value = 'Añadido correctamente'
-        setTimeout(() => {
-            responseMessage.value = '';
-        }, 3000);
     } catch (error) {
         if (error instanceof Error) {
             console.error(error);
@@ -147,6 +164,7 @@ const addProductoCarrito = async () => {
         </div>
         <div class="producto-relacionado">
             <h2>Productos relacionados</h2>
+            <ProductosCtegoriaPaginado :ids-categorias="idsCategoria"></ProductosCtegoriaPaginado>
         </div>
         <div class="productos-Reseñas">
             <h2>Reseñas</h2>
@@ -154,7 +172,7 @@ const addProductoCarrito = async () => {
         <div class="productos-descripcion">
             <h2>Descripción</h2>
             <div class="categorias">
-                <div v-for="categoria of mostrarEtiquetas" :key="categoria.idProducto">
+                <div v-for="categoria of mostrarEtiquetas" :key="categoria.productoId">
                     <p>{{ categoria.categoria.nombre }}</p>
                 </div>
             </div>

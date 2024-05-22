@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import CategoriasHome from '@/components/CategoriasHome.vue';
-
+import JuegosGratisPaginado from '@/components/Paginados/JuegosGratisPaginado.vue';
+import ProductosPaginados from '@/components/Paginados/ProductosPaginados.vue';
+import FiltrosJuegos from '@/components/FiltrosJuegos.vue';
 
 </script>
 
@@ -35,10 +37,11 @@ import CategoriasHome from '@/components/CategoriasHome.vue';
       </article>
       <article>
         <h2>Juegos Gratuitos</h2>
-
+        <JuegosGratisPaginado></JuegosGratisPaginado>
       </article>
       <article>
         <h2>Productos en Venta</h2>
+        <ProductosPaginados></ProductosPaginados>
       </article>
       <article>
         <CategoriasHome></CategoriasHome>

@@ -55,6 +55,11 @@ const router = createRouter({
       component: () => import('../views/MarketplaceView.vue')
     },
     {
+      path: '/filtro/:opcion/:categoria/:id',
+      name: 'filtro',
+      component: () => import('../views/FiltroView.vue')
+    },
+    {
       path: '/resenas',
       name: 'resenas',
       component: () => import('../views/ReseñasJuegoView.vue')

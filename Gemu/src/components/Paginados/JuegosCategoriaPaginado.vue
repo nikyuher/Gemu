@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, computed } from 'vue';
+import { onMounted, computed, watch } from 'vue';
 import { JuegoApi } from '@/stores/juegoApi';
 
 const props = defineProps<{
@@ -8,17 +8,26 @@ const props = defineProps<{
 
 const juegoStore = JuegoApi();
 
-const { hasMore, loading } = juegoStore;
+const { hasMoreCategoria, loading } = juegoStore;
 
-const juegos = computed(() => juegoStore.juegos);
-
+const juegos = computed(() => juegoStore.JuegosCategoriaPaginado);
 const lista = props.idsCategorias
-onMounted(async () => {
-    await juegoStore.GetJuegosCategoriaPaginados(lista);
+
+onMounted(() => {
+    fetchData(props.idsCategorias);
 });
 
+watch(() => props.idsCategorias, (newVal) => {
+    fetchData(newVal);
+});
+
+const fetchData = async (lista: number[]) => {
+    await juegoStore.resetCurrentPageGratis();
+    await juegoStore.GetJuegosCategoriaPaginados(lista);
+};
+
 const mostrarMas = async () => {
-    if (!loading && hasMore) {
+    if (!loading && hasMoreCategoria) {
         await juegoStore.GetJuegosCategoriaPaginados(lista);
     }
 };
@@ -27,7 +36,7 @@ const mostrarMas = async () => {
 </script>
 
 <template>
-    <div style="display: flex;">
+    <div style="display: flex; flex-wrap: wrap;">
         <div v-for="juego in juegos" :key="juego.idJuego" class="juego-item">
             <RouterLink :to="{ name: 'producto', params: { producto: 'juego', id: juego.idJuego } }"
                 style="text-decoration: none;">
@@ -41,10 +50,10 @@ const mostrarMas = async () => {
                 <p>{{ juego.precio }} €</p>
             </RouterLink>
         </div>
-        <button @click="mostrarMas" :disabled="loading || !hasMore">
-            {{ loading ? 'Cargando...' : 'Mostrar Más' }}
-        </button>
     </div>
+    <button @click="mostrarMas" :disabled="loading || !hasMoreCategoria" class="boton-mostrar-mas">
+        {{ loading ? 'Cargando...' : 'Mostrar Más' }}
+    </button>
 </template>
 
 <style scoped>
@@ -54,10 +63,21 @@ const mostrarMas = async () => {
     color: white;
     padding: 20px;
     margin-right: 20px;
+    margin-bottom: 20px;
     max-width: 400px;
 }
 
 .juego-item:hover {
     background-color: #301347;
+}
+
+.boton-mostrar-mas {
+    display: flex;
+    margin: auto;
+    text-align: center;
+    align-items: center;
+    background-color: #682E83;
+    border: 1px solid white;
+    padding: 10px 20px 10px 20px;
 }
 </style>

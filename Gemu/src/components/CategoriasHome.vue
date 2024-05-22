@@ -1,24 +1,20 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { RouterLink } from 'vue-router'
+import { CategoriaApi } from '@/stores/categoriasApi';
 
+const storeCategoria = CategoriaApi()
 const mostrarTodo = ref(false);
 
-const categorias = [
-    { nombre: 'Terror', icono: 'mdi-ghost' },
-    { nombre: 'Aventura', icono: 'mdi-sword' },
-    { nombre: 'Accion', icono: 'mdi-kabaddi' },
-    { nombre: 'Fps', icono: 'mdi-car-light-high' },
-    { nombre: 'Carrera', icono: 'mdi-car-sports' },
-    { nombre: 'Un jugador', icono: 'mdi-account' },
-    { nombre: 'Lucha', icono: 'mdi-karate' },
-    { nombre: 'Multijugador', icono: 'mdi-controller-classic' },
-    { nombre: 'Mundo abierto', icono: 'mdi-island-variant' },
-    { nombre: 'Estrategia', icono: 'mdi-chess-pawn' }
-];
+const listaCategorias = ref<any[]>([])
+
+onMounted(async () => {
+    await storeCategoria.GetCategoriaSeccion('juegos')
+    listaCategorias.value = storeCategoria.listaCategoriaSeccion
+})
 
 const categoriasFiltradas = computed(() => {
-    return mostrarTodo.value ? categorias : categorias.slice(0, 4);
+    return mostrarTodo.value ? listaCategorias.value : listaCategorias.value.slice(0, 4);
 });
 
 const toggleMostrarTodo = () => {
@@ -29,11 +25,14 @@ const toggleMostrarTodo = () => {
     <h2>Categorias</h2>
     <div class="categorias">
         <div class="ajustes-categoria">
-            <div v-for="(categoria, index) in categoriasFiltradas" :key="index">
-                <div class="caja">
-                    <v-icon>{{ categoria.icono }}</v-icon>
-                    <p>{{ categoria.nombre }}</p>
-                </div>
+            <div v-for="categoria of categoriasFiltradas" :key="categoria.idCategoria">
+                <router-link
+                    :to="{ name: 'filtro', params: { opcion: 'juegos', categoria: categoria.nombre, id: categoria.idCategoria } }">
+                    <div class="caja">
+                        <v-icon>{{ categoria.icono }}</v-icon>
+                        <p>{{ categoria.nombre }}</p>
+                    </div>
+                </router-link>
             </div>
         </div>
     </div>

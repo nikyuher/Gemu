@@ -13,11 +13,9 @@
 </template>
 
 <style scoped>
-
 .contenedorError {
     margin: 150px auto;
     text-align: center;
     color: none;
 }
-
 </style>

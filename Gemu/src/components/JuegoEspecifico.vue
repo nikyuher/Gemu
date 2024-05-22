@@ -6,7 +6,7 @@ import { CategoriaApi } from '@/stores/categoriasApi';
 import { CarritoApi } from '@/stores/carritoApi';
 import { UsuarioApi } from '@/stores/usuarioApi';
 import ErrorUrlView from "@/views/ErrorUrlView.vue";
-import Juegos from '@/components/JuegosCategoriaPaginado.vue'
+import Juegos from '@/components/Paginados/JuegosCategoriaPaginado.vue'
 
 const props = defineProps<{
     idJuego: number;
@@ -22,7 +22,6 @@ const storeCarrito = CarritoApi()
 const responseMessage = ref('');
 
 const IdUsuario = storeUsuario.$state.usuarioId?.idUsuario
-
 
 const ID = ref<number>()
 const nombreJuego = ref()
@@ -94,12 +93,17 @@ const addJuegoCarrito = async () => {
             const total = storeCarrito.getTotalPrecio() + sumaPrecio;
             await storeCarrito.setCatidadCarrito(cantidad)
             await storeCarrito.setTotalPrecio(total)
+            responseMessage.value = 'Añadido correctamente'
+            setTimeout(() => {
+                responseMessage.value = '';
+            }, 3000);
+        } else {
+            responseMessage.value = 'No estas registrado'
+            setTimeout(() => {
+                responseMessage.value = '';
+            }, 3000);
         }
 
-        responseMessage.value = 'Añadido correctamente'
-        setTimeout(() => {
-            responseMessage.value = '';
-        }, 3000);
     } catch (error) {
         if (error instanceof Error) {
             console.error(error);
@@ -118,6 +122,7 @@ const addJuegoCarrito = async () => {
 
 <template>
     <div v-if="!ID">
+        Error JuegoEspecifico
         <ErrorUrlView></ErrorUrlView>
     </div>
     <div v-else class=prodcuto>

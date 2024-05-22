@@ -2,15 +2,15 @@
 import { UsuarioApi } from '@/stores/usuarioApi';
 import { useRouter, useRoute, onBeforeRouteUpdate } from 'vue-router';
 import { ref } from 'vue';
-import informacionGeneral from '@/components/InforGeneral.vue'
-import AñadirFondos from '@/components/AñadirFondos.vue'
-import RestarFondos from '@/components/RestarFondos.vue'
-import infoBilletera from "@/components/InforBilletera.vue";
-import Ajustes from "@/components/AjustesUsuario.vue";
-import JuegosComprados from "@/components/JuegosComprados.vue";
-import ProductosComprados from "@/components/ProductosComprados.vue";
-import crearProducto from "@/components/CrearProducto.vue";
-import MisAnuncios from "@/components/AnunciosUsuario.vue";
+import informacionGeneral from '@/components/MenuUsuario/InforGeneral.vue'
+import AñadirFondos from '@/components/MenuUsuario/AñadirFondos.vue'
+import RestarFondos from '@/components/MenuUsuario/RestarFondos.vue'
+import infoBilletera from "@/components/MenuUsuario/InforBilletera.vue";
+import Ajustes from "@/components/MenuUsuario/AjustesUsuario.vue";
+import JuegosComprados from "@/components/MenuUsuario/JuegosComprados.vue";
+import ProductosComprados from "@/components/MenuUsuario/ProductosComprados.vue";
+import crearProducto from "@/components/MenuUsuario/CrearProducto.vue";
+import MisAnuncios from "@/components/MenuUsuario/AnunciosUsuario.vue";
 import { CarritoApi } from "@/stores/carritoApi";
 
 const route = useRoute();
