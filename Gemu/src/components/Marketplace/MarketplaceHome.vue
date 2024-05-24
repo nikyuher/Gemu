@@ -30,7 +30,11 @@ onMounted(async () => {
         <div class="cont-tipos">
             <h2>Tipos de producto</h2>
             <div v-for="seccion of listaSecciones" :key="seccion.idCategoria">
-                <p>{{ seccion.nombre }}</p>
+                <RouterLink
+                    :to="{ name: 'filtro', params: { opcion: 'productos', categoria: seccion.nombre, id: seccion.idCategoria } }"
+                    style="text-decoration: none;">
+                    <p>{{ seccion.nombre }}</p>
+                </RouterLink>
             </div>
         </div>
         <div class="cont-productos">
@@ -53,7 +57,8 @@ onMounted(async () => {
                         </RouterLink>
                     </div>
                 </div>
-                <RouterLink :to="{ name: 'filtro', params: { opcion: 'juegos', categoria: 'general', id: 0 } }">
+                <RouterLink
+                    :to="{ name: 'filtro', params: { opcion: 'productos', categoria: seccion.nombre, id: seccion.idCategoria } }">
                     <button class="boton-mostrar-mas">
                         Mostrar todo
                     </button>

@@ -2,7 +2,7 @@
 import { ref, onMounted, watchEffect } from "vue";
 import { useRoute } from 'vue-router';
 import { CategoriaApi } from '@/stores/categoriasApi';
-import juegosCategoria from '@/components/Paginados/JuegosCategoriaPaginado.vue'
+import ProductoCategoria from '@/components/Paginados/ProductosCtegoriaPaginado.vue'
 
 const props = defineProps<{
     idCategoria: number;
@@ -15,6 +15,9 @@ const tipoJuego = ref(route.params.categoria);
 const listaCategorias = ref<any[]>([])
 const listaPlataforma = ref<any[]>([])
 const listaIdsCategoria = ref<number[]>([]);
+const listaEstados = ['nuevo', 'casiNuevo', 'buenEstado', 'usado']
+
+const estadosSeleccionados = ref<string[]>([]);
 
 const fetchData = async (idJuego: number) => {
     try {
@@ -23,7 +26,7 @@ const fetchData = async (idJuego: number) => {
         } else {
             listaIdsCategoria.value = [idJuego]
         };
-        await storeCategoria.GetCategoriaSeccion('juegos')
+        await storeCategoria.GetCategoriaSeccion('marketplace')
         await storeCategoria.GetCategoriaSeccion('plataforma')
         listaCategorias.value = storeCategoria.listaCategoriaSeccion
         listaPlataforma.value = storeCategoria.listaCategoriaPlataforma
@@ -40,6 +43,15 @@ const CheckCategoria = (idCategoria: number) => {
     }
 };
 
+
+const CheckEstado = (estado: string) => {
+    if (estadosSeleccionados.value.includes(estado)) {
+        estadosSeleccionados.value = estadosSeleccionados.value.filter(e => e !== estado);
+    } else {
+        estadosSeleccionados.value.push(estado);
+    }
+};
+
 onMounted(() => {
     fetchData(props.idCategoria);
 });
@@ -47,6 +59,7 @@ onMounted(() => {
 watchEffect(() => {
     fetchData(props.idCategoria);
 });
+
 
 </script>
 
@@ -77,9 +90,20 @@ watchEffect(() => {
                         </div>
                     </div>
                 </div>
+                <div class="cajas">
+                    <h3>Estados</h3>
+                    <div v-for="(estado, index) in listaEstados" :key="index">
+                        <div style="display: flex;">
+                            <input type="checkbox" :value="estado" :name="estado"
+                                :checked="estadosSeleccionados.includes(estado)" @change="CheckEstado(estado)">
+                            <label>{{ estado }}</label>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="productos-filtrados">
-                <juegosCategoria :ids-categorias="[...listaIdsCategoria]"></juegosCategoria>
+                <ProductoCategoria :ids-categorias="[...listaIdsCategoria]" :estados="[...estadosSeleccionados]">
+                </ProductoCategoria>
             </div>
         </div>
     </div>

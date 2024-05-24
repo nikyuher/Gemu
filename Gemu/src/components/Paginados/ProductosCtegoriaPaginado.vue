@@ -4,6 +4,7 @@ import { ProductoApi } from '@/stores/productoApi';
 
 const props = defineProps<{
     idsCategorias: number[];
+    estados?: string[];
     validacion?: boolean;
 }>();
 
@@ -14,23 +15,35 @@ const hasMoreCategoria = computed(() => storeProducto.hasMoreCategoria);
 const showProgress = ref(false);
 
 const productos = ref<any[]>([])
-
+const productosFiltrados = ref<any[]>([]);
 const fetchData = async (ids: number[]) => {
     try {
 
         await storeProducto.resetCurrentPageCategoria()
         await storeProducto.GetProductoCategoriaPaginados(ids);
-        console.log(ids);
         productos.value = storeProducto.productosCategoriaPaginados
+        filtrarProductos();
     } catch (error) {
         console.error('Error en el fetchData:', error);
     }
 };
 
-watchEffect(() => {
-    console.log("El watchEffect " + props.idsCategorias);
+const filtrarProductos = () => {
+    if (props.estados && props.estados.length > 0) {
+        productosFiltrados.value = productos.value.filter(producto =>
+            props.estados?.includes(producto.estado)
+        );
+    } else {
+        productosFiltrados.value = productos.value;
+    }
+};
 
+watchEffect(() => {
     fetchData(props.idsCategorias);
+});
+
+watchEffect(() => {
+    filtrarProductos();
 });
 
 const mostrarMas = async () => {
@@ -47,7 +60,7 @@ const mostrarMas = async () => {
 
 <template>
     <div style="display: flex; flex-wrap: wrap;">
-        <div v-for="producto in productos" :key="producto.idProducto" class="producto-item">
+        <div v-for="producto in productosFiltrados" :key="producto.idProducto" class="producto-item">
             <RouterLink :to="{ name: 'producto', params: { producto: 'producto', id: producto.idProducto } }"
                 style="text-decoration: none;">
                 <div v-if="producto.imgsProducto.length > 0">

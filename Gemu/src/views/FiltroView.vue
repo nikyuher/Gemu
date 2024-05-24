@@ -2,7 +2,7 @@
 import { ref } from "vue";
 import { useRoute, onBeforeRouteUpdate } from 'vue-router';
 import FiltrosJuegos from '@/components/FiltrosJuegos.vue';
-import FiltroProductos from '@/components/FiltroProductos.vue';
+import FiltroProductos from '@/components/Marketplace/FiltroProductos.vue';
 import ErrorUrlView from "./ErrorUrlView.vue";
 
 const route = useRoute();
@@ -22,7 +22,7 @@ onBeforeRouteUpdate((to) => {
             <FiltrosJuegos :id-categoria="Number(idCategoria)"></FiltrosJuegos>
         </div>
         <div v-else-if="opcion === 'productos'">
-            <FiltroProductos></FiltroProductos>
+            <FiltroProductos :id-categoria="Number(idCategoria)"></FiltroProductos>
         </div>
         <div v-else>
             error en view
