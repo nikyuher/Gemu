@@ -3,14 +3,24 @@ import { ref, computed, onMounted } from 'vue';
 import { RouterLink } from 'vue-router'
 import { CategoriaApi } from '@/stores/categoriasApi';
 
+const props = defineProps<{
+    plataforma?: boolean;
+}>();
+
 const storeCategoria = CategoriaApi()
 const mostrarTodo = ref(false);
 
 const listaCategorias = ref<any[]>([])
 
 onMounted(async () => {
+
     await storeCategoria.GetCategoriaSeccion('juegos')
     listaCategorias.value = storeCategoria.listaCategoriaSeccion
+
+    if (props.plataforma) {
+        await storeCategoria.GetCategoriaSeccion('plataforma')
+        listaCategorias.value = storeCategoria.listaCategoriaPlataforma
+    }
 })
 
 const categoriasFiltradas = computed(() => {
@@ -22,9 +32,8 @@ const toggleMostrarTodo = () => {
 };
 </script>
 <template>
-    <h2>Categorias</h2>
-    <div class="categorias">
-        <div class="ajustes-categoria">
+    <div v-if="plataforma">
+        <div class="plataformas">
             <div v-for="categoria of categoriasFiltradas" :key="categoria.idCategoria">
                 <router-link
                     :to="{ name: 'filtro', params: { opcion: 'juegos', categoria: categoria.nombre, id: categoria.idCategoria } }">
@@ -36,10 +45,26 @@ const toggleMostrarTodo = () => {
             </div>
         </div>
     </div>
-    <div class="boton">
-        <button @click="toggleMostrarTodo">
-            {{ mostrarTodo ? 'Mostrar menos' : 'Mostrar todo' }}
-        </button>
+    <div v-else>
+        <h2>Categorias</h2>
+        <div class="categorias">
+            <div class="ajustes-categoria">
+                <div v-for="categoria of categoriasFiltradas" :key="categoria.idCategoria">
+                    <router-link
+                        :to="{ name: 'filtro', params: { opcion: 'juegos', categoria: categoria.nombre, id: categoria.idCategoria } }">
+                        <div class="caja">
+                            <v-icon>{{ categoria.icono }}</v-icon>
+                            <p>{{ categoria.nombre }}</p>
+                        </div>
+                    </router-link>
+                </div>
+            </div>
+        </div>
+        <div class="boton">
+            <button @click="toggleMostrarTodo">
+                {{ mostrarTodo ? 'Mostrar menos' : 'Mostrar todo' }}
+            </button>
+        </div>
     </div>
 </template>
 <style scoped>
@@ -83,5 +108,13 @@ const toggleMostrarTodo = () => {
 
 .caja .v-icon {
     font-size: 90px;
+}
+
+.plataformas {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    justify-content: space-evenly;
+    margin: 100px 0;
 }
 </style>

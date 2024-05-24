@@ -15,6 +15,7 @@ interface Producto {
 export const ProductoApi = defineStore('producto', {
   state: () => ({
     producto: null as Producto | null,
+    productos: [] as any[],
 
     productosPaginados: [] as any[],
     productosCategoriaPaginados: [] as any[],
@@ -30,6 +31,23 @@ export const ProductoApi = defineStore('producto', {
   }),
 
   actions: {
+    async AllProducts() {
+      try {
+        const response = await fetch(`${baseUrl}/Producto`, {
+          method: 'GET',
+          headers: {}
+        })
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.message || 'error al llamar a  los productos.')
+        }
+        const data = await response.json()
+
+        this.productos = data
+      } catch (error) {
+        console.log(error)
+      }
+    },
     async GetProductoCategoriaPaginados(categoriaIds: number[]) {
       if (this.loading) return
 
@@ -59,7 +77,7 @@ export const ProductoApi = defineStore('producto', {
         const data = await response.json()
 
         if (data.length < this.pageSize) {
-          this.hasMorePaginados = false
+          this.hasMoreCategoria = false
         }
 
         this.productosCategoriaPaginados = [...this.productosCategoriaPaginados, ...data]

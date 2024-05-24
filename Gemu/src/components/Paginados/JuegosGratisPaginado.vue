@@ -1,10 +1,17 @@
 <script setup lang="ts">
-import { onMounted, computed } from 'vue';
+import { onMounted, computed, ref } from 'vue';
 import { JuegoApi } from '@/stores/juegoApi';
+
+const props = defineProps<{
+    validacion?: boolean;
+}>();
+
 
 const juegoStore = JuegoApi();
 
-const { hasMoreGratis, loading } = juegoStore;
+const loading = computed(() => juegoStore.loading);
+const hasMoreGratis = computed(() => juegoStore.hasMoreGratis);
+const showProgress = ref(false);
 
 const juegos = computed(() => juegoStore.JuegosGratisPaginado);
 
@@ -14,8 +21,12 @@ onMounted(async () => {
 });
 
 const mostrarMas = async () => {
-    if (!loading && hasMoreGratis) {
+    if (!loading.value && hasMoreGratis.value) {
+        showProgress.value = true;
         await juegoStore.GetJuegosGratisPaginados();
+        setTimeout(() => {
+            showProgress.value = false;
+        }, 1000);
     }
 };
 
@@ -38,9 +49,21 @@ const mostrarMas = async () => {
             </RouterLink>
         </div>
     </div>
-    <button @click="mostrarMas" :disabled="loading || !hasMoreGratis" class="boton-mostrar-mas">
-        {{ loading ? 'Cargando...' : 'Mostrar Más' }}
-    </button>
+    <div v-if="props.validacion">
+        <RouterLink :to="{ name: 'filtro', params: { opcion: 'juegos', categoria: 'general', id: 0 } }">
+            <button @click="mostrarMas" class="boton-mostrar-mas">
+                Mostrar todo
+            </button>
+        </RouterLink>
+    </div>
+    <div v-else-if="showProgress" class="d-flex align-center justify-center fill-height">
+        <v-progress-circular color="grey-lighten-4" indeterminate></v-progress-circular>
+    </div>
+    <div v-else>
+        <button @click="mostrarMas" :class="{ 'ocultar': loading || !hasMoreGratis }" class="boton-mostrar-mas">
+            Mostrar Más
+        </button>
+    </div>
 </template>
 
 <style scoped>
@@ -66,5 +89,9 @@ const mostrarMas = async () => {
     background-color: #682E83;
     border: 1px solid white;
     padding: 10px 20px 10px 20px;
+}
+
+.ocultar {
+    display: none;
 }
 </style>

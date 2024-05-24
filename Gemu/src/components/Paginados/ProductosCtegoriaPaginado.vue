@@ -1,25 +1,45 @@
 <script setup lang="ts">
-import { onMounted, computed } from 'vue';
+import { onMounted, computed, ref, watch, watchEffect } from 'vue';
 import { ProductoApi } from '@/stores/productoApi';
 
 const props = defineProps<{
     idsCategorias: number[];
+    validacion?: boolean;
 }>();
 
 const storeProducto = ProductoApi();
 
-const { hasMoreCategoria, loading } = storeProducto;
+const loading = computed(() => storeProducto.loading);
+const hasMoreCategoria = computed(() => storeProducto.hasMoreCategoria);
+const showProgress = ref(false);
 
-const productos = computed(() => storeProducto.productosCategoriaPaginados);
-const lista = props.idsCategorias
-onMounted(async () => {
-    storeProducto.resetCurrentPageCategoria()
-    await storeProducto.GetProductoCategoriaPaginados(lista);
+const productos = ref<any[]>([])
+
+const fetchData = async (ids: number[]) => {
+    try {
+
+        await storeProducto.resetCurrentPageCategoria()
+        await storeProducto.GetProductoCategoriaPaginados(ids);
+        console.log(ids);
+        productos.value = storeProducto.productosCategoriaPaginados
+    } catch (error) {
+        console.error('Error en el fetchData:', error);
+    }
+};
+
+watchEffect(() => {
+    console.log("El watchEffect " + props.idsCategorias);
+
+    fetchData(props.idsCategorias);
 });
 
 const mostrarMas = async () => {
-    if (!loading && hasMoreCategoria) {
-        await storeProducto.GetProductoCategoriaPaginados(lista);
+    if (!loading.value && hasMoreCategoria.value) {
+        showProgress.value = true;
+        await storeProducto.GetProductoCategoriaPaginados(props.idsCategorias);
+        setTimeout(() => {
+            showProgress.value = false;
+        }, 1000);
     }
 };
 
@@ -41,9 +61,21 @@ const mostrarMas = async () => {
             </RouterLink>
         </div>
     </div>
-    <button @click="mostrarMas" :disabled="loading || !hasMoreCategoria" class="boton-mostrar-mas">
-        {{ loading ? 'Cargando...' : 'Mostrar Más' }}
-    </button>
+    <div v-if="props.validacion">
+        <RouterLink to="/marketplace">
+            <button @click="mostrarMas" class="boton-mostrar-mas">
+                Mostrar todo
+            </button>
+        </RouterLink>
+    </div>
+    <div v-else-if="showProgress" class="d-flex align-center justify-center fill-height">
+        <v-progress-circular color="grey-lighten-4" indeterminate></v-progress-circular>
+    </div>
+    <div v-else>
+        <button @click="mostrarMas" :class="{ 'ocultar': loading || !hasMoreCategoria }" class="boton-mostrar-mas">
+            Mostrar Más
+        </button>
+    </div>
 </template>
 
 <style scoped>
@@ -69,5 +101,9 @@ const mostrarMas = async () => {
     background-color: #682E83;
     border: 1px solid white;
     padding: 10px 20px 10px 20px;
+}
+
+.ocultar {
+    display: none;
 }
 </style>

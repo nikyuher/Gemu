@@ -55,7 +55,7 @@ const router = createRouter({
       component: () => import('../views/MarketplaceView.vue')
     },
     {
-      path: '/filtro/:opcion/:categoria/:id',
+      path: '/filtro/:opcion/:categoria/:id?',
       name: 'filtro',
       component: () => import('../views/FiltroView.vue')
     },

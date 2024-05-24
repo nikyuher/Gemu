@@ -1,56 +1,57 @@
 <script setup lang="ts">
 import { onMounted, computed, ref } from 'vue';
-import { ProductoApi } from '@/stores/productoApi';
+import { JuegoApi } from '@/stores/juegoApi';
 
 const props = defineProps<{
     validacion?: boolean;
 }>();
 
 
-const storeProducto = ProductoApi();
+const juegoStore = JuegoApi();
 
-const loading = computed(() => storeProducto.loading);
-const hasMorePaginados = computed(() => storeProducto.hasMorePaginados);
+const loading = computed(() => juegoStore.loading);
+const hasMorePaginados = computed(() => juegoStore.hasMorePaginados);
 const showProgress = ref(false);
 
-const productos = computed(() => storeProducto.productosPaginados);
+const juegos = computed(() => juegoStore.JuegosPaginados);
 
 onMounted(async () => {
-    storeProducto.resetCurrentPagePaginados()
-    await storeProducto.GetProductosPaginados();
+    juegoStore.resetCurrentPageCategoria();
+    await juegoStore.GetJuegosPaginados();
 });
 
 const mostrarMas = async () => {
     if (!loading.value && hasMorePaginados.value) {
         showProgress.value = true;
-        await storeProducto.GetProductosPaginados();
+        await juegoStore.GetJuegosPaginados();
         setTimeout(() => {
             showProgress.value = false;
         }, 1000);
     }
 };
 
+
 </script>
 
 <template>
     <div style="display: flex; flex-wrap: wrap;">
-        <div v-for="producto in productos" :key="producto.idProducto" class="producto-item">
-            <RouterLink :to="{ name: 'producto', params: { producto: 'producto', id: producto.idProducto } }"
+        <div v-for="juego in juegos" :key="juego.idJuego" class="juego-item">
+            <RouterLink :to="{ name: 'producto', params: { producto: 'juego', id: juego.idJuego } }"
                 style="text-decoration: none;">
-                <div v-if="producto.imgsProducto.length > 0">
-                    <img :src="'data:image/png;base64,' + producto.imgsProducto[0].datos" alt="Portada del producto"
+                <div v-if="juego.imgsJuego.length > 0">
+                    <img :src="'data:image/png;base64,' + juego.imgsJuego[0].datos" alt="Portada del juego"
                         style="height: 250px; width: 185px;" />
                 </div>
-                <h3>{{ producto.nombre }}</h3>
-                <p>Estado: {{ producto.estado }}</p>
-                <p>desde </p>
-                <p>{{ producto.precio }} €</p>
+                <h3>{{ juego.titulo }}</h3>
+                <p>{{ juego.plataforma }}</p>
+                <p style="color: #D0D0D0;">desde</p>
+                <p>Gratis</p>
             </RouterLink>
         </div>
     </div>
     <div v-if="props.validacion">
-        <RouterLink to="/marketplace">
-            <button class="boton-mostrar-mas">
+        <RouterLink :to="{ name: 'filtro', params: { opcion: 'juegos', categoria: 'general', id: 0 } }">
+            <button @click="mostrarMas" class="boton-mostrar-mas">
                 Mostrar todo
             </button>
         </RouterLink>
@@ -66,7 +67,7 @@ const mostrarMas = async () => {
 </template>
 
 <style scoped>
-.producto-item {
+.juego-item {
     border: 1px solid #D550F6;
     background-color: #491F6A;
     color: white;
@@ -76,7 +77,7 @@ const mostrarMas = async () => {
     max-width: 400px;
 }
 
-.producto-item:hover {
+.juego-item:hover {
     background-color: #301347;
 }
 

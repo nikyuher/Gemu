@@ -6,6 +6,7 @@ const baseUrl: string = urlStore.baseUrl
 export const CategoriaApi = defineStore('categoria', {
   state: () => ({
     listaCategoriaSeccion: [] as any[],
+    listaCategoriaPlataforma: [] as any[],
     listCategoriasProducto: [] as any[],
     listCategoriasJuego: [] as any[]
   }),
@@ -63,7 +64,12 @@ export const CategoriaApi = defineStore('categoria', {
 
         const data = await response.json()
 
-        this.listaCategoriaSeccion = data
+        if (seccion === 'marketplace' || seccion === 'juegos') {
+          this.listaCategoriaSeccion = data
+        }
+        if (seccion === 'plataforma') {
+          this.listaCategoriaPlataforma = data
+        }
       } catch (error) {
         throw new Error(`Error al obtner las categorias: ${error}`)
       }

@@ -1,17 +1,29 @@
 <script setup lang="ts">
-import { onMounted, computed, watch } from 'vue';
+import { onMounted, computed, watch, ref } from 'vue';
 import { JuegoApi } from '@/stores/juegoApi';
 
 const props = defineProps<{
     idsCategorias: number[];
+    validacion?: boolean;
 }>();
 
 const juegoStore = JuegoApi();
 
-const { hasMoreCategoria, loading } = juegoStore;
+
+const loading = computed(() => juegoStore.loading);
+const hasMoreCategoria = computed(() => juegoStore.hasMoreCategoria);
+const showProgress = ref(false);
 
 const juegos = computed(() => juegoStore.JuegosCategoriaPaginado);
-const lista = props.idsCategorias
+
+const fetchData = async (ids: number[]) => {
+    try {
+        await juegoStore.resetCurrentPageCategoria();
+        await juegoStore.GetJuegosCategoriaPaginados(ids);
+    } catch (error) {
+        console.error('Error en el fetchData:', error);
+    }
+};
 
 onMounted(() => {
     fetchData(props.idsCategorias);
@@ -19,19 +31,17 @@ onMounted(() => {
 
 watch(() => props.idsCategorias, (newVal) => {
     fetchData(newVal);
-});
-
-const fetchData = async (lista: number[]) => {
-    await juegoStore.resetCurrentPageGratis();
-    await juegoStore.GetJuegosCategoriaPaginados(lista);
-};
+}, { deep: true });
 
 const mostrarMas = async () => {
-    if (!loading && hasMoreCategoria) {
-        await juegoStore.GetJuegosCategoriaPaginados(lista);
+    if (!loading.value && hasMoreCategoria.value) {
+        showProgress.value = true;
+        await juegoStore.GetJuegosCategoriaPaginados(props.idsCategorias);
+        setTimeout(() => {
+            showProgress.value = false;
+        }, 1000);
     }
 };
-
 
 </script>
 
@@ -51,9 +61,21 @@ const mostrarMas = async () => {
             </RouterLink>
         </div>
     </div>
-    <button @click="mostrarMas" :disabled="loading || !hasMoreCategoria" class="boton-mostrar-mas">
-        {{ loading ? 'Cargando...' : 'Mostrar Más' }}
-    </button>
+    <div v-if="props.validacion">
+        <RouterLink :to="{ name: 'filtro', params: { opcion: 'juegos', categoria: 'general', id: 0 } }">
+            <button @click="mostrarMas" class="boton-mostrar-mas">
+                Mostrar todo
+            </button>
+        </RouterLink>
+    </div>
+    <div v-else-if="showProgress" class="d-flex align-center justify-center fill-height">
+        <v-progress-circular color="grey-lighten-4" indeterminate></v-progress-circular>
+    </div>
+    <div v-else>
+        <button @click="mostrarMas" :class="{ 'ocultar': loading || !hasMoreCategoria }" class="boton-mostrar-mas">
+            Mostrar Más
+        </button>
+    </div>
 </template>
 
 <style scoped>
@@ -79,5 +101,9 @@ const mostrarMas = async () => {
     background-color: #682E83;
     border: 1px solid white;
     padding: 10px 20px 10px 20px;
+}
+
+.ocultar {
+    display: none;
 }
 </style>

@@ -91,7 +91,7 @@ onMounted(async () => {
       </div>
     </div>
     <div class="nav-inferior">
-      <RouterLink to="/resenas">Marketplace</RouterLink>
+      <RouterLink to="/marketplace">Marketplace</RouterLink>
       <RouterLink to="/ofertas">Ofertas</RouterLink>
       <RouterLink :to="{ name: 'juegosTipo', params: { tipo: 'baratos' } }">Juegos Baratos</RouterLink>
     </div>

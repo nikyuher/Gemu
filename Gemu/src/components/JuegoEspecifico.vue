@@ -161,7 +161,7 @@ const addJuegoCarrito = async () => {
         </div>
         <div class="producto-relacionado">
             <h2>Productos relacionados</h2>
-            <Juegos :ids-categorias="idsCategoria"></Juegos>
+            <Juegos :validacion="true" :ids-categorias="idsCategoria"></Juegos>
         </div>
         <div class="juegos-Reseñas">
             <h2>Reseñas</h2>

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import CategoriasHome from '@/components/CategoriasHome.vue';
 import JuegosGratisPaginado from '@/components/Paginados/JuegosGratisPaginado.vue';
+import JuegosPaginados from '@/components/Paginados/JuegosPaginados.vue';
 import ProductosPaginados from '@/components/Paginados/ProductosPaginados.vue';
-import FiltrosJuegos from '@/components/FiltrosJuegos.vue';
 
 </script>
 
@@ -13,35 +13,19 @@ import FiltrosJuegos from '@/components/FiltrosJuegos.vue';
     </div>
     <section>
       <article>
-        <div class="plataformas">
-          <div class="caja">
-            <v-icon>mdi-laptop</v-icon>
-            <p>PC</p>
-          </div>
-          <div class="caja">
-            <v-icon>mdi-sony-playstation</v-icon>
-            <p>PlayStation</p>
-          </div>
-          <div class="caja">
-            <v-icon>mdi-microsoft-xbox</v-icon>
-            <p>Xbox</p>
-          </div>
-          <div class="caja">
-            <v-icon>mdi-nintendo-switch</v-icon>
-            <p>Nintendo</p>
-          </div>
-        </div>
+        <CategoriasHome :plataforma="true"></CategoriasHome>
       </article>
       <article>
-        <h2>Juegos Recomendados</h2>
+        <h2>Juegos Generales</h2>
+        <JuegosPaginados :validacion="true"></JuegosPaginados>
       </article>
       <article>
         <h2>Juegos Gratuitos</h2>
-        <JuegosGratisPaginado></JuegosGratisPaginado>
+        <JuegosGratisPaginado :validacion="true"></JuegosGratisPaginado>
       </article>
       <article>
         <h2>Productos en Venta</h2>
-        <ProductosPaginados></ProductosPaginados>
+        <ProductosPaginados :validacion="true"></ProductosPaginados>
       </article>
       <article>
         <CategoriasHome></CategoriasHome>
@@ -71,14 +55,6 @@ main {
 
 .banner img {
   width: 100%;
-}
-
-.plataformas {
-  display: flex;
-  align-items: center;
-  text-align: center;
-  justify-content: space-evenly;
-  margin: 100px 0;
 }
 
 .caja {

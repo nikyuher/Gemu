@@ -38,6 +38,7 @@ onMounted(async () => {
 
         responseMessage.value = '';
 
+        await storeCategoria.GetCategoriaSeccion('plataforma')
         await storeCategoria.GetCategoriaSeccion('marketplace')
         await storeCategoria.GetCategoriasProducto(props.idProducto)
         await storeProducto.GetProducto(props.idProducto)
@@ -50,7 +51,8 @@ onMounted(async () => {
             estado.value = storeProducto.producto?.estado
         }
         cantidad.value = storeProducto.producto?.cantidad
-        categoriasApi.value = storeCategoria.listaCategoriaSeccion
+
+        categoriasApi.value = [...storeCategoria.listaCategoriaPlataforma, ...storeCategoria.listaCategoriaSeccion]
 
         mostrarEtiquetas.value = storeCategoria.listCategoriasProducto
             .map(pc => pc.categoria.nombre)

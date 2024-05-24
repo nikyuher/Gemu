@@ -45,8 +45,9 @@ onMounted(async () => {
     try {
 
         await storeCategoria.GetCategoriaSeccion('marketplace')
+        await storeCategoria.GetCategoriaSeccion('plataforma')
 
-        categoriasApi.value = storeCategoria.listaCategoriaSeccion
+        categoriasApi.value = [...storeCategoria.listaCategoriaPlataforma, ...storeCategoria.listaCategoriaSeccion]
 
     } catch (error) {
         console.log('No se pudo obtener el id');

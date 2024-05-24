@@ -21,15 +21,19 @@ export const JuegoApi = defineStore('juego', {
 
     JuegosCategoriaPaginado: [] as any[],
     JuegosGratisPaginado: [] as any[],
+    JuegosPaginados: [] as any[],
 
     currentPageCategoria: 1 as number,
     currentPageGratis: 1 as number,
+    currentPagePaginados: 1 as number,
 
     hasMoreCategoria: true,
     hasMoreGratis: true,
+    hasMorePaginados: true,
 
     pageSize: 5,
-    loading: false
+    loading: false,
+    loadingPaginados: false
   }),
 
   actions: {
@@ -131,6 +135,42 @@ export const JuegoApi = defineStore('juego', {
         throw error
       } finally {
         this.loading = false
+      }
+    },
+    async GetJuegosPaginados() {
+      if (this.loadingPaginados) return
+
+      this.loadingPaginados = true
+      try {
+        const queryParams = new URLSearchParams({
+          pageNumber: this.currentPagePaginados.toString(),
+          pageSize: this.pageSize.toString()
+        })
+
+        const response = await fetch(`${baseUrl}/Juego/paginados?${queryParams.toString()}`, {
+          method: 'GET',
+          headers: {}
+        })
+
+        if (!response.ok) {
+          const errorText = await response.text()
+          console.log('Error Response Text:', errorText)
+          throw new Error('Error al obtener los juegos.')
+        }
+
+        const data = await response.json()
+
+        if (data.length < this.pageSize) {
+          this.hasMorePaginados = false
+        }
+
+        this.JuegosPaginados = [...this.JuegosPaginados, ...data]
+        this.currentPagePaginados += 1
+      } catch (error) {
+        console.log(error)
+        throw error
+      } finally {
+        this.loadingPaginados = false
       }
     },
     resetCurrentPageCategoria() {

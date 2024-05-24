@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed, watch } from 'vue'
+import { onMounted, computed, watch } from 'vue'
 import { CarritoApi } from "@/stores/carritoApi";
 import { UsuarioApi } from '@/stores/usuarioApi';
 
@@ -119,6 +119,7 @@ watch(idsJuego, (newVal) => {
         <div class="lista">
             <h2>Mi carrito</h2>
             <div v-for="carrito of listaCarrito" :key="carrito.idCarrito">
+                <h3>Productos</h3>
                 <div v-for="productoCarrito in carrito.carritoProductos" :key="productoCarrito.carritoProductoId">
                     <div class="caja-producto">
                         <div style="display: flex;">
@@ -141,6 +142,7 @@ watch(idsJuego, (newVal) => {
                     </div>
                 </div>
                 <div v-for="juegoCarrito in carrito.carritoJuegos" :key="juegoCarrito.carritoJuegoId">
+                    <h3>Juegos</h3>
                     <div class="caja-producto">
                         <div style="display: flex;">
                             <img :src="'data:image/png;base64,' + juegoCarrito.juego.imgsJuego[0].datos"
