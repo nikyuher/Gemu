@@ -55,7 +55,7 @@ const mostrarMas = async () => {
             </button>
         </RouterLink>
     </div>
-    <div v-else-if="showProgress" class="d-flex align-center justify-center fill-height">
+    <div v-else-if="showProgress" class="d-flex align-center justify-center">
         <v-progress-circular color="grey-lighten-4" indeterminate></v-progress-circular>
     </div>
     <div v-else>

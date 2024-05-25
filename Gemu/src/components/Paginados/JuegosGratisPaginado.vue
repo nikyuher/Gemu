@@ -43,9 +43,9 @@ const mostrarMas = async () => {
                         style="height: 250px; width: 185px;" />
                 </div>
                 <h3>{{ juego.titulo }}</h3>
-                <p>{{ juego.plataforma }}</p>
-                <p style="color: #D0D0D0;">desde</p>
-                <p>Gratis</p>
+                <p style="color: greenyellow;">{{ juego.plataforma }}</p>
+                <p>desde</p>
+                <p>{{ juego.precio != 0 ? juego.precio + ' €' : 'Gratis' }}</p>
             </RouterLink>
         </div>
     </div>
@@ -56,7 +56,7 @@ const mostrarMas = async () => {
             </button>
         </RouterLink>
     </div>
-    <div v-else-if="showProgress" class="d-flex align-center justify-center fill-height">
+    <div v-else-if="showProgress" class="d-flex align-center justify-center">
         <v-progress-circular color="grey-lighten-4" indeterminate></v-progress-circular>
     </div>
     <div v-else>

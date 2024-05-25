@@ -28,7 +28,10 @@ onMounted(async () => {
 <template>
     <div class="cont-Market">
         <div class="cont-tipos">
-            <h2>Tipos de producto</h2>
+            <RouterLink :to="{ name: 'filtro', params: { opcion: 'productos', categoria: 'general', id: 0 } }"
+                style="text-decoration: none;">
+                <h2>Tipos de producto</h2>
+            </RouterLink>
             <div v-for="seccion of listaSecciones" :key="seccion.idCategoria">
                 <RouterLink
                     :to="{ name: 'filtro', params: { opcion: 'productos', categoria: seccion.nombre, id: seccion.idCategoria } }"

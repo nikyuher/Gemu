@@ -15,6 +15,7 @@ const tipoJuego = ref(route.params.categoria);
 const listaCategorias = ref<any[]>([])
 const listaPlataforma = ref<any[]>([])
 const listaIdsCategoria = ref<number[]>([]);
+const selectedOption = ref('normal');
 
 const fetchData = async (idJuego: number) => {
     try {
@@ -23,10 +24,12 @@ const fetchData = async (idJuego: number) => {
         } else {
             listaIdsCategoria.value = [idJuego]
         };
+
         await storeCategoria.GetCategoriaSeccion('juegos')
         await storeCategoria.GetCategoriaSeccion('plataforma')
         listaCategorias.value = storeCategoria.listaCategoriaSeccion
         listaPlataforma.value = storeCategoria.listaCategoriaPlataforma
+
     } catch (error) {
         console.log('Error en el fetchData:', error);
     }
@@ -52,7 +55,7 @@ watchEffect(() => {
 
 <template>
     <div class="cont-general">
-        <h2>Juego de {{ tipoJuego }}</h2>
+        <h2> {{ tipoJuego === 'general' ? 'Juegos Generales' : 'Juegos de ' + tipoJuego }}</h2>
         <div class="cont-filtro">
             <div class="opciones-filtro">
                 <div class="cajas">
@@ -79,7 +82,14 @@ watchEffect(() => {
                 </div>
             </div>
             <div class="productos-filtrados">
-                <juegosCategoria :ids-categorias="[...listaIdsCategoria]"></juegosCategoria>
+                <div class="diseño-select">
+                    <select v-model="selectedOption">
+                        <option value="normal">Normal</option>
+                        <option value="mayorMenor">Mayor a menor precio</option>
+                        <option value="menorMayor">Menor a mayor precio</option>
+                    </select>
+                </div>
+                <juegosCategoria :ids-categorias="[...listaIdsCategoria]" :option="selectedOption"></juegosCategoria>
             </div>
         </div>
     </div>
@@ -110,5 +120,14 @@ watchEffect(() => {
 .productos-filtrados {
     width: 100%;
     margin: 10px 0;
+}
+
+.diseño-select {
+    text-align: right;
+}
+
+.diseño-select option {
+    background-color: #491F6A;
+
 }
 </style>

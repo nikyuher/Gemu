@@ -6,6 +6,7 @@ const props = defineProps<{
     idsCategorias: number[];
     estados?: string[];
     validacion?: boolean;
+    ordenPrecio?: string;
 }>();
 
 const storeProducto = ProductoApi();
@@ -16,6 +17,7 @@ const showProgress = ref(false);
 
 const productos = ref<any[]>([])
 const productosFiltrados = ref<any[]>([]);
+
 const fetchData = async (ids: number[]) => {
     try {
 
@@ -29,15 +31,24 @@ const fetchData = async (ids: number[]) => {
 };
 
 const filtrarProductos = () => {
+    let nreProducto = productos.value;
+
     if (props.estados && props.estados.length > 0) {
-        productosFiltrados.value = productos.value.filter(producto =>
+        nreProducto = nreProducto.filter(producto =>
             props.estados?.includes(producto.estado)
         );
-    } else {
-        productosFiltrados.value = productos.value;
     }
-};
 
+    if (props.ordenPrecio) {
+        if (props.ordenPrecio === 'mayor') {
+            nreProducto = nreProducto.sort((a, b) => b.precio - a.precio);
+        } else if (props.ordenPrecio === 'menor') {
+            nreProducto = nreProducto.sort((a, b) => a.precio - b.precio);
+        }
+    }
+
+    productosFiltrados.value = nreProducto;
+};
 watchEffect(() => {
     fetchData(props.idsCategorias);
 });
@@ -50,6 +61,8 @@ const mostrarMas = async () => {
     if (!loading.value && hasMoreCategoria.value) {
         showProgress.value = true;
         await storeProducto.GetProductoCategoriaPaginados(props.idsCategorias);
+        productos.value = storeProducto.productosCategoriaPaginados
+        filtrarProductos();
         setTimeout(() => {
             showProgress.value = false;
         }, 1000);
@@ -81,7 +94,7 @@ const mostrarMas = async () => {
             </button>
         </RouterLink>
     </div>
-    <div v-else-if="showProgress" class="d-flex align-center justify-center fill-height">
+    <div v-else-if="showProgress" class="d-flex align-center justify-center ">
         <v-progress-circular color="grey-lighten-4" indeterminate></v-progress-circular>
     </div>
     <div v-else>

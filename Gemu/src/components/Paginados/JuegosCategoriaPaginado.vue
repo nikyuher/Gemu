@@ -5,6 +5,7 @@ import { JuegoApi } from '@/stores/juegoApi';
 const props = defineProps<{
     idsCategorias: number[];
     validacion?: boolean;
+    option: string;
 }>();
 
 const juegoStore = JuegoApi();
@@ -14,16 +15,26 @@ const loading = computed(() => juegoStore.loading);
 const hasMoreCategoria = computed(() => juegoStore.hasMoreCategoria);
 const showProgress = ref(false);
 
-const juegos = computed(() => juegoStore.JuegosCategoriaPaginado);
+const juegos = ref<any[]>([])
 
 const fetchData = async (ids: number[]) => {
     try {
         await juegoStore.resetCurrentPageCategoria();
         await juegoStore.GetJuegosCategoriaPaginados(ids);
+        juegos.value = juegoStore.JuegosCategoriaPaginado
     } catch (error) {
         console.error('Error en el fetchData:', error);
     }
 };
+
+const filtroPrecios = computed(() => {
+    if (props.option === 'mayorMenor') {
+        return juegos.value.slice().sort((a, b) => b.precio - a.precio);
+    } else if (props.option === 'menorMayor') {
+        return juegos.value.slice().sort((a, b) => a.precio - b.precio);
+    }
+    return juegos.value;
+});
 
 onMounted(() => {
     fetchData(props.idsCategorias);
@@ -37,6 +48,7 @@ const mostrarMas = async () => {
     if (!loading.value && hasMoreCategoria.value) {
         showProgress.value = true;
         await juegoStore.GetJuegosCategoriaPaginados(props.idsCategorias);
+        juegos.value = juegoStore.JuegosCategoriaPaginado
         setTimeout(() => {
             showProgress.value = false;
         }, 1000);
@@ -47,7 +59,7 @@ const mostrarMas = async () => {
 
 <template>
     <div style="display: flex; flex-wrap: wrap;">
-        <div v-for="juego in juegos" :key="juego.idJuego" class="juego-item">
+        <div v-for="juego in filtroPrecios" :key="juego.idJuego" class="juego-item">
             <RouterLink :to="{ name: 'producto', params: { producto: 'juego', id: juego.idJuego } }"
                 style="text-decoration: none;">
                 <div v-if="juego.imgsJuego.length > 0">
@@ -55,9 +67,9 @@ const mostrarMas = async () => {
                         style="height: 250px; width: 185px;" />
                 </div>
                 <h3>{{ juego.titulo }}</h3>
-                <p>{{ juego.plataforma }}</p>
+                <p style="color: greenyellow;">{{ juego.plataforma }}</p>
                 <p>desde</p>
-                <p>{{ juego.precio }} €</p>
+                <p>{{ juego.precio != 0 ? juego.precio + ' €' : 'Gratis' }}</p>
             </RouterLink>
         </div>
     </div>
@@ -68,7 +80,7 @@ const mostrarMas = async () => {
             </button>
         </RouterLink>
     </div>
-    <div v-else-if="showProgress" class="d-flex align-center justify-center fill-height">
+    <div v-else-if="showProgress" class="d-flex align-center justify-center">
         <v-progress-circular color="grey-lighten-4" indeterminate></v-progress-circular>
     </div>
     <div v-else>

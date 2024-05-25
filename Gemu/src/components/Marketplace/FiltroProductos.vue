@@ -10,7 +10,7 @@ const props = defineProps<{
 
 const storeCategoria = CategoriaApi()
 const route = useRoute();
-const tipoJuego = ref(route.params.categoria);
+const tipoProducto = ref(route.params.categoria);
 
 const listaCategorias = ref<any[]>([])
 const listaPlataforma = ref<any[]>([])
@@ -18,6 +18,7 @@ const listaIdsCategoria = ref<number[]>([]);
 const listaEstados = ['nuevo', 'casiNuevo', 'buenEstado', 'usado']
 
 const estadosSeleccionados = ref<string[]>([]);
+const selectedOption = ref('normal');
 
 const fetchData = async (idJuego: number) => {
     try {
@@ -65,7 +66,7 @@ watchEffect(() => {
 
 <template>
     <div class="cont-general">
-        <h2>Juego de {{ tipoJuego }}</h2>
+        <h2>{{ tipoProducto === 'general' ? 'Productos Generales' : 'Productos de ' + tipoProducto }}</h2>
         <div class="cont-filtro">
             <div class="opciones-filtro">
                 <div class="cajas">
@@ -102,7 +103,15 @@ watchEffect(() => {
                 </div>
             </div>
             <div class="productos-filtrados">
-                <ProductoCategoria :ids-categorias="[...listaIdsCategoria]" :estados="[...estadosSeleccionados]">
+                <div class="diseño-select">
+                    <select v-model="selectedOption">
+                        <option value="normal">Normal</option>
+                        <option value="mayor">Mayor a menor precio</option>
+                        <option value="menor">Menor a mayor precio</option>
+                    </select>
+                </div>
+                <ProductoCategoria :ids-categorias="[...listaIdsCategoria]" :estados="[...estadosSeleccionados]"
+                    :orden-precio="selectedOption">
                 </ProductoCategoria>
             </div>
         </div>
@@ -134,5 +143,14 @@ watchEffect(() => {
 .productos-filtrados {
     width: 100%;
     margin: 10px 0;
+}
+
+.diseño-select {
+    text-align: right;
+}
+
+.diseño-select option {
+    background-color: #491F6A;
+
 }
 </style>
