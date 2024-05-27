@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useRoute, onBeforeRouteUpdate } from 'vue-router';
-import JuegosGratisPaginado from "@/components/Paginados/JuegosGratisPaginado.vue";
+import JuegosBaratosPaginado from "@/components/Paginados/JuegosBaratosPaginados.vue";
 
 const route = useRoute();
 const tipoJuego = ref(route.params.tipo);
@@ -16,7 +16,7 @@ onBeforeRouteUpdate((to) => {
         <h2>Juegos {{ tipoJuego }}</h2>
         <section>
             <article>
-                <JuegosGratisPaginado></JuegosGratisPaginado>
+                <JuegosBaratosPaginado></JuegosBaratosPaginado>
             </article>
         </section>
     </main>

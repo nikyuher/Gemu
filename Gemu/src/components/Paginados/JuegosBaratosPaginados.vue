@@ -10,20 +10,24 @@ const props = defineProps<{
 const juegoStore = JuegoApi();
 
 const loading = computed(() => juegoStore.loading);
-const hasMorePaginados = computed(() => juegoStore.hasMorePaginados);
+const hasMoreBarato = computed(() => juegoStore.hasMoreBaratos);
 const showProgress = ref(false);
 
-const juegos = computed(() => juegoStore.JuegosPaginados);
+const juegos = computed(() => juegoStore.JuegosBaratosPaginado);
 
 onMounted(async () => {
-    juegoStore.resetCurrentPageCategoria();
-    await juegoStore.GetJuegosPaginados();
+    try {
+        juegoStore.resetCurrentPageBarato();
+        await juegoStore.GetJuegosBaratosPaginados();
+    } catch (error) {
+        console.error('Error en el fetchData:', error);
+    }
 });
 
 const mostrarMas = async () => {
-    if (!loading.value && hasMorePaginados.value) {
+    if (!loading.value && hasMoreBarato.value) {
         showProgress.value = true;
-        await juegoStore.GetJuegosPaginados();
+        await juegoStore.GetJuegosBaratosPaginados();
         setTimeout(() => {
             showProgress.value = false;
         }, 1000);
@@ -43,17 +47,9 @@ const mostrarMas = async () => {
                         style="height: 250px; width: 185px;" />
                 </div>
                 <h3>{{ juego.titulo }}</h3>
-                <p><b style="color: #70C778;">{{ juego.plataforma }}</b></p>
-                <div v-if="juego.descuento != 0 && juego.descuento != null">
-                    <p style="font-size: 14px;">desde <s>{{ juego.precio }} €</s></p>
-                    <p style="font-size: 20px;">{{ juego.precioFinal != 0 ? juego.precioFinal + ' €' : 'Gratis' }}</p>
-                    <p style="color: greenyellow; font-size: 14px">
-                        {{ juego.descuento != 0 && juego.descuento != null ? 'Ahorra ' + juego.descuento + '%' : '' }}
-                    </p>
-                </div>
-                <div v-else>
-                    <p>{{ juego.precioFinal != 0 ? juego.precioFinal + ' €' : 'Gratis' }}</p>
-                </div>
+                <p style="color: #70C778;">{{ juego.plataforma }}</p>
+                <p>desde</p>
+                <p>{{ juego.precio != 0 ? juego.precio + ' €' : 'Gratis' }}</p>
             </RouterLink>
         </div>
     </div>
@@ -64,11 +60,11 @@ const mostrarMas = async () => {
             </button>
         </RouterLink>
     </div>
-    <div v-else-if="showProgress" class="d-flex align-center justify-center ">
+    <div v-else-if="showProgress" class="d-flex align-center justify-center">
         <v-progress-circular color="grey-lighten-4" indeterminate></v-progress-circular>
     </div>
     <div v-else>
-        <button @click="mostrarMas" :class="{ 'ocultar': loading || !hasMorePaginados }" class="boton-mostrar-mas">
+        <button @click="mostrarMas" :class="{ 'ocultar': loading || !hasMoreBarato }" class="boton-mostrar-mas">
             Mostrar Más
         </button>
     </div>

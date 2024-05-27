@@ -4,8 +4,8 @@ import { JuegoApi } from '@/stores/juegoApi';
 
 const props = defineProps<{
     idsCategorias: number[];
-    validacion?: boolean;
-    option: string;
+    validacion: boolean;
+    option?: string;
 }>();
 
 const juegoStore = JuegoApi();
@@ -29,9 +29,9 @@ const fetchData = async (ids: number[]) => {
 
 const filtroPrecios = computed(() => {
     if (props.option === 'mayorMenor') {
-        return juegos.value.slice().sort((a, b) => b.precio - a.precio);
+        return juegos.value.slice().sort((a, b) => b.precioFinal - a.precioFinal);
     } else if (props.option === 'menorMayor') {
-        return juegos.value.slice().sort((a, b) => a.precio - b.precio);
+        return juegos.value.slice().sort((a, b) => a.precioFinal - b.precioFinal);
     }
     return juegos.value;
 });
@@ -67,9 +67,17 @@ const mostrarMas = async () => {
                         style="height: 250px; width: 185px;" />
                 </div>
                 <h3>{{ juego.titulo }}</h3>
-                <p style="color: greenyellow;">{{ juego.plataforma }}</p>
-                <p>desde</p>
-                <p>{{ juego.precio != 0 ? juego.precio + ' €' : 'Gratis' }}</p>
+                <p><b style="color: #70C778;">{{ juego.plataforma }}</b></p>
+                <div v-if="juego.descuento != 0 && juego.descuento != null">
+                    <p style="font-size: 14px;">desde <s>{{ juego.precio }} €</s></p>
+                    <p style="font-size: 20px;">{{ juego.precioFinal != 0 ? juego.precioFinal + ' €' : 'Gratis' }}</p>
+                    <p style="color: greenyellow; font-size: 14px">
+                        {{ juego.descuento != 0 && juego.descuento != null ? 'Ahorra ' + juego.descuento + '%' : '' }}
+                    </p>
+                </div>
+                <div v-else>
+                    <p>{{ juego.precioFinal != 0 ? juego.precioFinal + ' €' : 'Gratis' }}</p>
+                </div>
             </RouterLink>
         </div>
     </div>

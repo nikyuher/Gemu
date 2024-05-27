@@ -10,6 +10,7 @@ interface Producto {
   descripcion: string
   estado: string
   cantidad: number
+  calificacionPromedio: number
 }
 
 export const ProductoApi = defineStore('producto', {

@@ -25,7 +25,6 @@ onBeforeRouteUpdate((to) => {
             <FiltroProductos :id-categoria="Number(idCategoria)"></FiltroProductos>
         </div>
         <div v-else>
-            error en view
             <ErrorUrlView></ErrorUrlView>
         </div>
     </main>

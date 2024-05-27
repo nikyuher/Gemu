@@ -36,7 +36,7 @@ export const CarritoApi = defineStore('carrito', {
         const cantidadJuegos = data.carritoJuegos?.length || 0
 
         const precioJuego = data.carritoJuegos.reduce(
-          (sum: number, juego: any) => sum + juego.juego.precio,
+          (sum: number, juego: any) => sum + juego.juego.precioFinal,
           0
         )
         const precioProducto = data.carritoProductos.reduce(

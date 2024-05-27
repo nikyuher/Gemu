@@ -16,8 +16,12 @@ const showProgress = ref(false);
 const juegos = computed(() => juegoStore.JuegosGratisPaginado);
 
 onMounted(async () => {
-    juegoStore.resetCurrentPageCategoria();
-    await juegoStore.GetJuegosGratisPaginados();
+    try {
+        await juegoStore.resetCurrentPageGratis();
+        await juegoStore.GetJuegosGratisPaginados();
+    } catch (error) {
+        console.error('Error en el fetchData:', error);
+    }
 });
 
 const mostrarMas = async () => {
@@ -43,9 +47,9 @@ const mostrarMas = async () => {
                         style="height: 250px; width: 185px;" />
                 </div>
                 <h3>{{ juego.titulo }}</h3>
-                <p style="color: greenyellow;">{{ juego.plataforma }}</p>
+                <p style="color: #70C778;">{{ juego.plataforma }}</p>
                 <p>desde</p>
-                <p>{{ juego.precio != 0 ? juego.precio + ' €' : 'Gratis' }}</p>
+                <p>{{ juego.precioFinal != 0 ? juego.precioFinal + ' €' : 'Gratis' }}</p>
             </RouterLink>
         </div>
     </div>

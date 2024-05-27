@@ -5,14 +5,6 @@ import urlStore from '@/stores/baseUrl'
 const baseUrl: string = urlStore.baseUrl
 const usarioAPi = UsuarioApi()
 
-// interface Transaccion {
-//   idUsuario: number
-//   total: number
-//   cantidad: number
-//   nota: string
-//   fecha: Date
-// }
-
 export const transaccionApi = defineStore('transaccion', {
   state: () => ({
     listaTransacciones: [] as any[]

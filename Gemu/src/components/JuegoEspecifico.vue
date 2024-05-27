@@ -5,6 +5,7 @@ import { ImagenesApi } from '@/stores/imagenesApi';
 import { CategoriaApi } from '@/stores/categoriasApi';
 import { CarritoApi } from '@/stores/carritoApi';
 import { UsuarioApi } from '@/stores/usuarioApi';
+import { reseñaApi } from '@/stores/reseñaApi';
 import ErrorUrlView from "@/views/ErrorUrlView.vue";
 import Juegos from '@/components/Paginados/JuegosCategoriaPaginado.vue'
 
@@ -13,6 +14,7 @@ const props = defineProps<{
 }>();
 
 const storeJuego = JuegoApi()
+const storeReseña = reseñaApi()
 const storeImagenes = ImagenesApi()
 const storeUsuario = UsuarioApi();
 const storeCategoria = CategoriaApi()
@@ -22,11 +24,14 @@ const storeCarrito = CarritoApi()
 const responseMessage = ref('');
 
 const IdUsuario = storeUsuario.$state.usuarioId?.idUsuario
+const calificacion = ref<number>(0)
+const listaReseñas = ref<any[]>([])
 
 const ID = ref<number>()
 const nombreJuego = ref()
 const descripcion = ref()
 const precio = ref<number>()
+const precioFinal = ref<number>()
 const descuento = ref<number>()
 const plataforma = ref<string>()
 
@@ -50,13 +55,18 @@ const fetchData = async (idJuego: number) => {
         await storeCategoria.GetCategoriasJuego(idJuego)
         await storeJuego.GetJuego(idJuego)
         await storeImagenes.GetImagenesJuego(idJuego)
+        await storeReseña.listaReseñasJuego(props.idJuego)
+
+        listaReseñas.value = storeReseña.listReseñasJuego
 
         ID.value = storeJuego.juego?.idJuego
         nombreJuego.value = storeJuego.juego?.titulo
         precio.value = storeJuego.juego?.precio
+        precioFinal.value = storeJuego.juego?.precioFinal
         descripcion.value = storeJuego.juego?.descripcion
         descuento.value = storeJuego.juego?.descuento
         plataforma.value = storeJuego.juego?.plataforma
+        calificacion.value = storeJuego.juego?.calificacionPromedio != null ? storeJuego.juego?.calificacionPromedio : 0
 
         categoriasApi.value = storeCategoria.listaCategoriaSeccion
         mostrarEtiquetas.value = storeCategoria.listCategoriasJuego;
@@ -131,13 +141,31 @@ const addJuegoCarrito = async () => {
                 <div class="cont-img-portada">
                     <img :src="imagenes[0]" alt="">
                 </div>
-                <h2 style="margin-left: 20px;">{{ nombreJuego }}</h2>
+                <div>
+                    <div style="margin-left: 10px;" class="rating">
+                        <v-icon v-for="star in 5" :key="star" class="star"
+                            :class="{ 'star-seleccionada': calificacion >= star }">
+                            {{ calificacion >= star ? 'mdi-star' : 'mdi-star-outline' }}
+                        </v-icon>
+                    </div>
+                    <h2 style="margin-left: 20px;">{{ nombreJuego }}</h2>
+                </div>
             </div>
             <div class="cont-info-compra">
                 <div style="text-align: left;">
                     <h3>Titulo: {{ nombreJuego }}</h3>
                     <h3>Plataforma: {{ plataforma }}</h3>
-                    <h3>Precio: {{ precio }} €</h3>
+                    <div v-if="descuento != 0 && descuento != null">
+                        <h3>Precio: {{ precioFinal }} €</h3>
+                        <div style="display: flex; font-size: 12px;">
+                            <h3><s> {{ precio }} € </s></h3>
+                            <h3 style="color: greenyellow;"> Ahorra {{ descuento }} %</h3>
+                        </div>
+
+                    </div>
+                    <div v-else>
+                        <h3>Precio: {{ precioFinal != 0 ? precioFinal + ' €' : 'Gratis' }} </h3>
+                    </div>
                 </div>
                 <button class="boton-compra">Comprar ahora</button>
                 <button class="boton-carrito" @click="addJuegoCarrito()">Añadir al carrito</button>
@@ -164,7 +192,34 @@ const addJuegoCarrito = async () => {
             <Juegos :validacion="true" :ids-categorias="idsCategoria"></Juegos>
         </div>
         <div class="juegos-Reseñas">
-            <h2>Reseñas</h2>
+            <div class="cont-top-resenas">
+                <h2>Reseñas</h2>
+                <RouterLink :to="{ name: 'resena', params: { producto: 'juego', nombre: nombreJuego, id: ID } }">
+                    <button>Danos tu opinión</button>
+                </RouterLink>
+            </div>
+            <div v-for="resenas of listaReseñas" :key="resenas.idJuego">
+                <div v-for="(resena, index) in resenas.reseñas.slice(0, 4)" :key="index">
+                    <div class="diseño-reseña">
+                        <v-icon style="font-size: 40px;">mdi-account-circle</v-icon>
+                        <div style="margin-left: 10px;">
+                            <div class="rating">
+                                <v-icon v-for="star in 5" :key="star" class="star"
+                                    :class="{ 'star-seleccionada': resena.calificacion >= star }">
+                                    {{ resena.calificacion >= star ? 'mdi-star' : 'mdi-star-outline' }}
+                                </v-icon>
+                            </div>
+                            <p>{{ resena.nombreUsuario }}</p>
+                            <p>{{ resena.comentario }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <RouterLink :to="{ name: 'filtro', params: { opcion: 'juegos', categoria: 'general', id: 0 } }">
+                <button class="boton-mostrar-mas">
+                    Mostrar todo
+                </button>
+            </RouterLink>
         </div>
         <div class="juegos-descripcion">
             <h2>Descripción</h2>
@@ -180,6 +235,49 @@ const addJuegoCarrito = async () => {
     </div>
 </template>
 <style scoped>
+.boton-mostrar-mas {
+    display: flex;
+    margin: auto;
+    text-align: center;
+    align-items: center;
+    background-color: #682E83;
+    border: 1px solid white;
+    padding: 10px 20px 10px 20px;
+}
+
+.diseño-reseña {
+    display: flex;
+    align-items: center;
+    background-color: #491F6A;
+    margin: 20px 0;
+    padding: 10px;
+}
+
+.rating {
+    display: flex;
+    align-items: center;
+}
+
+.star {
+    cursor: pointer;
+    margin-right: 5px;
+}
+
+.star-seleccionada {
+    color: #DFB23C;
+}
+
+.cont-top-resenas {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+button {
+    border: 1px solid #B12FB4;
+    padding: 5px 20px 5px 20px
+}
+
 .contenido-desc {
     background-color: #491F6A;
     padding: 20px;

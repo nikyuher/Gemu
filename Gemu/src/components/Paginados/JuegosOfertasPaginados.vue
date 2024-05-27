@@ -10,20 +10,24 @@ const props = defineProps<{
 const juegoStore = JuegoApi();
 
 const loading = computed(() => juegoStore.loading);
-const hasMorePaginados = computed(() => juegoStore.hasMorePaginados);
+const hasMoreOfertas = computed(() => juegoStore.hasMoreOfertas);
 const showProgress = ref(false);
 
-const juegos = computed(() => juegoStore.JuegosPaginados);
+const juegos = computed(() => juegoStore.JuegosOfertasPaginado);
 
 onMounted(async () => {
-    juegoStore.resetCurrentPageCategoria();
-    await juegoStore.GetJuegosPaginados();
+    try {
+        await juegoStore.resetCurrentPageOfertas();
+        await juegoStore.GetJuegosOfertasPaginados();
+    } catch (error) {
+        console.error('Error en el fetchData:', error);
+    }
 });
 
 const mostrarMas = async () => {
-    if (!loading.value && hasMorePaginados.value) {
+    if (!loading.value && hasMoreOfertas.value) {
         showProgress.value = true;
-        await juegoStore.GetJuegosPaginados();
+        await juegoStore.GetJuegosOfertasPaginados();
         setTimeout(() => {
             showProgress.value = false;
         }, 1000);
@@ -64,11 +68,11 @@ const mostrarMas = async () => {
             </button>
         </RouterLink>
     </div>
-    <div v-else-if="showProgress" class="d-flex align-center justify-center ">
+    <div v-else-if="showProgress" class="d-flex align-center justify-center">
         <v-progress-circular color="grey-lighten-4" indeterminate></v-progress-circular>
     </div>
     <div v-else>
-        <button @click="mostrarMas" :class="{ 'ocultar': loading || !hasMorePaginados }" class="boton-mostrar-mas">
+        <button @click="mostrarMas" :class="{ 'ocultar': loading || !hasMoreOfertas }" class="boton-mostrar-mas">
             Mostrar Más
         </button>
     </div>

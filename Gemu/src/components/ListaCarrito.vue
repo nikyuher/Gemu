@@ -159,7 +159,7 @@ watch(idsJuego, (newVal) => {
                                 color="transparent" style="width: 5px; margin: auto;">
                                 <v-icon size="25">mdi-delete</v-icon>
                             </v-btn>
-                            <p style="margin-top: 60px ;">{{ juegoCarrito.juego.precio }} €</p>
+                            <p style="margin-top: 60px ;">{{ juegoCarrito.juego.precioFinal }} €</p>
                         </div>
                     </div>
                 </div>

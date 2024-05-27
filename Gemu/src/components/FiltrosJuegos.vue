@@ -89,7 +89,8 @@ watchEffect(() => {
                         <option value="menorMayor">Menor a mayor precio</option>
                     </select>
                 </div>
-                <juegosCategoria :ids-categorias="[...listaIdsCategoria]" :option="selectedOption"></juegosCategoria>
+                <juegosCategoria :ids-categorias="[...listaIdsCategoria]" :validacion="false" :option="selectedOption">
+                </juegosCategoria>
             </div>
         </div>
     </div>
