@@ -2,11 +2,14 @@
 import { UsuarioApi } from '@/stores/usuarioApi';
 import { useRouter, useRoute, onBeforeRouteUpdate } from 'vue-router';
 import { ref } from 'vue';
+import { CarritoApi } from "@/stores/carritoApi";
 import informacionGeneral from '@/components/MenuUsuario/InforGeneral.vue'
 import ListaJuegos from '@/components/MenuAdmin/ListaJuegos.vue';
+import CrearJuego from '@/components/MenuAdmin/CrearJuego.vue';
 
 const route = useRoute();
 const router = useRouter();
+const storeCarrito = CarritoApi()
 
 onBeforeRouteUpdate((to) => {
     opcion.value = to.params.opcion as string | undefined;
@@ -21,6 +24,8 @@ const cuentaVisible3 = ref(false);
 const cuentaVisible4 = ref(false);
 
 const cerrarSesion = () => {
+    storeCarrito.setCatidadCarrito(0)
+    storeCarrito.setTotalPrecio(0)
     datosUsuario.removeUsuarioid()
     datosUsuario.removeToken()
     router.push("/")
@@ -59,9 +64,7 @@ const mostrarView = (view: string) => {
                         <v-icon class="icono2" :class="{ oculto: !cuentaVisible2 }">mdi-chevron-down</v-icon>
                     </div>
                     <p :class="{ activo: cuentaVisible2 }" @click="mostrarView('listaJuegos')">Lista juegos</p>
-                    <p :class="{ activo: cuentaVisible2 }">Crear</p>
-                    <p :class="{ activo: cuentaVisible2 }">Modificar</p>
-                    <p :class="{ activo: cuentaVisible2 }">Eliminar</p>
+                    <p :class="{ activo: cuentaVisible2 }" @click="mostrarView('crearJuego')">Crear</p>
                 </div>
                 <div class="desplegable mantenerClick" :style="{ backgroundColor: cuentaVisible3 ? '#240C2F' : '' }">
                     <div class="cont-desplegable" :class="{ activo: cuentaVisible3 }"
@@ -71,9 +74,6 @@ const mostrarView = (view: string) => {
                         <v-icon class="icono2" :class="{ oculto: !cuentaVisible3 }">mdi-chevron-down</v-icon>
                     </div>
                     <p :class="{ activo: cuentaVisible3 }">Lista usuarios</p>
-                    <p :class="{ activo: cuentaVisible3 }">Crear</p>
-                    <p :class="{ activo: cuentaVisible3 }">Modificar</p>
-                    <p :class="{ activo: cuentaVisible3 }">Eliminar</p>
                 </div>
                 <div class="desplegable mantenerClick" :style="{ backgroundColor: cuentaVisible4 ? '#240C2F' : '' }">
                     <div class="cont-desplegable" :class="{ activo: cuentaVisible4 }"
@@ -96,7 +96,9 @@ const mostrarView = (view: string) => {
                 <div v-if="opcionActual === 'listaJuegos'">
                     <ListaJuegos></ListaJuegos>
                 </div>
-
+                <div v-if="opcionActual === 'crearJuego'">
+                    <CrearJuego></CrearJuego>
+                </div>
             </div>
         </div>
     </main>

@@ -164,7 +164,7 @@ const ConvertorImgBase64 = (event: Event) => {
             <div class="cajas">
                 <div class="conInput">
                     <div style="width: 300px;">
-                        <h3>Nombre del producto</h3>
+                        <h3>Nombre del Juego</h3>
                         <input type="text" class="cont-numero" v-model="tituloJuego" placeholder="Nombre del producto"
                             required>
                     </div>
@@ -186,7 +186,7 @@ const ConvertorImgBase64 = (event: Event) => {
             </div>
             <div class="cajas">
                 <div class="cajas2">
-                    <h3>Describe el estado</h3>
+                    <h3>Plataforma</h3>
                     <select v-model="plataforma" required>
                         <option value="PS5">PS5</option>
                         <option value="PC">PC</option>
@@ -201,7 +201,7 @@ const ConvertorImgBase64 = (event: Event) => {
                             <p>%</p>
                         </div>
                     </div>
-                    <h4 style="color: gray;">Proporcion mas detalles del producto</h4>
+                    <h4 style="color: gray;">Proporcion mas detalles del juego</h4>
                     <textarea name="descripcion" v-model="descripcion"
                         placeholder="Escribir un minimo de 300 caracteres" maxlength="500" rows="4"
                         style="color: black; width: 500px; max-height: 200px; resize: none;" required

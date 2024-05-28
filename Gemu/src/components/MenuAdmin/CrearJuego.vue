@@ -1,41 +1,38 @@
 <script setup lang="ts">
 import { UsuarioApi } from '@/stores/usuarioApi';
-import { ProductoApi } from '@/stores/productoApi';
+import { JuegoApi } from '@/stores/juegoApi';
 import { ImagenesApi } from '@/stores/imagenesApi';
 import { CategoriaApi } from '@/stores/categoriasApi';
-import { AnuncioApi } from '@/stores/anuncioApi';
 import { ref, onMounted } from 'vue'
 
 const storeUsuario = UsuarioApi();
-const storeProducto = ProductoApi()
+const storeJuego = JuegoApi()
 const storeImagenes = ImagenesApi()
 const storeCategoria = CategoriaApi()
-const storeAnuncio = AnuncioApi()
 
-const idUser = storeUsuario.$state.usuarioId?.idUsuario
-const idProducto = ref<number | null>(null);
+const idJuego = ref<number | null>(null);
 const categoriasApi = ref<any[]>([])
 const responseMessage = ref('');
 
 const token = storeUsuario.getToken()
 
-const nombreProducto = ref()
+const tituloJuego = ref()
 const imagenes = ref<string[]>([])
 const precio = ref()
 const descripcion = ref()
-const estado = ref('nuevo')
-const cantidad = ref()
+const plataforma = ref('PC')
+const descuento = ref()
 const categoriasSelecionadas = ref<number[]>([])
 
 const mostrarEtiquetas = ref<string>('')
 const fileInputRef = ref<HTMLInputElement | null>(null);
 
 const limpiarDatos = () => {
-    nombreProducto.value = ''
+    tituloJuego.value = ''
     imagenes.value = []
-    estado.value = 'nuevo'
+    plataforma.value = 'PC'
     descripcion.value = ''
-    cantidad.value = 0
+    descuento.value = 0
     precio.value = 0
     categoriasSelecionadas.value = []
     mostrarEtiquetas.value = ''
@@ -44,7 +41,7 @@ const limpiarDatos = () => {
 onMounted(async () => {
     try {
 
-        await storeCategoria.GetCategoriaSeccion('marketplace')
+        await storeCategoria.GetCategoriaSeccion('juegos')
         await storeCategoria.GetCategoriaSeccion('plataforma')
 
         categoriasApi.value = [...storeCategoria.listaCategoriaPlataforma, ...storeCategoria.listaCategoriaSeccion]
@@ -61,23 +58,23 @@ onMounted(async () => {
 
 const CrearProducto = async () => {
     try {
-        const newProducto = {
-            nombre: nombreProducto.value,
-            precio: precio.value,
+        const newJuego = {
+            titulo: tituloJuego.value,
             descripcion: descripcion.value,
-            estado: estado.value,
-            cantidad: cantidad.value
+            precio: precio.value,
+            descuento: descuento.value,
+            plataforma: plataforma.value
         }
 
         if (token) {
-            await storeProducto.CrearProducto(newProducto, token)
+            await storeJuego.CrearDatosJuego(newJuego, token)
         }
-        idProducto.value = storeProducto.producto?.idProducto ?? null;
 
-        if (idProducto.value && token) {
-            await storeImagenes.AddImagenesProducto(idProducto.value, imagenes.value.map(img => img.split(',')[1]))
-            await storeCategoria.AsignarCategoriaProducto(idProducto.value, token, categoriasSelecionadas.value)
-            idUser && await storeAnuncio.crearAnuncio(idUser, idProducto.value)
+        idJuego.value = storeJuego.juego?.idJuego ?? null;
+
+        if (idJuego.value && token) {
+            await storeImagenes.AddImagenesJuego(idJuego.value, imagenes.value.map(img => img.split(',')[1]))
+            await storeCategoria.AsignarCategoriaJuego(idJuego.value, token, categoriasSelecionadas.value)
             responseMessage.value = 'Publicado exitosamente';
         } else {
             console.log('No se pudo obtener el id');
@@ -95,7 +92,7 @@ const CrearProducto = async () => {
     } catch (error) {
         if (error instanceof Error) {
             console.error(error);
-            responseMessage.value = error.message || 'Error al crear el producto.';
+            responseMessage.value = error.message || 'Error al crear el juego.';
             setTimeout(() => {
                 responseMessage.value = '';
             }, 3000);
@@ -155,8 +152,8 @@ const eliminarImagen = (index: number) => {
                 <div class="cajas">
                     <div class="conInput">
                         <div style="width: 300px;">
-                            <h3>Nombre del producto</h3>
-                            <input type="text" class="cont-numero" v-model="nombreProducto"
+                            <h3>Nombre del juego</h3>
+                            <input type="text" class="cont-numero" v-model="tituloJuego"
                                 placeholder="Nombre del producto" required>
                         </div>
                     </div>
@@ -178,19 +175,19 @@ const eliminarImagen = (index: number) => {
                 </div>
                 <div class="cajas">
                     <div class="cajas2">
-                        <h3>Describe el estado</h3>
-                        <select v-model="estado" required>
-                            <option value="nuevo">Nuevo</option>
-                            <option value="casiNuevo">Casi nuevo</option>
-                            <option value="buenEstado">Buen estado</option>
-                            <option value="usado">Usado</option>
+                        <h3>Plataforma</h3>
+                        <select v-model="plataforma" required>
+                            <option value="PS5">PS5</option>
+                            <option value="PC">PC</option>
+                            <option value="XBOX">XBOX</option>
+                            <option value="Nintendo">Nintendo</option>
                         </select>
-                        <h3>Cantidad</h3>
+                        <h3>Descuento</h3>
                         <div class="conInput">
-                            <input type="number" class="cont-numero" v-model="cantidad"
-                                placeholder="Numero de productos" required>
+                            <input type="number" class="cont-numero" v-model="descuento" placeholder="descuento"
+                                required>
                         </div>
-                        <h4 style="color: gray;">Proporcion mas detalles del producto</h4>
+                        <h4 style="color: gray;">Proporcion mas detalles del juego</h4>
                         <textarea name="descripcion" v-model="descripcion"
                             placeholder="Escribir un minimo de 300 caracteres" maxlength="500" rows="4"
                             style="color: black; width: 500px; max-height: 200px; resize: none;" required

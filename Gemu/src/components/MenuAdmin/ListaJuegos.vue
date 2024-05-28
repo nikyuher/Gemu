@@ -9,6 +9,9 @@ const storeJuego = JuegoApi()
 
 const token = storeUsuario.getToken()
 
+const loading = computed(() => storeJuego.loading);
+const hasMorePaginados = computed(() => storeJuego.hasMorePaginados);
+const showProgress = ref(false);
 
 const IdUsuario = storeUsuario.$state.usuarioId?.idUsuario
 const listaJuegos = ref<any[]>([]);
@@ -54,7 +57,7 @@ const juegosFiltrado = computed(() => {
     } else {
         const filtro = terminosBusqueda.value.toLowerCase();
         return listaJuegos.value.filter(anuncio => {
-            return anuncio.nombre.toLowerCase().includes(filtro);
+            return anuncio.titulo.toLowerCase().includes(filtro);
         });
     }
 });
@@ -66,6 +69,17 @@ const formatoFecha = (fecha: string) => {
     const year = date.getFullYear().toString().slice(-2);
     return `${month}/${day}/${year}`;
 }
+
+const mostrarMas = async () => {
+    if (!loading.value && hasMorePaginados.value) {
+        showProgress.value = true;
+        await storeJuego.GetJuegosPaginados();
+        listaJuegos.value = storeJuego.JuegosPaginados
+        setTimeout(() => {
+            showProgress.value = false;
+        }, 1000);
+    }
+};
 
 </script>
 
@@ -111,6 +125,15 @@ const formatoFecha = (fecha: string) => {
                             </template>
                         </v-dialog>
                     </div>
+                    <div v-if="showProgress" class="d-flex align-center justify-center">
+                        <v-progress-circular color="grey-lighten-4" indeterminate></v-progress-circular>
+                    </div>
+                    <div v-else>
+                        <button @click="mostrarMas" :class="{ 'ocultar': loading || !hasMorePaginados }"
+                            class="boton-mostrar-mas">
+                            Mostrar Más
+                        </button>
+                    </div>
                 </div>
                 <div v-else>
                     <p style="text-align: center; margin-top: 60px;">No hay datos disponibles</p>
@@ -121,6 +144,20 @@ const formatoFecha = (fecha: string) => {
 </template>
 
 <style scoped>
+.boton-mostrar-mas {
+    display: flex;
+    margin: auto;
+    text-align: center;
+    align-items: center;
+    background-color: #682E83;
+    border: 1px solid white;
+    padding: 10px 20px 10px 20px;
+}
+
+.ocultar {
+    display: none;
+}
+
 .update-producto-container {
     max-height: 600px;
     overflow-y: auto;

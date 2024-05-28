@@ -259,6 +259,38 @@ export const JuegoApi = defineStore('juego', {
         this.loadingPaginados = false
       }
     },
+    async CrearDatosJuego(datos: any, token: string) {
+      try {
+        const newJuego = {
+          titulo: datos.titulo,
+          descripcion: datos.descripcion,
+          precio: datos.precio,
+          descuento: datos.descuento,
+          plataforma: datos.plataforma
+        }
+
+        const response = await fetch(`${baseUrl}/Juego/crear`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify(newJuego)
+        })
+
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.message || 'error al crear el juego.')
+        }
+        const data = await response.json()
+
+        this.juego = data
+        console.log('Juego creados correctamente')
+      } catch (error) {
+        console.log(error)
+        throw error
+      }
+    },
     async UpdateDatosJuego(datos: any, token: string) {
       try {
         const newJuego = {
