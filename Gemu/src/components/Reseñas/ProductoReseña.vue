@@ -11,6 +11,7 @@ const props = defineProps<{
 const storeUsuario = UsuarioApi()
 const storeReseña = reseñaApi()
 
+const authenticated = computed(() => storeUsuario.isAuthenticated)
 const token = storeUsuario.getToken()
 
 const idUsuario = storeUsuario.usuarioId?.idUsuario
@@ -39,6 +40,10 @@ const characterCount = computed(() => {
 
 const formReseña = async () => {
     try {
+
+        if (!authenticated.value) {
+            throw new Error("No has iniciado sesión");
+        }
 
         if (idUsuario && idProducto != null) {
 

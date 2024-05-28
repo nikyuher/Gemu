@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import { UsuarioApi } from '@/stores/usuarioApi';
 import { useRouter, useRoute, onBeforeRouteUpdate } from 'vue-router';
-import { ref } from 'vue';
+import { CarritoApi } from "@/stores/carritoApi";
 import informacionGeneral from '@/components/MenuUsuario/InforGeneral.vue'
 import AñadirFondos from '@/components/MenuUsuario/AñadirFondos.vue'
 import RestarFondos from '@/components/MenuUsuario/RestarFondos.vue'
@@ -11,7 +12,6 @@ import JuegosComprados from "@/components/MenuUsuario/JuegosComprados.vue";
 import ProductosComprados from "@/components/MenuUsuario/ProductosComprados.vue";
 import crearProducto from "@/components/MenuUsuario/CrearProducto.vue";
 import MisAnuncios from "@/components/MenuUsuario/AnunciosUsuario.vue";
-import { CarritoApi } from "@/stores/carritoApi";
 
 const route = useRoute();
 const opcion = ref<string | undefined>(route.params.opcion as string | undefined);

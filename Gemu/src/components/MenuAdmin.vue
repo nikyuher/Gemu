@@ -1,10 +1,18 @@
 <script setup lang="ts">
 import { UsuarioApi } from '@/stores/usuarioApi';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute, onBeforeRouteUpdate } from 'vue-router';
 import { ref } from 'vue';
 import informacionGeneral from '@/components/MenuUsuario/InforGeneral.vue'
+import ListaJuegos from '@/components/MenuAdmin/ListaJuegos.vue';
 
+const route = useRoute();
 const router = useRouter();
+
+onBeforeRouteUpdate((to) => {
+    opcion.value = to.params.opcion as string | undefined;
+});
+
+const opcion = ref<string | undefined>(route.params.opcion as string | undefined);
 const datosUsuario = UsuarioApi();
 
 const cuentaVisible1 = ref(false);
@@ -17,6 +25,13 @@ const cerrarSesion = () => {
     datosUsuario.removeToken()
     router.push("/")
 }
+
+const opcionActual = ref<string>(opcion.value || 'informacion');
+
+const mostrarView = (view: string) => {
+    opcionActual.value = view;
+};
+
 
 </script>
 
@@ -34,16 +49,16 @@ const cerrarSesion = () => {
                         <v-icon class="icono1" :class="{ oculto: cuentaVisible1 }">mdi-chevron-up</v-icon>
                         <v-icon class="icono2" :class="{ oculto: !cuentaVisible1 }">mdi-chevron-down</v-icon>
                     </div>
-                    <p :class="{ activo: cuentaVisible1 }">Informacion general</p>
+                    <p :class="{ activo: cuentaVisible1 }" @click="mostrarView('informacion')">Informacion general</p>
                 </div>
                 <div class="desplegable mantenerClick" :style="{ backgroundColor: cuentaVisible2 ? '#240C2F' : '' }">
                     <div class="cont-desplegable" :class="{ activo: cuentaVisible2 }"
                         @click="cuentaVisible2 = !cuentaVisible2">
-                        <h3>Productos</h3>
+                        <h3>Juegos</h3>
                         <v-icon class="icono1" :class="{ oculto: cuentaVisible2 }">mdi-chevron-up</v-icon>
                         <v-icon class="icono2" :class="{ oculto: !cuentaVisible2 }">mdi-chevron-down</v-icon>
                     </div>
-                    <p :class="{ activo: cuentaVisible2 }">Lista productos</p>
+                    <p :class="{ activo: cuentaVisible2 }" @click="mostrarView('listaJuegos')">Lista juegos</p>
                     <p :class="{ activo: cuentaVisible2 }">Crear</p>
                     <p :class="{ activo: cuentaVisible2 }">Modificar</p>
                     <p :class="{ activo: cuentaVisible2 }">Eliminar</p>
@@ -75,7 +90,13 @@ const cerrarSesion = () => {
             </div>
             <div class="bloqueRelleno">a</div>
             <div class="contenido">
-                <informacionGeneral></informacionGeneral>
+                <div v-if="opcionActual === 'informacion'">
+                    <informacionGeneral></informacionGeneral>
+                </div>
+                <div v-if="opcionActual === 'listaJuegos'">
+                    <ListaJuegos></ListaJuegos>
+                </div>
+
             </div>
         </div>
     </main>

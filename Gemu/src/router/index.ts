@@ -60,7 +60,7 @@ const router = createRouter({
       component: () => import('../views/FiltroView.vue')
     },
     {
-      path: '/resena/:producto/:nombre=:id',
+      path: '/resena/:producto/:nombre=:id/:lista?',
       name: 'resena',
       component: () => import('../views/ReseñaView.vue')
     },

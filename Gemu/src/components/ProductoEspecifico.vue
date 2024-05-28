@@ -190,28 +190,33 @@ const addProductoCarrito = async () => {
                     <button>Danos tu opinión</button>
                 </RouterLink>
             </div>
-            <div v-for="resenas of listaReseñas" :key="resenas.idJuego">
-                <div v-for="(resena, index) in resenas.reseñas.slice(0, 4)" :key="index">
+            <div v-if="listaReseñas.length > 0">
+                <div v-for="resenas of listaReseñas.slice(0, 4)" :key="resenas.idReseña">
                     <div class="diseño-reseña">
                         <v-icon style="font-size: 40px;">mdi-account-circle</v-icon>
                         <div style="margin-left: 10px;">
                             <div class="rating">
                                 <v-icon v-for="star in 5" :key="star" class="star"
-                                    :class="{ 'star-seleccionada': resena.calificacion >= star }">
-                                    {{ resena.calificacion >= star ? 'mdi-star' : 'mdi-star-outline' }}
+                                    :class="{ 'star-seleccionada': resenas.calificacion >= star }">
+                                    {{ resenas.calificacion >= star ? 'mdi-star' : 'mdi-star-outline' }}
                                 </v-icon>
                             </div>
-                            <p>{{ resena.nombreUsuario }}</p>
-                            <p>{{ resena.comentario }}</p>
+                            <p>{{ resenas.nombreUsuario }}</p>
+                            <p>{{ resenas.comentario }}</p>
                         </div>
                     </div>
                 </div>
+                <RouterLink :to="{ name: 'filtro', params: { opcion: 'juegos', categoria: 'general', id: 0 } }">
+                    <button class="boton-mostrar-mas">
+                        Mostrar todo
+                    </button>
+                </RouterLink>
             </div>
-            <RouterLink :to="{ name: 'filtro', params: { opcion: 'juegos', categoria: 'general', id: 0 } }">
-                <button class="boton-mostrar-mas">
-                    Mostrar todo
-                </button>
-            </RouterLink>
+            <div v-else>
+                <p style="text-align: center; margin: 80px 0 80px  0;">
+                    Este producto no tiene reseñas. ¡Se el primero en comentar!
+                </p>
+            </div>
         </div>
         <div class="productos-descripcion">
             <h2>Descripción</h2>

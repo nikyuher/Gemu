@@ -13,17 +13,47 @@ export const ImagenesApi = defineStore('imagenes', {
   }),
 
   actions: {
-    async AddImagenesProducto(idJuego: number, imagenes: string[]) {
+    async AddImagenesProducto(idProducto: number, imagenes: string[]) {
       try {
         const token = usarioAPi.getToken()
 
         const imagenesObj = imagenes.map((imagen, index) => ({
           datos: imagen,
           esPortada: index === 0,
-          productoId: idJuego
+          productoId: idProducto
         }))
 
         const response = await fetch(`${baseUrl}/Imagen/producto `, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify(imagenesObj)
+        })
+
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.message || 'error al asignar las imagenes.')
+        }
+
+        console.log('Imagenes agregadas correctamente')
+      } catch (error) {
+        console.log(error)
+        throw error
+      }
+    },
+    async AddImagenesJuego(idJuego: number, imagenes: string[]) {
+      try {
+        const token = usarioAPi.getToken()
+
+        const imagenesObj = imagenes.map((imagen, index) => ({
+          datos: imagen,
+          esPortada: index === 0,
+          juegoId: idJuego
+        }))
+
+        const response = await fetch(`${baseUrl}/Imagen/juego `, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -102,6 +132,28 @@ export const ImagenesApi = defineStore('imagenes', {
             Authorization: `Bearer ${token}`
           },
           body: JSON.stringify(idProducto)
+        })
+
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.message || 'error al eliminar las imagenes.')
+        }
+      } catch (error) {
+        console.log(error)
+        throw error
+      }
+    },
+    async EliminarImagenesJuego(idJuego: number) {
+      try {
+        const token = usarioAPi.getToken()
+
+        const response = await fetch(`${baseUrl}/Imagen/juego `, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify(idJuego)
         })
 
         if (!response.ok) {

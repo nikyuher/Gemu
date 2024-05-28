@@ -200,10 +200,10 @@ export const ProductoApi = defineStore('producto', {
 
         if (!response.ok) {
           const errorData = await response.json()
-          throw new Error(errorData.message || 'error al actualizar los producto del producto.')
+          throw new Error(errorData.message || 'error al actualizar los datos del producto.')
         }
 
-        console.log('Datos producto actualizad correctamente')
+        console.log('Datos del producto actualizados correctamente')
       } catch (error) {
         console.log(error)
         throw error

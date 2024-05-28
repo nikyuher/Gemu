@@ -259,6 +259,59 @@ export const JuegoApi = defineStore('juego', {
         this.loadingPaginados = false
       }
     },
+    async UpdateDatosJuego(datos: any, token: string) {
+      try {
+        const newJuego = {
+          idJuego: datos.idJuego,
+          titulo: datos.titulo,
+          descripcion: datos.descripcion,
+          precio: datos.precio,
+          descuento: datos.descuento,
+          plataforma: datos.plataforma
+        }
+
+        const response = await fetch(`${baseUrl}/Juego/${datos.idJuego}/datos `, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify(newJuego)
+        })
+
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.message || 'error al actualizar los datos del juego.')
+        }
+
+        console.log('Datos del juego actualizados correctamente')
+      } catch (error) {
+        console.log(error)
+        throw error
+      }
+    },
+    async EliminarJuego(idJuego: number, token: string) {
+      try {
+        const response = await fetch(`${baseUrl}/Juego/${idJuego} `, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify(idJuego)
+        })
+
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.message || 'error al eliminar el juego.')
+        }
+
+        console.log('se elimino el juego')
+      } catch (error) {
+        console.log(error)
+        throw error
+      }
+    },
     resetCurrentPageOfertas() {
       this.currentPageOfertas = 1
       this.JuegosOfertasPaginado = []

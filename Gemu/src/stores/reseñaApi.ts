@@ -87,7 +87,7 @@ export const reseñaApi = defineStore('reseña', {
 
         const data = await response.json()
 
-        this.listReseñasJuego = [data]
+        this.listReseñasJuego = data.reseñas
       } catch (error) {
         console.log(error)
         throw error
@@ -107,7 +107,7 @@ export const reseñaApi = defineStore('reseña', {
 
         const data = await response.json()
 
-        this.listReseñasProducto = [data]
+        this.listReseñasProducto = data.reseñas
       } catch (error) {
         console.log(error)
         throw error

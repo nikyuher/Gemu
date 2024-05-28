@@ -112,6 +112,26 @@ export const CategoriaApi = defineStore('categoria', {
       } catch (error) {
         throw new Error(`Error al asignar las categorias: ${error}`)
       }
+    },
+    async AsignarCategoriaJuego(idJuego: number, token: string, idsCategoria: number[]) {
+      try {
+        const response = await fetch(`${baseUrl}/Juego/${idJuego}/añadir-categorias`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify(idsCategoria)
+        })
+
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.message || 'error al asignar las categorias.')
+        }
+        console.log('Categorias agregadas correctamente')
+      } catch (error) {
+        throw new Error(`Error al asignar las categorias: ${error}`)
+      }
     }
   }
 })
