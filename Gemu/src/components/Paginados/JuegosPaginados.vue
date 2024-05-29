@@ -16,7 +16,7 @@ const showProgress = ref(false);
 const juegos = computed(() => juegoStore.JuegosPaginados);
 
 onMounted(async () => {
-    juegoStore.resetCurrentPageCategoria();
+    juegoStore.resetCurrentPagePaginados();
     await juegoStore.GetJuegosPaginados();
 });
 
@@ -48,7 +48,8 @@ const mostrarMas = async () => {
                     <p style="font-size: 14px;">desde <s>{{ juego.precio }} €</s></p>
                     <p style="font-size: 20px;">{{ juego.precioFinal != 0 ? juego.precioFinal + ' €' : 'Gratis' }}</p>
                     <p style="color: greenyellow; font-size: 14px">
-                        {{ juego.descuento != 0 && juego.descuento != null ? 'Ahorra un ' + juego.descuento + '%' : '' }}
+                        {{ juego.descuento != 0 && juego.descuento != null ? 'Ahorra un ' + juego.descuento + '%' : ''
+                        }}
                     </p>
                 </div>
                 <div v-else>

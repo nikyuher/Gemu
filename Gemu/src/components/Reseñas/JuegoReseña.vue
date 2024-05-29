@@ -82,8 +82,6 @@ const formReseña = async () => {
     }
 }
 
-// este comentario va con el afan de que sepan de que es un buen producto y espero que les guste muchiiiisimo, muchos abrazos y bendiciones, mas cosas para rellenar
-
 </script>
 
 <template>

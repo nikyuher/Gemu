@@ -146,7 +146,7 @@ const eliminarImagen = (index: number) => {
 
 <template>
     <div class="cont-Info">
-        <h2>Crear anuncio</h2>
+        <h2>Crear Juego</h2>
         <div class="bloque">
             <form @submit.prevent="CrearProducto()">
                 <div class="cajas">

@@ -6,6 +6,8 @@ import { CarritoApi } from "@/stores/carritoApi";
 import informacionGeneral from '@/components/MenuUsuario/InforGeneral.vue'
 import ListaJuegos from '@/components/MenuAdmin/ListaJuegos.vue';
 import CrearJuego from '@/components/MenuAdmin/CrearJuego.vue';
+import ListaUsuario from '@/components/MenuAdmin/ListaUsuario.vue';
+import ListaPeticiones from '@/components/MenuAdmin/ListaPeticiones.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -73,7 +75,7 @@ const mostrarView = (view: string) => {
                         <v-icon class="icono1" :class="{ oculto: cuentaVisible3 }">mdi-chevron-up</v-icon>
                         <v-icon class="icono2" :class="{ oculto: !cuentaVisible3 }">mdi-chevron-down</v-icon>
                     </div>
-                    <p :class="{ activo: cuentaVisible3 }">Lista usuarios</p>
+                    <p :class="{ activo: cuentaVisible3 }" @click="mostrarView('listaUsuarios')">Lista usuarios</p>
                 </div>
                 <div class="desplegable mantenerClick" :style="{ backgroundColor: cuentaVisible4 ? '#240C2F' : '' }">
                     <div class="cont-desplegable" :class="{ activo: cuentaVisible4 }"
@@ -82,7 +84,7 @@ const mostrarView = (view: string) => {
                         <v-icon class="icono1" :class="{ oculto: cuentaVisible4 }">mdi-chevron-up</v-icon>
                         <v-icon class="icono2" :class="{ oculto: !cuentaVisible4 }">mdi-chevron-down</v-icon>
                     </div>
-                    <p :class="{ activo: cuentaVisible4 }">Lista peticiones</p>
+                    <p :class="{ activo: cuentaVisible4 }" @click="mostrarView('listaPeticiones')">Lista peticiones</p>
                 </div>
                 <div class="mantenerClick desplegable" @click="cerrarSesion">
                     <h3>Cerrar</h3>
@@ -98,6 +100,12 @@ const mostrarView = (view: string) => {
                 </div>
                 <div v-if="opcionActual === 'crearJuego'">
                     <CrearJuego></CrearJuego>
+                </div>
+                <div v-if="opcionActual === 'listaUsuarios'">
+                    <ListaUsuario></ListaUsuario>
+                </div>
+                <div v-if="opcionActual === 'listaPeticiones'">
+                    <ListaPeticiones></ListaPeticiones>
                 </div>
             </div>
         </div>

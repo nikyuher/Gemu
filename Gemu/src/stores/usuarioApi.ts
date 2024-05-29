@@ -28,10 +28,35 @@ export const UsuarioApi = defineStore('usuario', {
   state: () => ({
     token: localStorage.getItem('jwtToken') as string | null,
     usuarioId: JSON.parse(localStorage.getItem('usuarioData') || 'null') as Usuario | null,
+    listaUsuarios: [] as Usuario[],
     saldoActual: 0 as number
   }),
 
   actions: {
+    async getAllUsuario() {
+      try {
+        const token = this.getToken()
+
+        const response = await fetch(`${baseUrl}/Usuario`, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.message || 'error al obtener al usuario.')
+        }
+
+        const data = await response.json()
+
+        this.listaUsuarios = data
+      } catch (error) {
+        console.error('Error al obtener los usuarios:', error)
+        throw error
+      }
+    },
     async getUsuarioId(idUsuario: number) {
       try {
         const token = this.getToken()
@@ -175,6 +200,33 @@ export const UsuarioApi = defineStore('usuario', {
         throw error
       }
     },
+    async updateRol(DatosUser: any) {
+      try {
+        const token = this.getToken()
+
+        const newDatos = {
+          idUsuario: DatosUser.idUsuario,
+          idRol: DatosUser.idRol
+        }
+
+        const response = await fetch(`${baseUrl}/Usuario/${DatosUser.idUsuario}/rol`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify(newDatos)
+        })
+
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.message || 'error al actualizar el rol.')
+        }
+      } catch (error) {
+        console.log('error al actualizar el rol. ' + error)
+        throw error
+      }
+    },
     async updateDatos(DatosUser: any) {
       try {
         const token = this.getToken()
@@ -207,6 +259,30 @@ export const UsuarioApi = defineStore('usuario', {
         }
 
         this.setUsuarioId(usuarioActual)
+      } catch (error) {
+        console.log(error)
+        throw error
+      }
+    },
+    async EliminarUsuario(idUsuario: number) {
+      try {
+        const token = this.getToken()
+
+        const response = await fetch(`${baseUrl}/Usuario?id=${idUsuario} `, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify(idUsuario)
+        })
+
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.message || 'error al eliminar el usuario.')
+        }
+
+        console.log('se elimino el usuario')
       } catch (error) {
         console.log(error)
         throw error

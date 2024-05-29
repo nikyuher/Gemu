@@ -55,7 +55,7 @@ const fetchData = async (idProducto: number) => {
         await storeImagenes.GetImagenesProducto(idProducto)
         await storeReseña.listaReseñasProducto(props.idProducto)
 
-        listaReseñas.value = storeReseña.listReseñasProducto
+        listaReseñas.value = storeReseña.listReseñasProducto.filter(r => r.solicitud === "aprobada")
 
         ID.value = storeProducto.producto?.idProducto
         nombreProducto.value = storeProducto.producto?.nombre
@@ -186,7 +186,8 @@ const addProductoCarrito = async () => {
         <div class="productos-Reseñas">
             <div class="cont-top-resenas">
                 <h2>Reseñas</h2>
-                <RouterLink :to="{ name: 'resena', params: { producto: 'producto', nombre: nombreProducto, id: ID } }">
+                <RouterLink
+                    :to="{ name: 'resena', params: { producto: 'producto', nombre: nombreProducto, id: ID, lista: '' } }">
                     <button>Danos tu opinión</button>
                 </RouterLink>
             </div>
@@ -206,7 +207,8 @@ const addProductoCarrito = async () => {
                         </div>
                     </div>
                 </div>
-                <RouterLink :to="{ name: 'filtro', params: { opcion: 'juegos', categoria: 'general', id: 0 } }">
+                <RouterLink
+                    :to="{ name: 'resena', params: { producto: 'producto', nombre: nombreProducto, id: ID, lista: 'reseñas-producto' } }">
                     <button class="boton-mostrar-mas">
                         Mostrar todo
                     </button>
@@ -245,6 +247,7 @@ const addProductoCarrito = async () => {
 .diseño-reseña {
     display: flex;
     align-items: center;
+    text-align: justify;
     background-color: #491F6A;
     margin: 20px 0;
     padding: 10px;

@@ -90,16 +90,19 @@ const ActualizarProducto = async () => {
             await storeImagenes.EliminarImagenesJuego(idJuego.value)
             await storeImagenes.AddImagenesJuego(idJuego.value, imagenes.value.map(img => img.split(',')[1]))
             await storeCategoria.AsignarCategoriaJuego(idJuego.value, token, categoriasSelecionadas.value)
+
+            responseMessage.value = 'Actualizado exitosamente';
+            setTimeout(() => {
+                storeJuego.resetCurrentPagePaginados();
+                storeJuego.GetJuegosPaginados();
+                responseMessage.value = '';
+
+            }, 3000);
         } else {
             console.log('No se pudo obtener el id');
             responseMessage.value = 'Hubo un problema al incluir las imagenes';
         }
 
-        responseMessage.value = 'Actualizado exitosamente';
-
-        setTimeout(() => {
-            responseMessage.value = '';
-        }, 3000);
     } catch (error) {
         if (error instanceof Error) {
             console.error(error);

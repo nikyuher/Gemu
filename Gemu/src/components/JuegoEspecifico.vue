@@ -57,7 +57,7 @@ const fetchData = async (idJuego: number) => {
         await storeImagenes.GetImagenesJuego(idJuego)
         await storeReseña.listaReseñasJuego(props.idJuego)
 
-        listaReseñas.value = storeReseña.listReseñasJuego
+        listaReseñas.value = storeReseña.listReseñasJuego.filter(r => r.solicitud === "aprobada")
 
         ID.value = storeJuego.juego?.idJuego
         nombreJuego.value = storeJuego.juego?.titulo
@@ -132,7 +132,6 @@ const addJuegoCarrito = async () => {
 
 <template>
     <div v-if="!ID">
-        Error JuegoEspecifico
         <ErrorUrlView></ErrorUrlView>
     </div>
     <div v-else class=prodcuto>
@@ -255,6 +254,7 @@ const addJuegoCarrito = async () => {
 .diseño-reseña {
     display: flex;
     align-items: center;
+    text-align: justify;
     background-color: #491F6A;
     margin: 20px 0;
     padding: 10px;

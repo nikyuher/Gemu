@@ -6,7 +6,8 @@ const baseUrl: string = urlStore.baseUrl
 export const reseñaApi = defineStore('reseña', {
   state: () => ({
     listReseñasJuego: [] as any[],
-    listReseñasProducto: [] as any[]
+    listReseñasProducto: [] as any[],
+    listaPeticionesPendiente: [] as any[]
   }),
 
   actions: {
@@ -108,6 +109,76 @@ export const reseñaApi = defineStore('reseña', {
         const data = await response.json()
 
         this.listReseñasProducto = data.reseñas
+      } catch (error) {
+        console.log(error)
+        throw error
+      }
+    },
+    async listaPeticiones(token: string) {
+      try {
+        const response = await fetch(`${baseUrl}/Reseña/pendientes`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          }
+        })
+
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.message || 'error al actualizar el estado.')
+        }
+
+        const data = await response.json()
+
+        this.listaPeticionesPendiente = data
+      } catch (error) {
+        console.log(error)
+        throw error
+      }
+    },
+    async updateEstadoResena(datos: any, token: string) {
+      try {
+        const resenaAprovada = {
+          idReseña: datos.idReseña,
+          solicitud: datos.solicitud
+        }
+
+        const response = await fetch(`${baseUrl}/Reseña/gestor-solicitud`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify(resenaAprovada)
+        })
+
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.message || 'error al actualizar el estado.')
+        }
+      } catch (error) {
+        console.log(error)
+        throw error
+      }
+    },
+    async EliminarResena(idResena: number, idUsuario: number, token: string) {
+      try {
+        const response = await fetch(`${baseUrl}/Reseña/${idResena}/usuario `, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify(idUsuario)
+        })
+
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.message || 'error al eliminar la resena.')
+        }
+
+        console.log('se elimino la resena')
       } catch (error) {
         console.log(error)
         throw error

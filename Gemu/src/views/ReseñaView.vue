@@ -23,11 +23,11 @@ onBeforeRouteUpdate((to) => {
         <div v-if="tipoProducto === 'juego' && NameLista === ''">
             <JuegoReseña :id-juego="Number(idProducto)"></JuegoReseña>
         </div>
-        <div v-else-if="NameLista === 'reseñas-juego'">
-            <ListaReseñaJuego :id-producto="Number(idProducto)"></ListaReseñaJuego>
-        </div>
         <div v-else-if="tipoProducto === 'producto' && NameLista === ''">
             <ProductoReseña :id-producto="Number(idProducto)"></ProductoReseña>
+        </div>
+        <div v-else-if="NameLista === 'reseñas-juego'">
+            <ListaReseñaJuego :id-juego="Number(idProducto)"></ListaReseñaJuego>
         </div>
         <div v-else-if="NameLista === 'reseñas-producto'">
             <ListaReseñaProducto :id-producto="Number(idProducto)"></ListaReseñaProducto>

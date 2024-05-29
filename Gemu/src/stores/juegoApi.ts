@@ -37,7 +37,7 @@ export const JuegoApi = defineStore('juego', {
     hasMoreOfertas: true,
     hasMorePaginados: true,
 
-    pageSize: 5,
+    pageSize: 4,
     loading: false,
     loadingPaginados: false,
     precioBarato: 15
@@ -363,6 +363,11 @@ export const JuegoApi = defineStore('juego', {
       this.currentPageBaratos = 1
       this.JuegosBaratosPaginado = []
       this.hasMoreBaratos = true
+    },
+    resetCurrentPagePaginados() {
+      this.currentPagePaginados = 1
+      this.JuegosPaginados = []
+      this.hasMorePaginados = true
     }
   }
 })

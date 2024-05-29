@@ -14,7 +14,7 @@ const hasMorePaginados = computed(() => storeJuego.hasMorePaginados);
 const showProgress = ref(false);
 
 const IdUsuario = storeUsuario.$state.usuarioId?.idUsuario
-const listaJuegos = ref<any[]>([]);
+const listaJuegos = computed(() => storeJuego.JuegosPaginados);
 const terminosBusqueda = ref('');
 
 const getImagenURL = (base64StringArray: any) => {
@@ -25,8 +25,8 @@ const getImagenURL = (base64StringArray: any) => {
 onMounted(async () => {
     try {
         if (IdUsuario) {
+            storeJuego.resetCurrentPagePaginados();
             await storeJuego.GetJuegosPaginados();
-            listaJuegos.value = storeJuego.JuegosPaginados;
         } else {
             console.error('IdUsuario no definido');
         }
@@ -41,7 +41,7 @@ const EliminarJuego = async (idJuego: number) => {
         try {
             await storeJuego.EliminarJuego(idJuego, token);
 
-            const index = listaJuegos.value.findIndex(anuncio => anuncio.idJuego === idJuego);
+            const index = listaJuegos.value.findIndex(juego => juego.idJuego === idJuego);
             if (index !== -1) {
                 listaJuegos.value.splice(index, 1);
             }
@@ -56,8 +56,8 @@ const juegosFiltrado = computed(() => {
         return listaJuegos.value;
     } else {
         const filtro = terminosBusqueda.value.toLowerCase();
-        return listaJuegos.value.filter(anuncio => {
-            return anuncio.titulo.toLowerCase().includes(filtro);
+        return listaJuegos.value.filter(juego => {
+            return juego.titulo.toLowerCase().includes(filtro);
         });
     }
 });
@@ -74,7 +74,7 @@ const mostrarMas = async () => {
     if (!loading.value && hasMorePaginados.value) {
         showProgress.value = true;
         await storeJuego.GetJuegosPaginados();
-        listaJuegos.value = storeJuego.JuegosPaginados
+        // listaJuegos.value = storeJuego.JuegosPaginados
         setTimeout(() => {
             showProgress.value = false;
         }, 1000);
@@ -85,7 +85,7 @@ const mostrarMas = async () => {
 
 <template>
     <div class="cont-Info">
-        <h2>Mis anuncios</h2>
+        <h2>Lista Juegos</h2>
         <div class="bloque">
             <div class="cajas">
                 <div class="search">
@@ -219,10 +219,12 @@ const mostrarMas = async () => {
     grid-template-columns: repeat(6, 1fr);
     text-align: center;
     align-items: center;
+    border-bottom: 1px solid rgb(177, 177, 177);
+
 }
 
 .anotaciones img {
-    padding-top: 20px;
+    padding: 20px 0;
 }
 
 .anotaciones h3 {
