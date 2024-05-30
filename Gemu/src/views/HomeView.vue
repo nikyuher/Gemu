@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import CategoriasHome from '@/components/CategoriasHome.vue';
+import JuegosGratisPaginado from '@/components/Paginados/JuegosGratisPaginado.vue';
+import JuegosPaginados from '@/components/Paginados/JuegosPaginados.vue';
+import ProductosPaginados from '@/components/Paginados/ProductosPaginados.vue';
 
 </script>
 
@@ -9,54 +13,22 @@
     </div>
     <section>
       <article>
-        <div class="plataformas">
-          <div class="caja">
-            <v-icon>mdi-laptop</v-icon>
-            <p>PC</p>
-          </div>
-          <div class="caja">
-            <v-icon>mdi-sony-playstation</v-icon>
-            <p>PlayStation</p>
-          </div>
-          <div class="caja">
-            <v-icon>mdi-microsoft-xbox</v-icon>
-            <p>Xbox</p>
-          </div>
-          <div class="caja">
-            <v-icon>mdi-nintendo-switch</v-icon>
-            <p>Nintendo</p>
-          </div>
-        </div>
+        <CategoriasHome :plataforma="true"></CategoriasHome>
       </article>
       <article>
-        <h2>Juegos Recomendados</h2>
+        <h2>Juegos Generales</h2>
+        <JuegosPaginados :validacion="true"></JuegosPaginados>
       </article>
       <article>
         <h2>Juegos Gratuitos</h2>
+        <JuegosGratisPaginado :validacion="true"></JuegosGratisPaginado>
       </article>
       <article>
         <h2>Productos en Venta</h2>
+        <ProductosPaginados :validacion="true"></ProductosPaginados>
       </article>
       <article>
-        <h2>Categorias</h2>
-        <div class="plataformas">
-          <div class="caja">
-            <v-icon>mdi-alien</v-icon>
-            <p>Terror</p>
-          </div>
-          <div class="caja">
-            <v-icon>mdi-robot-dead</v-icon>
-            <p>Aventura</p>
-          </div>
-          <div class="caja">
-            <v-icon>mdi-kabaddi</v-icon>
-            <p>Accion</p>
-          </div>
-          <div class="caja">
-            <v-icon>mdi-car-light-high</v-icon>
-            <p>Fps</p>
-          </div>
-        </div>
+        <CategoriasHome></CategoriasHome>
       </article>
       <article>
         <div class="ProximosLanzamientos">
@@ -72,20 +44,17 @@
   color: white;
 }
 
+article {
+  width: 95%;
+  margin: auto;
+}
+
 main {
   margin: auto;
 }
 
-.banner img{
+.banner img {
   width: 100%;
-}
-
-.plataformas {
-  display: flex;
-  align-items: center;
-  text-align: center;
-  justify-content: space-evenly;
-  margin: 100px 0;
 }
 
 .caja {
@@ -98,7 +67,7 @@ main {
   font-size: 90px;
 }
 
-.ProximosLanzamientos{
+.ProximosLanzamientos {
   background-color: #412360;
 }
 </style>

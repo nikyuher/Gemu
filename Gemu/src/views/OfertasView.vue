@@ -1,5 +1,5 @@
 <script setup lang="ts">
-
+import JuegosOfertasPaginados from "@/components/Paginados/JuegosOfertasPaginados.vue";
 </script>
 
 <template>
@@ -9,7 +9,7 @@
     </div>
     <section>
       <article>
-
+        <JuegosOfertasPaginados></JuegosOfertasPaginados>
       </article>
     </section>
   </main>
@@ -19,15 +19,16 @@
 * {
   color: white;
 }
-.banner img{
+
+.banner img {
   width: 100%;
 }
+
 main {
   margin: auto;
 }
 
-.banner img{
+.banner img {
   width: 100%;
 }
-
 </style>

@@ -35,9 +35,19 @@ const router = createRouter({
       component: () => import('../views/JuegosTipoView.vue')
     },
     {
-      path: '/user-menu',
+      path: '/:producto/:id',
+      name: 'producto',
+      component: () => import('../views/ProductoView.vue')
+    },
+    {
+      path: '/user-menu/:opcion?',
       name: 'user-menu',
       component: () => import('../views/MenuView.vue')
+    },
+    {
+      path: '/carritoCompra',
+      name: 'carrito-Compra',
+      component: () => import('../views/CarritoCompra.vue')
     },
     {
       path: '/marketplace',
@@ -45,14 +55,29 @@ const router = createRouter({
       component: () => import('../views/MarketplaceView.vue')
     },
     {
-      path: '/reseñas',
-      name: 'reseñas',
-      component: () => import('../views/ReseñasJuegoView.vue')
+      path: '/filtro/:opcion/:categoria/:id?',
+      name: 'filtro',
+      component: () => import('../views/FiltroView.vue')
+    },
+    {
+      path: '/resena/:producto/:nombre=:id/:lista?',
+      name: 'resena',
+      component: () => import('../views/ReseñaView.vue')
+    },
+    {
+      path: '/trabajo',
+      name: 'trabajo',
+      component: () => import('../views/TrabajoView.vue')
+    },
+    {
+      path: '/ayuda-vender',
+      name: 'ayuda',
+      component: () => import('../views/AyudaView.vue')
     },
     {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
-      component: () => import('../views/ErrorUrlView.vue'), 
+      component: () => import('../views/ErrorUrlView.vue')
     }
   ]
 })

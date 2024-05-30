@@ -1,23 +1,69 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
-import { RouterLink, RouterView } from 'vue-router'
+import { ref, watch, onMounted, computed } from "vue";
+import { RouterLink, RouterView, useRouter } from 'vue-router'
 import { useRoute } from 'vue-router';
+import { UsuarioApi } from '@/stores/usuarioApi';
+import { CarritoApi } from "@/stores/carritoApi";
+import BusquedaHome from "@/components/busquedaHome.vue";
 
+const storeCarrito = CarritoApi()
 
-// Lista de rutas donde quieres ocultar el header
-const rutasAOcultarHeader = ["/iniciarSesion", "/registrarse", "/user-menu"];
-const rutasOcultarFooter = ["/user-menu"];
+const datosUsuario = UsuarioApi();
+const isAuthenticated = computed(() => datosUsuario.isAuthenticated);
+
+const totalCantidad = computed(() => storeCarrito.getCatidadCarrito());
 const route = useRoute();
+const router = useRouter();
+const rutasAOcultarHeader = ['/iniciarSesion', '/registrarse', '/user-menu', '/carritoCompra', '/user-menu/crearAnuncio'];
+const rutasOcultarFooter = ['/user-menu', '/user-menu/crearAnuncio'];
+
 
 const ocultarHeader = ref(rutasAOcultarHeader.includes(route.path));
 const ocultarFooter = ref(rutasOcultarFooter.includes(route.path));
 
-// Observa cambios en route.path y actualiza shouldHideHeader
 watch(route, () => {
   ocultarHeader.value = rutasAOcultarHeader.includes(route.path);
   ocultarFooter.value = rutasOcultarFooter.includes(route.path);
 });
 
+// Función para remover el token y el usuario ID
+const removerTokenYUsuarioId = () => {
+  storeCarrito.setCatidadCarrito(0)
+  storeCarrito.setTotalPrecio(0)
+  datosUsuario.removeToken();
+  datosUsuario.removeUsuarioid();
+  router.push("/")
+};
+
+// Eliminar cada 1 hora
+onMounted(async () => {
+  if (datosUsuario.getToken()) {
+    const datosUser = {
+      idUsuario: datosUsuario.$state.usuarioId?.idUsuario,
+      token: datosUsuario.getToken(),
+      idCarrito: datosUsuario.$state.usuarioId?.idCarrito
+    }
+    await storeCarrito.ListaCarrito(datosUser)
+    setInterval(removerTokenYUsuarioId, 3600000);
+  }
+});
+
+const busqueda = ref<string>('')
+const busquedaMandar = ref<string>('')
+
+const search = async () => {
+
+  try {
+    if (busqueda.value != '') {
+      busquedaMandar.value = busqueda.value
+    } else {
+      busquedaMandar.value = ''
+    }
+  } catch (error) {
+    console.log(error);
+
+  }
+}
 
 </script>
 
@@ -33,7 +79,7 @@ watch(route, () => {
 
       <div class="cont-nav">
         <div class="search">
-          <input type="search" placeholder="Buscar...">
+          <input @input="search()" type="search" v-model="busqueda" placeholder="Buscar...">
           <v-icon>mdi-magnify</v-icon>
         </div>
         <div class="idiomas">
@@ -44,24 +90,32 @@ watch(route, () => {
           </select>
         </div>
         <div class="carrito">
-          <RouterLink to="/carritoCompra"> <v-icon>mdi-cart</v-icon></RouterLink>
+          <v-badge :content="totalCantidad" color="red">
+            <RouterLink to="/carritoCompra"> <v-icon>mdi-cart</v-icon></RouterLink>
+          </v-badge>
         </div>
-        <div class="cuentaUsuario">
+        <div v-if="isAuthenticated" class="cuentaUsuario">
+          <RouterLink to="/user-menu">
+            {{ datosUsuario.$state.usuarioId?.nombre }}
+            <v-icon>mdi-account-circle</v-icon>
+          </RouterLink>
+        </div>
+        <div v-else class="cuentaUsuario">
           <RouterLink to="/iniciarSesion">InicioSesion</RouterLink>
           <RouterLink to="/registrarse" style="border-left:2px solid white ;">Registrarse</RouterLink>
         </div>
         <div class="vender">
-          <RouterLink to="/user-menu">Vender</RouterLink>
+          <RouterLink :to="{ name: 'user-menu', params: { opcion: 'crearAnuncio' } }">Vender</RouterLink>
         </div>
       </div>
     </div>
     <div class="nav-inferior">
-      <RouterLink to="/reseñas">Marketplace</RouterLink>
+      <RouterLink to="/marketplace">Marketplace</RouterLink>
       <RouterLink to="/ofertas">Ofertas</RouterLink>
       <RouterLink :to="{ name: 'juegosTipo', params: { tipo: 'baratos' } }">Juegos Baratos</RouterLink>
-      <RouterLink :to="{ name: 'juegosTipo', params: { tipo: 'populares' } }">Más Populares</RouterLink>
     </div>
   </header>
+  <BusquedaHome :busqueda="busquedaMandar"></BusquedaHome>
 
   <RouterView />
 
@@ -235,6 +289,7 @@ header {
 .cuentaUsuario a:hover {
   color: gray;
 }
+
 
 /* Vender */
 .vender {
