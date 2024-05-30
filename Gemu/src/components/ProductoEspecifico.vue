@@ -131,6 +131,27 @@ const addProductoCarrito = async () => {
     }
 }
 
+const showModal = ref(false);
+const selectedImageIndex = ref<number>(0);
+
+const showImage = (index: number) => {
+    selectedImageIndex.value = index;
+    showModal.value = true;
+}
+
+const nextImage = () => {
+    if (selectedImageIndex.value !== null && selectedImageIndex.value < imagenes.value.length - 1) {
+        selectedImageIndex.value += 1;
+    }
+}
+
+const prevImage = () => {
+    if (selectedImageIndex.value !== null && selectedImageIndex.value > 0) {
+        selectedImageIndex.value -= 1;
+    }
+}
+
+
 </script>
 
 <template>
@@ -171,14 +192,22 @@ const addProductoCarrito = async () => {
             <v-sheet elevation="8" max-width="800" style="background-color: transparent; box-shadow: none !important ;">
                 <v-slide-group class="pa-4" center-active show-arrows>
                     <v-slide-group-item v-for="(imagen, index) in imagenes.slice(1)" :key="index"
-                        v-slot="{ isSelected, toggle }">
-                        <v-card :color="isSelected ? 'primary' : 'grey-lighten-1'" class="ma-4" @click="toggle">
+                        v-slot="{ isSelected }">
+                        <v-card :color="isSelected ? 'primary' : 'grey-lighten-1'" class="ma-4"
+                            @click="() => showImage(index + 1)">
                             <img :src="imagen" alt="imagen producto" style="height: 150px;">
                         </v-card>
                     </v-slide-group-item>
                 </v-slide-group>
             </v-sheet>
         </div>
+        <v-dialog v-model="showModal" max-width="90%">
+            <v-icon @click="prevImage" class="navigation-arrow left">mdi-chevron-left</v-icon>
+            <div class="image-container">
+                <img :src="imagenes[selectedImageIndex]" alt="Imagen del juego">
+            </div>
+            <v-icon @click="nextImage" class="navigation-arrow right">mdi-chevron-right</v-icon>
+        </v-dialog>
         <div class="producto-relacionado">
             <h2>Productos relacionados</h2>
             <ProductosCtegoriaPaginado :ids-categorias="idsCategoria" :validacion="true"></ProductosCtegoriaPaginado>
@@ -358,5 +387,37 @@ button {
 /* Img Muestra */
 .cont-img-muestra {
     display: flex;
+}
+
+.navigation-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 48px;
+    color: #FFFFFF;
+    z-index: 10;
+}
+
+.navigation-arrow.left {
+    left: 1px;
+    color: #bf62e4;
+}
+
+.navigation-arrow.right {
+    right: 1px;
+    color: #bf62e4;
+}
+
+.image-container {
+    width: 80%;
+    height: 600px;
+    margin: auto;
+}
+
+.image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
 }
 </style>
