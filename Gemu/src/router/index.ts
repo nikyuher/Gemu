@@ -65,6 +65,16 @@ const router = createRouter({
       component: () => import('../views/ReseñaView.vue')
     },
     {
+      path: '/trabajo',
+      name: 'trabajo',
+      component: () => import('../views/TrabajoView.vue')
+    },
+    {
+      path: '/ayuda-vender',
+      name: 'ayuda',
+      component: () => import('../views/AyudaView.vue')
+    },
+    {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
       component: () => import('../views/ErrorUrlView.vue')

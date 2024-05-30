@@ -21,7 +21,7 @@ const formatoFecha = (fecha: string) => {
 onMounted(async () => {
     try {
         IdUsuario && await transactionStore.historialTransacciones(IdUsuario)
-        historial.value = transactionStore.listaTransacciones
+        historial.value = transactionStore.listaTransacciones.reverse();
     } catch (error) {
         console.log(error)
     }

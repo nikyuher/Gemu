@@ -4,8 +4,10 @@ import { RouterLink, RouterView, useRouter } from 'vue-router'
 import { useRoute } from 'vue-router';
 import { UsuarioApi } from '@/stores/usuarioApi';
 import { CarritoApi } from "@/stores/carritoApi";
+import BusquedaHome from "@/components/busquedaHome.vue";
 
 const storeCarrito = CarritoApi()
+
 const datosUsuario = UsuarioApi();
 const isAuthenticated = computed(() => datosUsuario.isAuthenticated);
 
@@ -44,8 +46,25 @@ onMounted(async () => {
     await storeCarrito.ListaCarrito(datosUser)
     setInterval(removerTokenYUsuarioId, 3600000);
   }
-
 });
+
+const busqueda = ref<string>('')
+const busquedaMandar = ref<string>('')
+
+const search = async () => {
+
+  try {
+    if (busqueda.value != '') {
+      busquedaMandar.value = busqueda.value
+    } else {
+      busquedaMandar.value = ''
+    }
+  } catch (error) {
+    console.log(error);
+
+  }
+}
+
 </script>
 
 <template>
@@ -60,7 +79,7 @@ onMounted(async () => {
 
       <div class="cont-nav">
         <div class="search">
-          <input type="search" placeholder="Buscar...">
+          <input @input="search()" type="search" v-model="busqueda" placeholder="Buscar...">
           <v-icon>mdi-magnify</v-icon>
         </div>
         <div class="idiomas">
@@ -96,6 +115,7 @@ onMounted(async () => {
       <RouterLink :to="{ name: 'juegosTipo', params: { tipo: 'baratos' } }">Juegos Baratos</RouterLink>
     </div>
   </header>
+  <BusquedaHome :busqueda="busquedaMandar"></BusquedaHome>
 
   <RouterView />
 

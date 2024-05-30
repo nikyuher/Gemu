@@ -4,7 +4,7 @@ import { ProductoApi } from '@/stores/productoApi';
 import { ImagenesApi } from '@/stores/imagenesApi';
 import { CategoriaApi } from '@/stores/categoriasApi';
 import { AnuncioApi } from '@/stores/anuncioApi';
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 
 const storeUsuario = UsuarioApi();
 const storeProducto = ProductoApi()
@@ -19,13 +19,29 @@ const responseMessage = ref('');
 
 const token = storeUsuario.getToken()
 
-const nombreProducto = ref()
+const nombreProducto = ref<string>('')
 const imagenes = ref<string[]>([])
 const precio = ref()
-const descripcion = ref()
+const descripcion = ref<string>('')
 const estado = ref('nuevo')
 const cantidad = ref()
 const categoriasSelecionadas = ref<number[]>([])
+
+const isFormValid = computed(() => {
+    return descripcion.value.length >= 150 && descripcion.value.length <= 600;
+});
+
+const isFormValid2 = computed(() => {
+    return nombreProducto.value.length >= 1 && nombreProducto.value.length <= 80;
+});
+
+const characterCount = computed(() => {
+    return descripcion.value.length;
+});
+
+const characterCount2 = computed(() => {
+    return nombreProducto.value.length;
+});
 
 const mostrarEtiquetas = ref<string>('')
 const fileInputRef = ref<HTMLInputElement | null>(null);
@@ -158,6 +174,7 @@ const eliminarImagen = (index: number) => {
                             <h3>Nombre del producto</h3>
                             <input type="text" class="cont-numero" v-model="nombreProducto"
                                 placeholder="Nombre del producto" required>
+                            <p>{{ characterCount2 }}/80 caracteres</p>
                         </div>
                     </div>
                 </div>
@@ -191,10 +208,14 @@ const eliminarImagen = (index: number) => {
                                 placeholder="Numero de productos" required>
                         </div>
                         <h4 style="color: gray;">Proporcion mas detalles del producto</h4>
-                        <textarea name="descripcion" v-model="descripcion"
+                        <p>{{ characterCount }}/600 caracteres</p>
+                        <textarea name="descripcion" v-model="descripcion" outlined
                             placeholder="Escribir un minimo de 300 caracteres" maxlength="500" rows="4"
-                            style="color: black; width: 500px; max-height: 200px; resize: none;" required
-                            class="diseño-Text-Area"></textarea>
+                            style="color: black; width: 600px; max-height: 200px; resize: none;" required
+                            class="diseño-Text-Area">
+                        </textarea>
+                        <p v-if="!isFormValid">Por favor, asegúrate de colocar una descripcion entre 300 y 600
+                            caracteres.</p>
                     </div>
                 </div>
                 <div class="cajas">
@@ -229,7 +250,7 @@ const eliminarImagen = (index: number) => {
                     {{ responseMessage }}
                 </v-alert>
                 <div class="confirmar">
-                    <input type="submit" value="Publicar">
+                    <input type="submit" :disabled="!isFormValid || !isFormValid2" value="Publicar">
                 </div>
             </form>
         </div>
