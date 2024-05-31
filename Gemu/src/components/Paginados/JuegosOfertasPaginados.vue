@@ -52,7 +52,8 @@ const mostrarMas = async () => {
                     <p style="font-size: 14px;">desde <s>{{ juego.precio }} €</s></p>
                     <p style="font-size: 20px;">{{ juego.precioFinal != 0 ? juego.precioFinal + ' €' : 'Gratis' }}</p>
                     <p style="color: greenyellow; font-size: 14px">
-                        {{ juego.descuento != 0 && juego.descuento != null ? 'Ahorra un ' + juego.descuento + '%' : '' }}
+                        {{ juego.descuento != 0 && juego.descuento != null ? 'Ahorra un ' + juego.descuento + '%' : ''
+                        }}
                     </p>
                 </div>
                 <div v-else>
@@ -85,8 +86,7 @@ const mostrarMas = async () => {
     background-color: #491F6A;
     color: white;
     padding: 20px;
-    margin-right: 20px;
-    margin-bottom: 20px;
+    margin: 40px auto;
     max-width: 400px;
 }
 

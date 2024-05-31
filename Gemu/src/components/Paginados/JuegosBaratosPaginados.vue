@@ -76,8 +76,7 @@ const mostrarMas = async () => {
     background-color: #491F6A;
     color: white;
     padding: 20px;
-    margin-right: 20px;
-    margin-bottom: 20px;
+    margin: 40px auto;
     max-width: 400px;
 }
 

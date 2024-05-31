@@ -71,8 +71,7 @@ const mostrarMas = async () => {
     background-color: #491F6A;
     color: white;
     padding: 20px;
-    margin-right: 20px;
-    margin-bottom: 20px;
+    margin: 40px auto;
     max-width: 400px;
 }
 
@@ -82,7 +81,7 @@ const mostrarMas = async () => {
 
 .boton-mostrar-mas {
     display: flex;
-    margin: auto;
+    margin: 20pxs auto;
     text-align: center;
     align-items: center;
     background-color: #682E83;
