@@ -17,6 +17,8 @@ const listaPlataforma = ref<any[]>([])
 const listaIdsCategoria = ref<number[]>([]);
 const selectedOption = ref('normal');
 
+const dialogVisible = ref(false);
+
 const fetchData = async (idJuego: number) => {
     try {
         if (idJuego === 0) {
@@ -55,9 +57,52 @@ watchEffect(() => {
 
 <template>
     <div class="cont-general">
-        <h2> {{ tipoJuego === 'general' ? 'Juegos Generales' : 'Juegos de ' + tipoJuego }}</h2>
+        <h2>{{ tipoJuego === 'general' ? 'Juegos Generales' : 'Juegos de ' + tipoJuego }}</h2>
+        <v-btn class="btn-ordenar-filtrar" @click="dialogVisible = true" color="#491F6A">
+            <v-icon>mdi-tune</v-icon>
+            Ordenar y filtrar
+        </v-btn>
+        <v-dialog v-model="dialogVisible" persistent max-width="300" transition="dialog-top-transition">
+            <v-card color="#301347">
+                <v-card-title>
+                    <v-icon>mdi-tune</v-icon>
+                    <span class="headline">Filtros</span>
+                    <v-spacer></v-spacer>
+                    <v-btn icon @click="dialogVisible = false" color="#491F6A">
+                        <v-icon>mdi-close</v-icon>
+                    </v-btn>
+                </v-card-title>
+                <v-card-text>
+                    <div class="opciones-filtro">
+                        <div class="cajas">
+                            <h3>Plataformas</h3>
+                            <div v-for="categoria of listaPlataforma" :key="categoria.idCategoria">
+                                <div style="display: flex;">
+                                    <input type="checkbox" :value="categoria.idCategoria" :name="categoria.nombre"
+                                        :checked="listaIdsCategoria.includes(categoria.idCategoria)"
+                                        @change="CheckCategoria(categoria.idCategoria)">
+                                    <label>{{ categoria.nombre }}</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="cajas">
+                            <h3>Categorias</h3>
+                            <div v-for="categoria of listaCategorias" :key="categoria.idCategoria">
+                                <div style="display: flex;">
+                                    <input type="checkbox" :value="categoria.idCategoria" :name="categoria.nombre"
+                                        :checked="listaIdsCategoria.includes(categoria.idCategoria)"
+                                        @change="CheckCategoria(categoria.idCategoria)">
+                                    <label>{{ categoria.nombre }}</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </v-card-text>
+            </v-card>
+        </v-dialog>
         <div class="cont-filtro">
-            <div class="opciones-filtro">
+
+            <div class="opciones-filtro filtro-desktop">
                 <div class="cajas">
                     <h3>Plataformas</h3>
                     <div v-for="categoria of listaPlataforma" :key="categoria.idCategoria">
@@ -81,8 +126,10 @@ watchEffect(() => {
                     </div>
                 </div>
             </div>
+
             <div class="productos-filtrados">
                 <div class="diseño-select">
+                    <v-icon>mdi-tune</v-icon>
                     <select v-model="selectedOption">
                         <option value="normal">Normal</option>
                         <option value="mayorMenor">Mayor a menor precio</option>
@@ -95,6 +142,7 @@ watchEffect(() => {
         </div>
     </div>
 </template>
+
 
 <style scoped>
 .cont-general {
@@ -130,5 +178,20 @@ watchEffect(() => {
 .diseño-select option {
     background-color: #491F6A;
 
+}
+
+.btn-ordenar-filtrar {
+    display: none;
+}
+
+@media (max-width: 870px) {
+    .btn-ordenar-filtrar {
+        display: block;
+        margin-bottom: 20px;
+    }
+
+    .filtro-desktop {
+        display: none;
+    }
 }
 </style>

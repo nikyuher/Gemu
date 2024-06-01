@@ -111,10 +111,9 @@ const mostrarMas = async () => {
                         <p>{{ formatoFecha(juego.fecha) }}</p>
                         <p>{{ juego.titulo }}</p>
                         <p>{{ juego.precio }} €</p>
-                        <v-dialog max-width="500">
+                        <v-dialog>
                             <template v-slot:activator="{ props: activatorProps }">
-                                <v-btn v-bind="activatorProps" rounded color="purple"
-                                    style="width: 100px; margin: auto;">
+                                <v-btn v-bind="activatorProps" rounded color="purple" style="width: 5px; margin: auto;">
                                     <v-icon size="25">mdi-pencil</v-icon>
                                 </v-btn>
                             </template>
@@ -249,7 +248,7 @@ p {
 /* contenedores */
 
 .cont-Info {
-    width: 95%;
+    width: 100%;
 }
 
 .cont-Info h2 {
@@ -284,5 +283,11 @@ p {
 
 .bloque {
     margin: 50px 0 20px 0
+}
+
+@media (max-width: 670px) {
+    .caja-key {
+        margin: 0;
+    }
 }
 </style>

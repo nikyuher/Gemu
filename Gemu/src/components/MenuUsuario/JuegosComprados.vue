@@ -78,7 +78,8 @@
                                 <p>{{ juegoBilioteca.juego.precio }} €</p>
                                 <v-dialog max-width="500">
                                     <template v-slot:activator="{ props: activatorProps }">
-                                        <v-btn v-bind="activatorProps" rounded color="purple">
+                                        <v-btn v-bind="activatorProps" rounded color="purple"
+                                            style="width: 50px; margin: auto;">
                                             <v-icon size="25">mdi-key-variant</v-icon>
                                         </v-btn>
                                     </template>
@@ -184,7 +185,7 @@ p {
 /* contenedores */
 
 .cont-Info {
-    width: 95%;
+    width: 100%;
 }
 
 .cont-Info h2 {
