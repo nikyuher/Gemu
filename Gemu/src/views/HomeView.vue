@@ -30,11 +30,6 @@ import ProductosPaginados from '@/components/Paginados/ProductosPaginados.vue';
       <article>
         <CategoriasHome></CategoriasHome>
       </article>
-      <article>
-        <div class="ProximosLanzamientos">
-          <h2>Proximos Lanzamientos</h2>
-        </div>
-      </article>
     </section>
   </main>
 </template>
