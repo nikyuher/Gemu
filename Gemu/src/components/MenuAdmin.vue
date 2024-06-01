@@ -39,16 +39,20 @@ const mostrarView = (view: string) => {
     opcionActual.value = view;
 };
 
-
+const isMenuOpen = ref(false);
+const toggleMenu = () => {
+    isMenuOpen.value = !isMenuOpen.value;
+};
 </script>
 
 <template>
-    <div class="bloqueInvisible">
-        <p></p>
-    </div>
+
     <main>
         <div class="layout">
-            <div class="Barra">
+            <div class="menu-button" @click="toggleMenu">
+                <v-icon>mdi-menu</v-icon>
+            </div>
+            <div class="Barra" :class="{ 'is-open': isMenuOpen }">
                 <div class="desplegable mantenerClick" :style="{ backgroundColor: cuentaVisible1 ? '#240C2F' : '' }">
                     <div class="cont-desplegable" :class="{ activo: cuentaVisible1 }"
                         @click="cuentaVisible1 = !cuentaVisible1">
@@ -217,5 +221,51 @@ main {
     display: grid;
     grid-template-columns: 300px 1fr;
     height: 100%;
+    padding-top: 170px;
+    padding-right: 50px;
+}
+
+.menu-button {
+    display: none;
+}
+
+
+@media (max-width: 975px) {
+    .Barra {
+        display: none;
+    }
+
+    .layout {
+        padding-top: 118px;
+        padding-right: 0;
+        display: block;
+    }
+
+    .menu-button {
+        display: block;
+        top: 118px;
+        background-color: #491F6A;
+        padding: 20px 20px;
+    }
+
+    .bloqueInvisible {
+        height: 120px;
+    }
+
+    .bloqueRelleno {
+        display: none;
+    }
+
+    .Barra.is-open {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: 170px;
+        left: 0;
+        background-color: #491F6A;
+        width: 300px;
+        z-index: 1;
+    }
+
 }
 </style>

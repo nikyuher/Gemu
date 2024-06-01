@@ -169,19 +169,6 @@ watch(idsJuego, (newVal) => {
 </template>
 
 <style scoped>
-.pago {
-    display: flex;
-}
-
-.forma-pago {
-    background-color: #491F6A;
-    display: flex;
-    margin-right: 40px;
-    max-height: 100px;
-    padding: 10px;
-    border-radius: 5px;
-}
-
 .carrito {
     display: flex;
 }
@@ -200,7 +187,7 @@ watch(idsJuego, (newVal) => {
     background-color: #5C2C83;
     border: 2px solid #A140B9;
     justify-content: space-between;
-    min-width: 400px;
+    max-width: 400px;
     margin: 20px 0;
 }
 

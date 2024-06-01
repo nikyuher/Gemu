@@ -82,10 +82,9 @@ watch(() => props.busqueda, (newVal) => {
 <style scoped>
 .cont-datos-obtenidos {
     position: absolute;
-    top: 100px;
+    top: 74px;
     left: 0;
     right: 0;
-    background-color: rgba(35, 13, 39, 0.466);
     z-index: 9999;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
     padding: 10px;
@@ -107,5 +106,12 @@ watch(() => props.busqueda, (newVal) => {
     text-overflow: ellipsis;
     white-space: nowrap;
     max-width: 150px;
+}
+
+@media (max-width: 1117px) {
+    .cont-datos-obtenidos {
+        top: 38px;
+    }
+
 }
 </style>

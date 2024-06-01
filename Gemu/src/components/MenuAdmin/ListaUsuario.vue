@@ -159,7 +159,6 @@ const usuariosFiltrado = computed(() => {
 }
 
 .cont-put-rol h3 {
-
     color: #682E83;
     font-size: 23px;
 }
@@ -262,7 +261,7 @@ p {
 /* contenedores */
 
 .cont-Info {
-    width: 95%;
+    width: 100%;
 }
 
 .cont-Info h2 {

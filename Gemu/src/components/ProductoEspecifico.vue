@@ -263,6 +263,10 @@ const prevImage = () => {
     </div>
 </template>
 <style scoped>
+.v-sheet {
+    max-width: 80%;
+}
+
 .boton-mostrar-mas {
     display: flex;
     margin: auto;
@@ -298,6 +302,7 @@ const prevImage = () => {
 
 .cont-top-resenas {
     display: flex;
+    margin-top: 30px;
     align-items: center;
     justify-content: space-between;
 }
@@ -419,5 +424,26 @@ button {
     width: 100%;
     height: 100%;
     object-fit: contain;
+}
+
+@media (max-width: 1117px) {
+
+    .cont-portada {
+        display: block;
+        margin: 50px auto;
+        align-items: center;
+    }
+
+    .cont-info-portada {
+        display: grid;
+    }
+
+    .cont-img-portada {
+        margin: auto;
+    }
+
+    .v-sheet {
+        max-width: 100%;
+    }
 }
 </style>

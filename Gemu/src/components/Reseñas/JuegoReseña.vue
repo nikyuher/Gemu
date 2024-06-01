@@ -158,4 +158,11 @@ h2 {
 p {
     margin-bottom: 10px;
 }
+
+@media (max-width: 522px) {
+    .opinion-container {
+        width: 100%;
+    }
+
+}
 </style>

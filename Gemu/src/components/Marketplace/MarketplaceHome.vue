@@ -36,7 +36,7 @@ onMounted(async () => {
                 <RouterLink
                     :to="{ name: 'filtro', params: { opcion: 'productos', categoria: seccion.nombre, id: seccion.idCategoria } }"
                     style="text-decoration: none;">
-                    <p>{{ seccion.nombre }}</p>
+                    <p style="margin: 20px 0;">{{ seccion.nombre }}</p>
                 </RouterLink>
             </div>
         </div>
@@ -80,12 +80,21 @@ onMounted(async () => {
     background-color: #491F6A;
     padding: 10px;
     width: 20%;
-    max-height: 300px;
+    max-height: 355px;
+    margin-right: 20px;
 }
 
 .cont-productos {
     width: 80%;
     padding: 10px;
+}
+
+.cont-tipos p {
+    padding: 5px;
+}
+
+.cont-tipos p:hover {
+    background-color: #250f36;
 }
 
 .seccion-productos {
@@ -122,5 +131,17 @@ onMounted(async () => {
     background-color: #682E83;
     border: 1px solid white;
     padding: 10px 20px 10px 20px;
+}
+
+@media (max-width: 870px) {
+    .cont-Market {
+        display: grid;
+    }
+
+    .cont-tipos {
+        background-color: #491F6A;
+        padding: 10px;
+        width: 100%;
+    }
 }
 </style>

@@ -187,4 +187,10 @@ watchEffect(() => {
     font-size: 22px;
     color: white;
 }
+
+@media (max-width: 975px) {
+    .bloqueFooter {
+        margin: auto
+    }
+}
 </style>

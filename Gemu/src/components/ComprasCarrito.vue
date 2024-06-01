@@ -132,19 +132,22 @@ const continuarCompra2 = () => {
         </div>
         <div>
             <ListaCarrito></ListaCarrito>
-            <button @click="continuarCompra2()">Continuar</button>
+            <button @click="continuarCompra2()" style="margin-top: 20px;">Continuar</button>
         </div>
     </div>
     <div v-else class="pago">
-        <div class="forma-pago">
-            <h2> Gēmu
-                ゲーム
-            </h2>
-            <div>
-                <p>Billetera Gēmu </p>
-                <p>Saldo total disponible: {{ saldoActual }} $</p>
+        <div>
+            <h2>Metodo de pago</h2>
+            <div class="forma-pago">
+                <h2> Gēmu
+                    ゲーム
+                </h2>
+                <div>
+                    <p>Billetera Gēmu </p>
+                    <p>Saldo total disponible: {{ saldoActual }} $</p>
+                </div>
+                <v-icon>mdi-circle-slice-8</v-icon>
             </div>
-            <v-icon>mdi-circle-slice-8</v-icon>
         </div>
         <div style="max-width: 460px;">
             <ListaCarrito></ListaCarrito>
@@ -253,5 +256,32 @@ button {
 .info button:hover {
     background-color: #af712b;
     color: rgb(255, 255, 255);
+}
+
+@media (max-width: 870px) {
+
+    .carrito {
+        display: grid;
+    }
+
+    .info {
+        margin: 20px 0;
+    }
+
+    .direccion {
+        display: grid;
+    }
+
+    .diseño-direccion {
+        margin-bottom: 30px;
+    }
+
+    .pago {
+        display: grid;
+    }
+
+    .forma-pago {
+        margin-bottom: 20px
+    }
 }
 </style>

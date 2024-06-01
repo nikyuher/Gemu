@@ -102,8 +102,7 @@ const formatoFecha = (fecha: string) => {
                         <p>{{ anuncio.producto.precio }} €</p>
                         <v-dialog max-width="500">
                             <template v-slot:activator="{ props: activatorProps }">
-                                <v-btn v-bind="activatorProps" rounded color="purple"
-                                    style="width: 100px; margin: auto;">
+                                <v-btn v-bind="activatorProps" rounded color="purple" style="width: 5px; margin: auto;">
                                     <v-icon size="25">mdi-pencil</v-icon>
                                 </v-btn>
                             </template>
@@ -248,5 +247,11 @@ p {
 
 .bloque {
     margin: 50px 0 20px 0
+}
+
+@media (max-width: 670px) {
+    .caja-key {
+        margin: 0;
+    }
 }
 </style>

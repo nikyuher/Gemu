@@ -186,9 +186,13 @@ const eliminarImagen = (index: number) => {
                             style="color: black;">
                         <div class="imagenes-container">
                             <div v-for="(imagen, index) in imagenes" :key="index" class="imagen-container">
-                                <img :src="imagen" class="imagen" alt="Imagen" width="80">
-                                <v-icon @click="eliminarImagen(index)"
-                                    style="color: #722121; font-size: 40px;">mdi-delete</v-icon>
+                                <div style="display: grid;">
+                                    <img :src="imagen" class="imagen" alt="Imagen" width="80">
+                                    <v-icon @click="eliminarImagen(index)"
+                                        style="color: #722121; font-size: 40px; margin: auto;">
+                                        mdi-delete
+                                    </v-icon>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -211,7 +215,7 @@ const eliminarImagen = (index: number) => {
                         <p>{{ characterCount }}/600 caracteres</p>
                         <textarea name="descripcion" v-model="descripcion" outlined
                             placeholder="Escribir un minimo de 300 caracteres" maxlength="500" rows="4"
-                            style="color: black; width: 600px; max-height: 200px; resize: none;" required
+                            style="color: black; width: 95%; max-height: 200px; resize: none;" required
                             class="diseño-Text-Area">
                         </textarea>
                         <p v-if="!isFormValid">Por favor, asegúrate de colocar una descripcion entre 300 y 600
@@ -418,7 +422,7 @@ h5 {
 
 /* contenedores */
 .cont-Info {
-    width: 95%;
+    width: 100%;
 }
 
 .cont-Info h2 {

@@ -157,7 +157,6 @@ const ConvertorImgBase64 = (event: Event) => {
 
 <template>
     <div class="bloque">
-        {{ idProducto }}
         <form @submit.prevent="ActualizarProducto()">
             <div class="cajas">
                 <div class="conInput">
@@ -175,9 +174,13 @@ const ConvertorImgBase64 = (event: Event) => {
                     <input ref="fileInputRef" type="file" multiple @change="ConvertorImgBase64" style="color: black;">
                     <div class="imagenes-container">
                         <div v-for="(imagen, index) in imagenes" :key="index" class="imagen-container">
-                            <img :src="imagen" class="imagen" alt="Imagen" width="80">
-                            <v-icon @click="eliminarImagen(index)"
-                                style="color: #722121; font-size: 40px;">mdi-delete</v-icon>
+                            <div style="display: grid;">
+                                <img :src="imagen" class="imagen" alt="Imagen" width="80">
+                                <v-icon @click="eliminarImagen(index)"
+                                    style="color: #722121; font-size: 40px; margin: auto;">
+                                    mdi-delete
+                                </v-icon>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -199,7 +202,7 @@ const ConvertorImgBase64 = (event: Event) => {
                     <h4 style="color: gray;">Proporcion mas detalles del producto</h4>
                     <textarea name="descripcion" v-model="descripcion"
                         placeholder="Escribir un minimo de 300 caracteres" maxlength="500" rows="4"
-                        style="color: black; width: 500px; max-height: 200px; resize: none;" required
+                        style="color: black; width: 100%; max-height: 200px; resize: none;" required
                         class="diseño-Text-Area"></textarea>
                 </div>
             </div>

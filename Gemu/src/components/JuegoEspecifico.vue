@@ -195,7 +195,7 @@ const prevImage = () => {
             </div>
         </div>
         <div class="cont-img-muestra">
-            <v-sheet elevation="8" max-width="800" style="background-color: transparent; box-shadow: none !important ;">
+            <v-sheet elevation="8" style="background-color: transparent; box-shadow: none !important ;">
                 <v-slide-group class="pa-4" center-active show-arrows>
                     <v-slide-group-item v-for="(imagen, index) in imagenes.slice(1)" :key="index"
                         v-slot="{ isSelected }">
@@ -269,6 +269,10 @@ const prevImage = () => {
     </div>
 </template>
 <style scoped>
+.v-sheet {
+    max-width: 80%;
+}
+
 .boton-mostrar-mas {
     display: flex;
     margin: auto;
@@ -306,6 +310,7 @@ const prevImage = () => {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    margin-top: 30px
 }
 
 button {
@@ -425,5 +430,26 @@ button {
     width: 100%;
     height: 100%;
     object-fit: contain;
+}
+
+@media (max-width: 1117px) {
+
+    .cont-portada {
+        display: block;
+        margin: 50px auto;
+        align-items: center;
+    }
+
+    .cont-info-portada {
+        display: grid;
+    }
+
+    .cont-img-portada {
+        margin: auto;
+    }
+
+    .v-sheet {
+        max-width: 100%;
+    }
 }
 </style>

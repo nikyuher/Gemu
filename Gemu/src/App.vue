@@ -65,6 +65,11 @@ const search = async () => {
   }
 }
 
+const isMenuOpen = ref(false);
+const toggleMenu = () => {
+  isMenuOpen.value = !isMenuOpen.value;
+};
+
 </script>
 
 <template>
@@ -76,8 +81,10 @@ const search = async () => {
           <p>ゲーム</p>
         </RouterLink>
       </div>
-
-      <div class="cont-nav">
+      <div class="menu-button" @click="toggleMenu">
+        <v-icon>mdi-menu</v-icon>
+      </div>
+      <div class="cont-nav" :class="{ 'is-open': isMenuOpen }">
         <div class="search">
           <input @input="search()" type="search" v-model="busqueda" placeholder="Buscar...">
           <v-icon>mdi-magnify</v-icon>
@@ -107,6 +114,8 @@ const search = async () => {
         <div class="vender">
           <RouterLink :to="{ name: 'user-menu', params: { opcion: 'crearAnuncio' } }">Vender</RouterLink>
         </div>
+        <BusquedaHome :busqueda="busquedaMandar"></BusquedaHome>
+
       </div>
     </div>
     <div class="nav-inferior">
@@ -115,7 +124,6 @@ const search = async () => {
       <RouterLink :to="{ name: 'juegosTipo', params: { tipo: 'baratos' } }">Juegos Baratos</RouterLink>
     </div>
   </header>
-  <BusquedaHome :busqueda="busquedaMandar"></BusquedaHome>
 
   <RouterView />
 
@@ -160,8 +168,14 @@ const search = async () => {
 
 <style scoped>
 /* Barra de navegacion */
+
 header {
   background-color: rgb(0, 0, 0);
+}
+
+.menu-button {
+  display: none;
+  cursor: pointer;
 }
 
 .nav-superior {
@@ -356,5 +370,45 @@ footer {
 .custom-icon {
   font-size: 22px;
   color: white;
+}
+
+
+/* Media Queries */
+@media (max-width: 1117px) {
+  .cont-nav {
+    display: none;
+  }
+
+  .menu-button {
+    display: block;
+    margin-right: 20px;
+  }
+
+  .cont-nav.is-open {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 100px;
+    right: 0;
+    background-color: rgb(0, 0, 0);
+    width: 100%;
+    z-index: 1;
+  }
+
+  .cont-nav .search,
+  .cont-nav .idiomas,
+  .cont-nav .carrito,
+  .cont-nav .cuentaUsuario,
+  .cont-nav .vender {
+    margin: 10px 20px;
+  }
+
+  .cont-nav .search input {
+    width: calc(100% - 40px);
+  }
+
+  .cont-nav .vender {
+    text-align: center
+  }
 }
 </style>

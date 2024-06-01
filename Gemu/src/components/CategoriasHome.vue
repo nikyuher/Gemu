@@ -114,6 +114,7 @@ const toggleMostrarTodo = () => {
     display: flex;
     align-items: center;
     text-align: center;
+    flex-wrap: wrap;
     justify-content: space-evenly;
     margin: 100px 0;
 }
