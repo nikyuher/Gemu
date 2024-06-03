@@ -16,6 +16,7 @@ const showProgress = ref(false);
 const IdUsuario = storeUsuario.$state.usuarioId?.idUsuario
 const listaJuegos = computed(() => storeJuego.JuegosPaginados);
 const terminosBusqueda = ref('');
+const ordenFecha = ref('masReciente');
 
 const getImagenURL = (base64StringArray: any) => {
     const base64String = base64StringArray[0]?.datos;
@@ -52,14 +53,20 @@ const EliminarJuego = async (idJuego: number) => {
 }
 
 const juegosFiltrado = computed(() => {
-    if (!terminosBusqueda.value) {
-        return listaJuegos.value;
-    } else {
+    let juegos = listaJuegos.value;
+
+    if (terminosBusqueda.value) {
         const filtro = terminosBusqueda.value.toLowerCase();
-        return listaJuegos.value.filter(juego => {
-            return juego.titulo.toLowerCase().includes(filtro);
-        });
+        juegos = juegos.filter(juego => juego.titulo.toLowerCase().includes(filtro));
     }
+
+    if (ordenFecha.value === 'masReciente') {
+        juegos = juegos.sort((a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime());
+    } else {
+        juegos = juegos.sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime());
+    }
+
+    return juegos;
 });
 
 const formatoFecha = (fecha: string) => {
@@ -92,6 +99,13 @@ const mostrarMas = async () => {
                     <input type="search" v-model="terminosBusqueda" placeholder="Buscar por nombre de producto">
                 </div>
             </div>
+        </div>
+        <div class="ordenar">
+            <label for="ordenFecha">Ordenar por fecha:</label>
+            <select id="ordenFecha" v-model="ordenFecha">
+                <option style="color: black;" value="masReciente">Más antiguos</option>
+                <option style="color: black;" value="masAntiguo">Más recientes</option>
+            </select>
         </div>
         <div class="bloque">
             <div class="cajas2">
@@ -283,6 +297,24 @@ p {
 
 .bloque {
     margin: 50px 0 20px 0
+}
+
+/* Ordenar select */
+.ordenar {
+    display: flex;
+    justify-content: flex-end;
+    margin: 10px;
+    align-items: center;
+}
+
+.ordenar label {
+    margin-right: 10px;
+    color: #7852A9;
+}
+
+.ordenar select {
+    padding: 5px;
+    color: #7852A9;
 }
 
 @media (max-width: 670px) {

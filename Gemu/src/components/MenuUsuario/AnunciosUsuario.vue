@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import { UsuarioApi } from '@/stores/usuarioApi';
 import { AnuncioApi } from '@/stores/anuncioApi';
 import { ProductoApi } from '@/stores/productoApi';
@@ -16,6 +16,19 @@ const IdUsuario = storeUsuario.$state.usuarioId?.idUsuario
 const historial = ref<any[]>([]);
 const terminosBusqueda = ref('');
 
+const ordenSeleccionado = ref('mas-reciente');
+
+
+const ordenarHistorial = () => {
+    if (ordenSeleccionado.value === 'mas-reciente') {
+        historial.value.sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime());
+    } else {
+        historial.value.sort((a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime());
+    }
+}
+
+watch(ordenSeleccionado, ordenarHistorial);
+
 const getImagenURL = (base64StringArray: any) => {
     const base64String = base64StringArray[0]?.datos;
     return base64String ? `data:image/png;base64,${base64String}` : '';
@@ -26,6 +39,7 @@ onMounted(async () => {
         if (IdUsuario) {
             await storeAnuncio.GetAnunciosUsuario(IdUsuario);
             historial.value = storeAnuncio.listaAnuncios;
+            ordenarHistorial();
         } else {
             console.error('IdUsuario no definido');
         }
@@ -43,6 +57,7 @@ const EliminarProducto = async (idProducto: number) => {
             const index = historial.value.findIndex(anuncio => anuncio.producto.idProducto === idProducto);
             if (index !== -1) {
                 historial.value.splice(index, 1);
+                ordenarHistorial();
             }
         } catch (error) {
             console.error('Error al eliminar el producto:', error);
@@ -80,6 +95,13 @@ const formatoFecha = (fecha: string) => {
                     <input type="search" v-model="terminosBusqueda" placeholder="Buscar por nombre de producto">
                 </div>
             </div>
+        </div>
+        <div class="ordenar">
+            <label for="orden">Ordenar por fecha:</label>
+            <select v-model="ordenSeleccionado">
+                <option style="color: black;" value="mas-reciente">Más reciente</option>
+                <option style="color: black;" value="mas-antiguo">Más antiguo</option>
+            </select>
         </div>
         <div class="bloque">
             <div class="cajas2">
@@ -212,7 +234,7 @@ p {
 /* contenedores */
 
 .cont-Info {
-    width: 95%;
+    width: 100%;
 }
 
 .cont-Info h2 {
@@ -247,6 +269,24 @@ p {
 
 .bloque {
     margin: 50px 0 20px 0
+}
+
+/* Ordenar select */
+.ordenar {
+    display: flex;
+    justify-content: flex-end;
+    margin: 10px;
+    align-items: center;
+}
+
+.ordenar label {
+    margin-right: 10px;
+    color: #7852A9;
+}
+
+.ordenar select {
+    padding: 5px;
+    color: #7852A9;
 }
 
 @media (max-width: 670px) {

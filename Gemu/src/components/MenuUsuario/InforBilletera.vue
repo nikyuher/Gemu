@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { transaccionApi } from '@/stores/transacciones';
 import { UsuarioApi } from '@/stores/usuarioApi';
 
@@ -9,6 +9,16 @@ const transactionStore = transaccionApi();
 const saldoActual = ref(datosUsuario.$state.saldoActual)
 const IdUsuario = datosUsuario.$state.usuarioId?.idUsuario
 const historial = ref<any[]>([]);
+
+const ordenSeleccionado = ref('inicio-fin');
+
+const ordenarHistorial = () => {
+    if (ordenSeleccionado.value === 'inicio-fin') {
+        historial.value.sort((a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime());
+    } else {
+        historial.value.sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime());
+    }
+}
 
 const formatoFecha = (fecha: string) => {
     const date = new Date(fecha);
@@ -21,11 +31,13 @@ const formatoFecha = (fecha: string) => {
 onMounted(async () => {
     try {
         IdUsuario && await transactionStore.historialTransacciones(IdUsuario)
-        historial.value = transactionStore.listaTransacciones.reverse();
+        historial.value = transactionStore.listaTransacciones;
     } catch (error) {
         console.log(error)
     }
 })
+
+watch(ordenSeleccionado, ordenarHistorial);
 </script>
 
 <template>
@@ -43,6 +55,13 @@ onMounted(async () => {
         <div class="bloque">
             <div class="cajas">
                 <h2>Historial</h2>
+            </div>
+            <div class="ordenar">
+                <label>Ordenar por fecha:</label>
+                <select v-model="ordenSeleccionado">
+                    <option style="color: black;" value="inicio-fin">Inicio a Fin</option>
+                    <option style="color: black;" value="fin-inicio">Fin a Inicio</option>
+                </select>
             </div>
             <div class="cajas2">
                 <div class="anotaciones top-tabla">
@@ -138,5 +157,23 @@ p {
 
 .bloque {
     margin: 50px 0 20px 0
+}
+
+/* Ordenar select */
+.ordenar {
+    display: flex;
+    justify-content: flex-end;
+    margin: 10px;
+    align-items: center;
+}
+
+.ordenar label {
+    margin-right: 10px;
+    color: #7852A9;
+}
+
+.ordenar select {
+    padding: 5px;
+    color: #7852A9;
 }
 </style>

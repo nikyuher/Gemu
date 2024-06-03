@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import { UsuarioApi } from '@/stores/usuarioApi';
 import { reseñaApi } from '@/stores/reseñaApi';
 
@@ -13,10 +13,23 @@ const listaPeticiones = computed(() => storeResena.listaPeticionesPendiente);
 const responseMessage = ref('');
 const terminosBusqueda = ref('');
 
+const ordenSeleccionado = ref('mas-reciente');
+
+const ordenarLista = () => {
+    if (ordenSeleccionado.value === 'mas-reciente') {
+        listaPeticiones.value.sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime());
+    } else {
+        listaPeticiones.value.sort((a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime());
+    }
+};
+
+watch(ordenSeleccionado, ordenarLista);
+
 onMounted(async () => {
     try {
         if (idAdmin && token) {
             await storeResena.listaPeticiones(token);
+            ordenarLista();
         } else {
             console.error('IdUsuario no definido');
         }
@@ -35,6 +48,7 @@ const EliminarResena = async (idReseña: number) => {
             const index = listaPeticiones.value.findIndex(resena => resena.idReseña === idReseña);
             if (index !== -1) {
                 listaPeticiones.value.splice(index, 1);
+                ordenarLista();
             }
         } catch (error) {
             console.error('Error al eliminar la reseña:', error);
@@ -56,6 +70,7 @@ const aprobarResena = async (idReseña: number) => {
             const index = listaPeticiones.value.findIndex(resena => resena.idReseña === idReseña);
             if (index !== -1) {
                 listaPeticiones.value.splice(index, 1);
+                ordenarLista();
             }
 
             responseMessage.value = 'Actualizado exitosamente';
@@ -106,6 +121,13 @@ const formatoFecha = (fecha: string) => {
                     <input type="search" v-model="terminosBusqueda" placeholder="Buscar por nombre">
                 </div>
             </div>
+        </div>
+        <div class="ordenar">
+            <label for="orden">Ordenar por fecha:</label>
+            <select v-model="ordenSeleccionado">
+                <option style="color: black;" value="mas-reciente">Más reciente</option>
+                <option style="color: black;" value="mas-antiguo">Más antiguo</option>
+            </select>
         </div>
         <div class="bloque">
             <div class="cajas2">
@@ -277,7 +299,7 @@ p {
 /* contenedores */
 
 .cont-Info {
-    width: 95%;
+    width: 100%;
 }
 
 .cont-Info h2 {
@@ -312,5 +334,23 @@ p {
 
 .bloque {
     margin: 50px 0 20px 0
+}
+
+/* Ordenar select */
+.ordenar {
+    display: flex;
+    justify-content: flex-end;
+    margin: 10px;
+    align-items: center;
+}
+
+.ordenar label {
+    margin-right: 10px;
+    color: #7852A9;
+}
+
+.ordenar select {
+    padding: 5px;
+    color: #7852A9;
 }
 </style>

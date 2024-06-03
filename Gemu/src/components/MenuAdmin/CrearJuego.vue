@@ -27,6 +27,8 @@ const categoriasSelecionadas = ref<number[]>([])
 const mostrarEtiquetas = ref<string>('')
 const fileInputRef = ref<HTMLInputElement | null>(null);
 
+
+
 const limpiarDatos = () => {
     tituloJuego.value = ''
     imagenes.value = []
@@ -211,7 +213,7 @@ const eliminarImagen = (index: number) => {
                 <div class="cajas" style="padding-bottom: 10px;">
                     <div>
                         <h3>Etiquetas</h3>
-                        <div class="diseño-input-etiquetas">
+                        <div class="diseño-input-etiquetas" style="width: 100%;">
                             <input type="text" v-model="mostrarEtiquetas" disabled>
                         </div>
                         <div class="cont-etiquetas">
@@ -249,7 +251,7 @@ const eliminarImagen = (index: number) => {
 
     outline: none;
 
-    width: 90%;
+    width: 100%;
     background-color: transparent;
     height: 15px;
     color: black;

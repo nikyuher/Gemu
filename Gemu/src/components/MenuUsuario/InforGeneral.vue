@@ -79,7 +79,7 @@ h5 {
 }
 
 .cont-Info {
-    width: 95%;
+    width: 100%;
 }
 
 .cont-Info h2 {
@@ -107,4 +107,5 @@ h5 {
 .bloque {
     margin: 50px 0 20px 0
 }
+
 </style>

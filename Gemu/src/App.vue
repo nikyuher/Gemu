@@ -37,6 +37,7 @@ const removerTokenYUsuarioId = () => {
 
 // Eliminar cada 1 hora
 onMounted(async () => {
+
   if (datosUsuario.getToken()) {
     const datosUser = {
       idUsuario: datosUsuario.$state.usuarioId?.idUsuario,
@@ -65,15 +66,26 @@ const search = async () => {
   }
 }
 
+const cerrarBuscador = async() =>{
+  busqueda.value=''
+  search()
+}
+
 const isMenuOpen = ref(false);
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value;
 };
 
+const toggleMenuClose = () => {
+  if (isMenuOpen.value == true) {
+    isMenuOpen.value = false
+  }
+};
+
 </script>
 
 <template>
-  <header :style="{ display: ocultarHeader ? 'none' : 'block' }">
+  <header :style="{ display: ocultarHeader ? 'none' : 'block' }" @click="cerrarBuscador()">
     <div class="nav-superior">
       <div class="logo">
         <RouterLink to="/">
@@ -98,23 +110,23 @@ const toggleMenu = () => {
         </div>
         <div class="carrito">
           <v-badge :content="totalCantidad" color="red">
-            <RouterLink to="/carritoCompra"> <v-icon>mdi-cart</v-icon></RouterLink>
+            <RouterLink @click="toggleMenuClose()" to="/carritoCompra"> <v-icon>mdi-cart</v-icon></RouterLink>
           </v-badge>
         </div>
         <div v-if="isAuthenticated" class="cuentaUsuario">
-          <RouterLink to="/user-menu">
+          <RouterLink @click="toggleMenuClose()" to="/user-menu">
             {{ datosUsuario.$state.usuarioId?.nombre }}
             <v-icon>mdi-account-circle</v-icon>
           </RouterLink>
         </div>
         <div v-else class="cuentaUsuario">
-          <RouterLink to="/iniciarSesion">InicioSesion</RouterLink>
-          <RouterLink to="/registrarse" style="border-left:2px solid white ;">Registrarse</RouterLink>
+          <RouterLink @click="toggleMenuClose()" to="/iniciarSesion">InicioSesion</RouterLink>
+          <RouterLink @click="toggleMenuClose()" to="/registrarse" style="border-left:2px solid white ;">Registrarse</RouterLink>
         </div>
         <div class="vender">
-          <RouterLink :to="{ name: 'user-menu', params: { opcion: 'crearAnuncio' } }">Vender</RouterLink>
+          <RouterLink @click="toggleMenuClose()" :to="{ name: 'user-menu', params: { opcion: 'crearAnuncio' } }">Vender</RouterLink>
         </div>
-        <BusquedaHome :busqueda="busquedaMandar"></BusquedaHome>
+        <BusquedaHome @click="toggleMenuClose()" :busqueda="busquedaMandar"></BusquedaHome>
 
       </div>
     </div>
@@ -125,7 +137,7 @@ const toggleMenu = () => {
     </div>
   </header>
 
-  <RouterView />
+  <RouterView @click="cerrarBuscador(); toggleMenuClose()" />
 
   <footer :style="{ display: ocultarFooter ? 'none' : 'block' }">
     <div class="footer-superior">

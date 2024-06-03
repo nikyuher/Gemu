@@ -92,10 +92,6 @@
                                     </template>
                                 </v-dialog>
                             </div>
-                            <div v-for="(producto, index) of biblioteca.productos" :key="index">
-                                <p>Id del Producto: {{ producto.id }}</p>
-                                <p>Nombre del Producto: {{ producto.nombre }}</p>
-                            </div>
                         </div>
                     </div>
                     <div v-else>

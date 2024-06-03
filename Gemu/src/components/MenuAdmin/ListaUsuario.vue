@@ -4,11 +4,12 @@ import { UsuarioApi } from '@/stores/usuarioApi';
 
 const storeUsuario = UsuarioApi();
 
-const token = storeUsuario.getToken()
+const token = storeUsuario.getToken();
 
-const idAdmin = storeUsuario.$state.usuarioId?.idUsuario
+const idAdmin = storeUsuario.$state.usuarioId?.idUsuario;
 const listaUsuarios = computed(() => storeUsuario.listaUsuarios);
-const rolSelect = ref<string>('1')
+const rolSelect = ref<string>('1');
+const rolFiltro = ref<string>('todos');
 const responseMessage = ref('');
 const terminosBusqueda = ref('');
 
@@ -20,13 +21,11 @@ onMounted(async () => {
             console.error('IdUsuario no definido');
         }
     } catch (error) {
-        console.log(error)
+        console.log(error);
     }
-})
-
+});
 
 const EliminarUsuario = async (idUsuario: number) => {
-
     if (idUsuario && idAdmin && token) {
         try {
             await storeUsuario.EliminarUsuario(idUsuario);
@@ -39,17 +38,15 @@ const EliminarUsuario = async (idUsuario: number) => {
             console.error('Error al eliminar el usuario:', error);
         }
     }
-}
+};
 
 const ActualizarRol = async (idUsuario: number) => {
-
     try {
         if (idUsuario && idAdmin && token) {
-
             const datos = {
                 idUsuario: idUsuario,
-                idRol: Number(rolSelect.value)
-            }
+                idRol: Number(rolSelect.value),
+            };
             await storeUsuario.updateRol(datos);
             await storeUsuario.getAllUsuario();
 
@@ -69,19 +66,22 @@ const ActualizarRol = async (idUsuario: number) => {
             throw new Error(String(error));
         }
     }
-}
+};
 
 const usuariosFiltrado = computed(() => {
-    if (!terminosBusqueda.value) {
-        return listaUsuarios.value;
-    } else {
-        const filtro = terminosBusqueda.value.toLowerCase();
-        return listaUsuarios.value.filter(anuncio => {
-            return anuncio.nombre.toLowerCase().includes(filtro);
-        });
-    }
-});
+    let usuarios = listaUsuarios.value;
 
+    if (terminosBusqueda.value) {
+        const filtro = terminosBusqueda.value.toLowerCase();
+        usuarios = usuarios.filter(usuario => usuario.nombre.toLowerCase().includes(filtro));
+    }
+
+    if (rolFiltro.value !== 'todos') {
+        usuarios = usuarios.filter(usuario => usuario.rol === rolFiltro.value);
+    }
+
+    return usuarios;
+});
 </script>
 
 <template>
@@ -93,6 +93,14 @@ const usuariosFiltrado = computed(() => {
                     <input type="search" v-model="terminosBusqueda" placeholder="Buscar por nombre">
                 </div>
             </div>
+        </div>
+        <div class="ordenar">
+            <label>Filtrar por rol:</label>
+            <select v-model="rolFiltro">
+                <option value="todos">Todos</option>
+                <option value="Usuario">Usuario</option>
+                <option value="Admin">Admin</option>
+            </select>
         </div>
         <div class="bloque">
             <div class="cajas2">
@@ -114,7 +122,7 @@ const usuariosFiltrado = computed(() => {
                         <v-dialog max-width="500">
                             <template v-slot:activator="{ props: activatorProps }">
                                 <v-btn v-bind="activatorProps" rounded color="purple"
-                                    style="width: 100px; margin: auto;">
+                                    style="width: 10px; margin: auto;">
                                     <v-icon size="25">mdi-pencil</v-icon>
                                 </v-btn>
                             </template>
@@ -128,7 +136,7 @@ const usuariosFiltrado = computed(() => {
                                             <option value="2">Admin</option>
                                         </select>
                                         <v-btn @click="ActualizarRol(usuario.idUsuario)" color="orange"
-                                            style=" margin: auto;">
+                                            style="margin: auto;">
                                             Actualizar
                                         </v-btn>
                                         <v-alert v-if="responseMessage" :value="true"
@@ -296,5 +304,23 @@ p {
 
 .bloque {
     margin: 50px 0 20px 0
+}
+
+/* Ordenar select */
+.ordenar {
+    display: flex;
+    justify-content: flex-end;
+    margin: 10px;
+    align-items: center;
+}
+
+.ordenar label {
+    margin-right: 10px;
+    color: #7852A9;
+}
+
+.ordenar select {
+    padding: 5px;
+    color: #7852A9;
 }
 </style>

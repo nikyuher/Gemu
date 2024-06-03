@@ -108,6 +108,12 @@ const continuarCompra1 = () => {
 const continuarCompra2 = () => {
     showDireccion.value = false;
 }
+
+const validarDireccion = computed(() => {
+
+    return direccionUser.value != '' && codigoPostalUsuer.value != 0;
+});
+
 </script>
 
 <template>
@@ -127,12 +133,15 @@ const continuarCompra2 = () => {
                 <p>Direccion </p>
                 <input type="text" v-model="direccionUser" placeholder="direccion" required>
                 <p>Codigo postal </p>
-                <input type="number" v-model="codigoPostalUsuer" placeholder="codigo postal" required>
+                <input type="number" v-model="codigoPostalUsuer" placeholder="codigo postal" style="color: black;"
+                    required>
+                <p v-if="!validarDireccion" style="color: orange;">Rellene su direccion y codigo postal</p>
             </div>
         </div>
         <div>
             <ListaCarrito></ListaCarrito>
-            <button @click="continuarCompra2()" style="margin-top: 20px;">Continuar</button>
+            <button @click="continuarCompra2()" :disabled="!validarDireccion"
+                style="margin-top: 20px;">Continuar</button>
         </div>
     </div>
     <div v-else class="pago">

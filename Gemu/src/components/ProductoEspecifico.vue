@@ -180,7 +180,11 @@ const prevImage = () => {
                     <h3>Estado: {{ estado }}</h3>
                     <h3>Precio: {{ precio }} €</h3>
                 </div>
-                <button class="boton-compra">Comprar ahora</button>
+                <RouterLink to="/carritoCompra" @click="addProductoCarrito()">
+                    <button class="boton-compra">
+                        Comprar ahora
+                    </button>
+                </RouterLink>
                 <button class="boton-carrito" @click="addProductoCarrito()">Añadir al carrito</button>
                 <v-alert v-if="responseMessage" :value="true"
                     :type="responseMessage.includes('correctamente') ? 'success' : 'error'">

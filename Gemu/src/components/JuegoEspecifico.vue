@@ -186,7 +186,11 @@ const prevImage = () => {
                         <h3>Precio: {{ precioFinal != 0 ? precioFinal + ' €' : 'Gratis' }} </h3>
                     </div>
                 </div>
-                <button class="boton-compra">Comprar ahora</button>
+                <RouterLink to="/carritoCompra" @click="addJuegoCarrito()">
+                    <button class="boton-compra">
+                        Comprar ahora
+                    </button>
+                </RouterLink>
                 <button class="boton-carrito" @click="addJuegoCarrito()">Añadir al carrito</button>
                 <v-alert v-if="responseMessage" :value="true"
                     :type="responseMessage.includes('correctamente') ? 'success' : 'error'">
