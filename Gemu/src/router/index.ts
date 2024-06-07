@@ -79,7 +79,14 @@ const router = createRouter({
       name: 'not-found',
       component: () => import('../views/ErrorUrlView.vue')
     }
-  ]
+  ],
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition;
+    } else {
+      return { top: 0 };
+    }
+  }
 })
 
 export default router

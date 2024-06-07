@@ -87,7 +87,7 @@ const formReseña = async () => {
     <div class="opinion-container">
         <h2>Opinión</h2>
         <p>¡Ayuda a otros usuarios a elegir! Esta reseña debe contener tu opinión personal del
-            producto en términos de jugabilidad, gráficos, banda sonora e historia.</p>
+            producto en términos de jugabilidad, usabilidad, experiencia,etc.</p>
         <p>Para garantizar la calidad, tu opinión será revisada por moderadores de Gēmu.com.
             Recibirás una notificación cuando se publique.</p>
         <p>Tu reseña debe contener al menos 150 caracteres.</p>

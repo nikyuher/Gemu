@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, computed, watch } from 'vue'
+import { onMounted, computed, watch, ref } from 'vue'
 import { CarritoApi } from "@/stores/carritoApi";
 import { UsuarioApi } from '@/stores/usuarioApi';
 
@@ -9,6 +9,7 @@ const storeCarrito = CarritoApi()
 const IdUsuario = storeUsuario.$state.usuarioId ? storeUsuario.$state.usuarioId?.idUsuario : 0
 const listaCarrito = computed(() => storeCarrito.listaCarrito);
 
+const isLoading = ref(true);
 
 const datosUser = {
     idUsuario: IdUsuario,
@@ -24,6 +25,8 @@ onMounted(async () => {
         }
     } catch (error) {
         console.log(error);
+    } finally {
+        isLoading.value = false;
     }
 })
 
@@ -118,49 +121,63 @@ watch(idsJuego, (newVal) => {
     <div class="carrito">
         <div class="lista">
             <h2>Mi carrito</h2>
-            <div v-for="carrito of listaCarrito" :key="carrito.idCarrito">
-                <h3>Productos</h3>
-                <div v-for="productoCarrito in carrito.carritoProductos" :key="productoCarrito.carritoProductoId">
-                    <div class="caja-producto">
-                        <div style="display: flex;">
-                            <img :src="'data:image/png;base64,' + productoCarrito.producto.imgsProducto[0].datos"
-                                alt="Imagen del producto">
-                            <div>
-                                <p style="padding-left: 10px;">{{ productoCarrito.producto.nombre }}</p>
-                                <p style="margin-top: 71px; padding-left: 10px;">Estado: {{
-                                    productoCarrito.producto.estado }} </p>
+            <div v-if="isLoading" class="loading" style="text-align: center; margin: 40px 0; font-size: 30px;">
+                <p>Cargando...</p>
+            </div>
+            <div v-else>
+                <div v-for="carrito of listaCarrito" :key="carrito.idCarrito">
+                    <div v-if="carrito.carritoProductos.length > 0">
+                        <h3>Productos</h3>
+                        <div v-for="productoCarrito in carrito.carritoProductos"
+                            :key="productoCarrito.carritoProductoId">
+                            <div class="caja-producto">
+                                <div style="display: flex;">
+                                    <img :src="'data:image/png;base64,' + productoCarrito.producto.imgsProducto[0].datos"
+                                        alt="Imagen del producto">
+                                    <div>
+                                        <p style="padding-left: 10px;">{{ productoCarrito.producto.nombre }}</p>
+                                        <p style="margin-top: 71px; padding-left: 10px;">Estado: {{
+                                            productoCarrito.producto.estado }} </p>
+                                    </div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <v-btn
+                                        @click="EliminarProducto(productoCarrito.carritoProductoId, productoCarrito.productoId)"
+                                        color="transparent" style="width: 5px; margin: auto;">
+                                        <v-icon size="25">mdi-delete</v-icon>
+                                    </v-btn>
+                                    <p style="margin-top: 60px ;">{{ productoCarrito.producto.precio }} €</p>
+                                </div>
                             </div>
-                        </div>
-                        <div style="text-align: center;">
-                            <v-btn
-                                @click="EliminarProducto(productoCarrito.carritoProductoId, productoCarrito.productoId)"
-                                color="transparent" style="width: 5px; margin: auto;">
-                                <v-icon size="25">mdi-delete</v-icon>
-                            </v-btn>
-                            <p style="margin-top: 60px ;">{{ productoCarrito.producto.precio }} €</p>
                         </div>
                     </div>
-                </div>
-                <div v-for="juegoCarrito in carrito.carritoJuegos" :key="juegoCarrito.carritoJuegoId">
-                    <h3>Juegos</h3>
-                    <div class="caja-producto">
-                        <div style="display: flex;">
-                            <img :src="'data:image/png;base64,' + juegoCarrito.juego.imgsJuego[0].datos"
-                                alt="Imagen del producto">
-                            <div>
-                                <p style="padding-left: 10px;">{{ juegoCarrito.juego.titulo }}</p>
-                                <p style="margin-top: 71px; padding-left: 10px;">Plataforma:{{
-                                    juegoCarrito.juego.plataforma }}
-                                </p>
+                    <div v-if="carrito.carritoJuegos.length > 0">
+                        <div v-for="juegoCarrito in carrito.carritoJuegos" :key="juegoCarrito.carritoJuegoId">
+                            <h3>Juegos</h3>
+                            <div class="caja-producto">
+                                <div style="display: flex;">
+                                    <img :src="'data:image/png;base64,' + juegoCarrito.juego.imgsJuego[0].datos"
+                                        alt="Imagen del producto">
+                                    <div>
+                                        <p style="padding-left: 10px;">{{ juegoCarrito.juego.titulo }}</p>
+                                        <p style="margin-top: 71px; padding-left: 10px;">Plataforma:{{
+                                            juegoCarrito.juego.plataforma }}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <v-btn @click="EliminarJuego(juegoCarrito.carritoJuegoId, juegoCarrito.juegoId)"
+                                        color="transparent" style="width: 5px; margin: auto;">
+                                        <v-icon size="25">mdi-delete</v-icon>
+                                    </v-btn>
+                                    <p style="margin-top: 60px ;">{{ juegoCarrito.juego.precioFinal }} €</p>
+                                </div>
                             </div>
                         </div>
-                        <div style="text-align: center;">
-                            <v-btn @click="EliminarJuego(juegoCarrito.carritoJuegoId, juegoCarrito.juegoId)"
-                                color="transparent" style="width: 5px; margin: auto;">
-                                <v-icon size="25">mdi-delete</v-icon>
-                            </v-btn>
-                            <p style="margin-top: 60px ;">{{ juegoCarrito.juego.precioFinal }} €</p>
-                        </div>
+                    </div>
+                    <div v-if="carrito.carritoProductos.length == 0 && carrito.carritoJuegos.length == 0"
+                        style="text-align: center; margin: 30px 0;">
+                        <p>Tu carrito esta vacio.</p>
                     </div>
                 </div>
             </div>

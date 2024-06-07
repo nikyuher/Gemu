@@ -39,6 +39,9 @@ const imagenes = ref<string[]>([])
 const mostrarEtiquetas = ref<any>()
 const categoriasApi = ref<any[]>([])
 
+const isLoading = ref(true);
+const hasError = ref(false);
+
 onMounted(() => {
     fetchData(props.idProducto);
 });
@@ -48,7 +51,17 @@ watch(() => props.idProducto, (newVal) => {
 });
 
 const fetchData = async (idProducto: number) => {
+    isLoading.value = true;
+    hasError.value = false;
+
     try {
+        const timer = setTimeout(() => {
+            if (isLoading.value) {
+                hasError.value = true;
+                isLoading.value = false;
+            }
+        }, 5000);
+
         await storeCategoria.GetCategoriaSeccion('marketplace')
         await storeCategoria.GetCategoriasProducto(idProducto)
         await storeProducto.GetProducto(idProducto)
@@ -76,7 +89,11 @@ const fetchData = async (idProducto: number) => {
         idsCategoria.value = storeCategoria.listCategoriasProducto.map(categoria => categoria.categoriaId)
         imagenes.value = storeImagenes.imagenesProductos.map(d => 'data:image/png;base64,' + d.datos)
 
+        clearTimeout(timer);
+        isLoading.value = false;
     } catch (error) {
+        isLoading.value = false;
+        hasError.value = true;
         if (error instanceof Error) {
             console.error(error);
             responseMessage.value = error.message || 'Error al cargar datos del producto.';
@@ -155,7 +172,10 @@ const prevImage = () => {
 </script>
 
 <template>
-    <div v-if="!ID">
+    <div v-if="isLoading" style="min-height: 500px; display: flex; justify-content: center; align-items: center;">
+        <h2>Cargando...</h2>
+    </div>
+    <div v-else-if="hasError">
         <ErrorUrlView></ErrorUrlView>
     </div>
     <div v-else class=prodcuto>
@@ -193,7 +213,7 @@ const prevImage = () => {
             </div>
         </div>
         <div class="cont-img-muestra">
-            <v-sheet elevation="8" max-width="800" style="background-color: transparent; box-shadow: none !important ;">
+            <v-sheet elevation="8"  style="background-color: transparent; box-shadow: none !important ;">
                 <v-slide-group class="pa-4" center-active show-arrows>
                     <v-slide-group-item v-for="(imagen, index) in imagenes.slice(1)" :key="index"
                         v-slot="{ isSelected }">

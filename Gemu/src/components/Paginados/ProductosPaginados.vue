@@ -33,7 +33,8 @@ const mostrarMas = async () => {
 </script>
 
 <template>
-    <div style="display: flex; flex-wrap: wrap;">
+    <div v-if="productos.length > 0">
+        <div style="display: flex; flex-wrap: wrap;">
         <div v-for="producto in productos" :key="producto.idProducto" class="producto-item">
             <RouterLink :to="{ name: 'producto', params: { producto: 'producto', id: producto.idProducto } }"
                 style="text-decoration: none;">
@@ -62,6 +63,10 @@ const mostrarMas = async () => {
         <button @click="mostrarMas" :class="{ 'ocultar': loading || !hasMorePaginados }" class="boton-mostrar-mas">
             Mostrar Más
         </button>
+    </div>
+    </div>
+    <div v-else style="text-align: center; margin: 50px auto;">
+        <p>No hay datos disponibles</p>
     </div>
 </template>
 

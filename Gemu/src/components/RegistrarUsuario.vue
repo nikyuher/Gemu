@@ -109,7 +109,7 @@ const register = async () => {
                 <label for="">Correo</label>
                 <input v-model="correo" type="text" placeholder="correo@gmail.com" class="input-diseño" required>
                 <label for="">Contraseña</label>
-                <input v-model="contraseña" type="text" placeholder="CONTRAseña123@" class="input-diseño" required>
+                <input v-model="contraseña" type="password" placeholder="CONTRAseña123@" class="input-diseño" required>
                 <label for="terminos">
                     <input type="checkbox" id="terminos" v-model="terminos" required>
                     Acepto los <a href="https://policies.google.com/terms" target="_blank">términos</a> y <a

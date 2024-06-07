@@ -28,7 +28,7 @@ const cantidad = ref()
 const categoriasSelecionadas = ref<number[]>([])
 
 const isFormValid = computed(() => {
-    return descripcion.value.length >= 300 && descripcion.value.length <= 600;
+    return descripcion.value.length >= 150 && descripcion.value.length <= 600;
 });
 
 const isFormValid2 = computed(() => {
@@ -214,11 +214,11 @@ const eliminarImagen = (index: number) => {
                         <h4 style="color: gray;">Proporcion mas detalles del producto</h4>
                         <p>{{ characterCount }}/600 caracteres</p>
                         <textarea name="descripcion" v-model="descripcion" outlined
-                            placeholder="Escribir un minimo de 300 caracteres" maxlength="600" rows="4"
+                            placeholder="Escribir un minimo de 150 caracteres" maxlength="600" rows="4"
                             style="color: black; width: 95%; max-height: 200px; resize: none;" required
                             class="diseño-Text-Area">
                         </textarea>
-                        <p v-if="!isFormValid">Por favor, asegúrate de colocar una descripcion entre 300 y 600
+                        <p v-if="!isFormValid">Por favor, asegúrate de colocar una descripcion entre 150 y 600
                             caracteres.</p>
                     </div>
                 </div>

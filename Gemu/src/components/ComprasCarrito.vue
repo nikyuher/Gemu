@@ -12,7 +12,7 @@ const storeUsuario = UsuarioApi();
 const storeCarrito = CarritoApi()
 
 const IdUsuario = storeUsuario.$state.usuarioId?.idUsuario
-const listaCarrito = ref<any[]>([])
+const listaCarrito = computed(()=> storeCarrito.listaCarrito)
 const idsProducto = computed(() => storeCarrito.getIdsProducto());
 const idsJuego = computed(() => storeCarrito.getIdsJuego());
 const saldoActual = computed(() => storeUsuario.getSaldoActual());
@@ -24,8 +24,8 @@ const direccionUser = ref<string>()
 const codigoPostalUsuer = ref<number>()
 
 const responseMessage = ref('')
-const showCarrito = ref(true);
-const showDireccion = ref(true);
+
+const opcionActual = ref(1); 
 
 const datosUser = {
     idUsuario: IdUsuario,
@@ -39,8 +39,6 @@ onMounted(async () => {
         if (IdUsuario) {
             storeUsuario.getUsuarioId(IdUsuario)
             await storeCarrito.ListaCarrito(datosUser)
-
-            listaCarrito.value = storeCarrito.listaCarrito
 
             direccionUser.value = storeUsuario.$state.usuarioId ? storeUsuario.$state.usuarioId?.direccion : ''
             codigoPostalUsuer.value = storeUsuario.$state.usuarioId?.codigoPostal
@@ -82,7 +80,6 @@ const comprarProducto = async () => {
 
                 IdUsuario && await storeCarrito.ListaCarrito(datosUser);
                 IdUsuario && storeUsuario.getUsuarioId(IdUsuario)
-                listaCarrito.value = []
                 responseMessage.value = 'Compra exitosa';
 
                 setTimeout(() => {
@@ -103,10 +100,11 @@ const comprarProducto = async () => {
 
 
 const continuarCompra1 = () => {
-    showCarrito.value = false;
+    opcionActual.value = 2;
 }
+
 const continuarCompra2 = () => {
-    showDireccion.value = false;
+    opcionActual.value = 3;
 }
 
 const validarDireccion = computed(() => {
@@ -114,43 +112,67 @@ const validarDireccion = computed(() => {
     return direccionUser.value != '' && codigoPostalUsuer.value != 0;
 });
 
+const isCarritoVacio = computed(() => {
+    return listaCarrito.value.length === 0 || 
+           (listaCarrito.value[0]?.carritoProductos?.length === 0 && 
+            listaCarrito.value[0]?.carritoJuegos?.length === 0);
+});
+
+const cambiarEstado = (step: number) => {
+    opcionActual.value = step;
+}
 </script>
 
 <template>
-    <div v-if="showCarrito" class="carrito">
+    <div class="barraProgreso">
+        <div @click=" opcionActual >= 1 && cambiarEstado(1)" class="cont-circulo">
+            <div :class="{ green: opcionActual >= 1, gray: opcionActual < 1 }">1</div>
+            <div>Carrito</div>
+        </div>
+        <div class="borde"></div>
+        <div v-if="idsProducto.length > 0" @click="opcionActual >= 2 && cambiarEstado(2) " class="cont-circulo">
+            <div  :class="{ green: opcionActual >= 2, gray: opcionActual < 2 }">2</div>
+            <div>Direccion</div>
+        </div>
+        <div class="borde"></div>
+        <div  @click="opcionActual >= (idsProducto.length > 0 ? 3 : 2) && cambiarEstado(idsProducto.length > 0 ? 3 : 2)" class="cont-circulo">
+            <div  :class="{ green: opcionActual >= 3, gray: opcionActual < 3 }">{{ idsProducto.length > 0 ? '3' : '2' }}</div>
+            <div>Compra</div>
+        </div>
+    </div>
+    
+    <div v-if="opcionActual === 1" class="carrito">
         <ListaCarrito></ListaCarrito>
         <div class="info">
             <h2>Resumen</h2>
             <h2>Cantidad: {{ totalCantidad }} </h2>
             <h2>Total: {{ totalPrecio }} €</h2>
-            <button @click="continuarCompra1()">Continuar</button>
+            <button @click="continuarCompra1()" :disabled="isCarritoVacio" :class="{ disabled: isCarritoVacio}">Continuar</button>
         </div>
     </div>
-    <div v-else-if="idsProducto.length > 0 && showDireccion" class="direccion">
+    
+    <div v-else-if="opcionActual === 2 && idsProducto.length > 0" class="direccion">
         <div class="diseño-direccion">
             <h2>Direccion</h2>
             <div>
                 <p>Direccion </p>
                 <input type="text" v-model="direccionUser" placeholder="direccion" required>
                 <p>Codigo postal </p>
-                <input type="number" v-model="codigoPostalUsuer" placeholder="codigo postal" style="color: black;"
-                    required>
+                <input type="number" v-model="codigoPostalUsuer" placeholder="codigo postal" style="color: black;" required>
                 <p v-if="!validarDireccion" style="color: orange;">Rellene su direccion y codigo postal</p>
             </div>
         </div>
         <div>
             <ListaCarrito></ListaCarrito>
-            <button @click="continuarCompra2()" :disabled="!validarDireccion"
-                style="margin-top: 20px;">Continuar</button>
+            <button @click="continuarCompra2()" :disabled="!validarDireccion || isCarritoVacio" :class="{ disabled: isCarritoVacio }" style="margin-top: 20px;">Continuar</button>
         </div>
     </div>
+    
     <div v-else class="pago">
         <div>
             <h2>Metodo de pago</h2>
             <div class="forma-pago">
-                <h2> Gēmu
-                    ゲーム
-                </h2>
+                <h2> Gēmu ゲーム </h2>
                 <div>
                     <p>Billetera Gēmu </p>
                     <p>Saldo total disponible: {{ saldoActual }} $</p>
@@ -160,29 +182,77 @@ const validarDireccion = computed(() => {
         </div>
         <div style="max-width: 460px;">
             <ListaCarrito></ListaCarrito>
-            <div class="info" style="margin: 20px 0; max-width: 440px; ">
+            <div class="info" style="margin: 20px 0; max-width: 440px;">
                 <h2>Cantidad: {{ totalCantidad }} </h2>
                 <h2>Total: {{ totalPrecio }} €</h2>
-                <button @click="comprarProducto()">Comprar</button>
-                <v-alert v-if="responseMessage" :value="true"
-                    :type="responseMessage.includes('exitosa') ? 'success' : 'error'">
+                <button @click="comprarProducto()" :class="{ disabled: isCarritoVacio}" :disabled="isCarritoVacio">Comprar</button>
+                <v-alert v-if="responseMessage" :value="true" :type="responseMessage.includes('exitosa') ? 'success' : 'error'">
                     {{ responseMessage }}
                 </v-alert>
-                <h5 style="margin-top: 20px;">Al hacer clic en "Continuar", admito que he leído y aceptado los
-                    Términos y condiciones incluida la Política de privacidad y los
-                    Cookies.
-                </h5>
+                <h5 style="margin-top: 20px;">Al hacer clic en "Comprar", admito que he leído y aceptado los Términos y condiciones incluida la Política de privacidad y los Cookies.</h5>
             </div>
         </div>
     </div>
-</template>
+    </template>
+    
 
 <style scoped>
-.pago {
-    display: flex;
+.borde {
+    position: relative;
+    width: 100%;
 }
 
-.direccion {
+.borde::before {
+    content: '';
+    position: absolute;
+    top: 50%; 
+    left: 0;
+    width: 100%; 
+    border-top: 1px solid gray;
+    transform: translateY(-50%); 
+}
+
+.barraProgreso{
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 100px;
+}
+
+.cont-circulo{
+    display: flex;
+    align-items: center;
+}
+
+.barraProgreso .green {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: currentColor;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: green;
+}
+
+.barraProgreso .gray {
+    pointer-events: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: currentColor;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: gray;
+}
+
+.disabled{
+    background-color: #af712b; ;
+    color: black !important;
+}
+
+.pago, .direccion, .carrito {
     display: flex;
 }
 
@@ -196,12 +266,8 @@ const validarDireccion = computed(() => {
 }
 
 .diseño-direccion input {
-    -webkit-appearance: none;
-    -moz-appearance: none;
     appearance: none;
-
     outline: none;
-
     width: 90%;
     background-color: rgb(213, 200, 236);
     height: 30px;

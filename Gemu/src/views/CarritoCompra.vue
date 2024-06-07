@@ -2,7 +2,7 @@
 import { UsuarioApi } from '@/stores/usuarioApi';
 import { computed } from 'vue';
 import ComprasCarrito from '@/components/ComprasCarrito.vue'
-import ErrorUrlView from './ErrorUrlView.vue';
+import IniciarSesion from '@/components/InicioSesion.vue';
 
 const datosUsuario = UsuarioApi();
 const isAuthenticated = computed(() => datosUsuario.isAuthenticated);
@@ -21,7 +21,7 @@ const isAuthenticated = computed(() => datosUsuario.isAuthenticated);
             <ComprasCarrito></ComprasCarrito>
         </div>
         <div v-else>
-            <ErrorUrlView></ErrorUrlView>
+            <IniciarSesion></IniciarSesion>
         </div>
     </main>
 </template>

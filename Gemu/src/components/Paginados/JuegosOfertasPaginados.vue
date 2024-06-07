@@ -38,45 +38,52 @@ const mostrarMas = async () => {
 </script>
 
 <template>
-    <div style="display: flex; flex-wrap: wrap;">
-        <div v-for="juego in juegos" :key="juego.idJuego" class="juego-item">
-            <RouterLink :to="{ name: 'producto', params: { producto: 'juego', id: juego.idJuego } }"
-                style="text-decoration: none;">
-                <div v-if="juego.imgsJuego.length > 0">
-                    <img :src="'data:image/png;base64,' + juego.imgsJuego[0].datos" alt="Portada del juego"
-                        style="height: 250px; width: 185px;" />
-                </div>
-                <h3>{{ juego.titulo }}</h3>
-                <p><b style="color: #70C778;">{{ juego.plataforma }}</b></p>
-                <div v-if="juego.descuento != 0 && juego.descuento != null">
-                    <p style="font-size: 14px;">desde <s>{{ juego.precio }} €</s></p>
-                    <p style="font-size: 20px;">{{ juego.precioFinal != 0 ? juego.precioFinal + ' €' : 'Gratis' }}</p>
-                    <p style="color: greenyellow; font-size: 14px">
-                        {{ juego.descuento != 0 && juego.descuento != null ? 'Ahorra un ' + juego.descuento + '%' : ''
-                        }}
-                    </p>
-                </div>
-                <div v-else>
-                    <p>desde</p>
-                    <p>{{ juego.precioFinal != 0 ? juego.precioFinal + ' €' : 'Gratis' }}</p>
-                </div>
+    <div v-if="juegos.length > 0">
+        <div style="display: flex; flex-wrap: wrap;">
+            <div v-for="juego in juegos" :key="juego.idJuego" class="juego-item">
+                <RouterLink :to="{ name: 'producto', params: { producto: 'juego', id: juego.idJuego } }"
+                    style="text-decoration: none;">
+                    <div v-if="juego.imgsJuego.length > 0">
+                        <img :src="'data:image/png;base64,' + juego.imgsJuego[0].datos" alt="Portada del juego"
+                            style="height: 250px; width: 185px;" />
+                    </div>
+                    <h3>{{ juego.titulo }}</h3>
+                    <p><b style="color: #70C778;">{{ juego.plataforma }}</b></p>
+                    <div v-if="juego.descuento != 0 && juego.descuento != null">
+                        <p style="font-size: 14px;">desde <s>{{ juego.precio }} €</s></p>
+                        <p style="font-size: 20px;">{{ juego.precioFinal != 0 ? juego.precioFinal + ' €' : 'Gratis' }}
+                        </p>
+                        <p style="color: greenyellow; font-size: 14px">
+                            {{ juego.descuento != 0 && juego.descuento != null ? 'Ahorra un ' + juego.descuento + '%' :
+                                ''
+                            }}
+                        </p>
+                    </div>
+                    <div v-else>
+                        <p>desde</p>
+                        <p>{{ juego.precioFinal != 0 ? juego.precioFinal + ' €' : 'Gratis' }}</p>
+                    </div>
+                </RouterLink>
+            </div>
+        </div>
+        <div v-if="props.validacion">
+            <RouterLink :to="{ name: 'filtro', params: { opcion: 'juegos', categoria: 'general', id: 0 } }">
+                <button @click="mostrarMas" class="boton-mostrar-mas">
+                    Mostrar todo
+                </button>
             </RouterLink>
         </div>
-    </div>
-    <div v-if="props.validacion">
-        <RouterLink :to="{ name: 'filtro', params: { opcion: 'juegos', categoria: 'general', id: 0 } }">
-            <button @click="mostrarMas" class="boton-mostrar-mas">
-                Mostrar todo
+        <div v-else-if="showProgress" class="d-flex align-center justify-center">
+            <v-progress-circular color="grey-lighten-4" indeterminate></v-progress-circular>
+        </div>
+        <div v-else>
+            <button @click="mostrarMas" :class="{ 'ocultar': loading || !hasMoreOfertas }" class="boton-mostrar-mas">
+                Mostrar Más
             </button>
-        </RouterLink>
+        </div>
     </div>
-    <div v-else-if="showProgress" class="d-flex align-center justify-center">
-        <v-progress-circular color="grey-lighten-4" indeterminate></v-progress-circular>
-    </div>
-    <div v-else>
-        <button @click="mostrarMas" :class="{ 'ocultar': loading || !hasMoreOfertas }" class="boton-mostrar-mas">
-            Mostrar Más
-        </button>
+    <div v-else style="text-align: center; margin: 50px auto;">
+        <p>No hay datos disponibles</p>
     </div>
 </template>
 

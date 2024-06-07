@@ -43,6 +43,9 @@ const categoriasApi = ref<any[]>([])
 const showModal = ref(false);
 const selectedImageIndex = ref<number>(0);
 
+const isLoading = ref(true);
+const hasError = ref(false);
+
 onMounted(() => {
     fetchData(props.idJuego);
 });
@@ -52,7 +55,16 @@ watch(() => props.idJuego, (newVal) => {
 });
 
 const fetchData = async (idJuego: number) => {
+    isLoading.value = true;
+    hasError.value = false;
+
     try {
+        const timer = setTimeout(() => {
+            if (isLoading.value) {
+                hasError.value = true;
+                isLoading.value = false;
+            }
+        }, 5000);
 
         await storeCategoria.GetCategoriaSeccion('juegos')
         await storeCategoria.GetCategoriasJuego(idJuego)
@@ -77,7 +89,11 @@ const fetchData = async (idJuego: number) => {
         idsCategoria.value = storeCategoria.listCategoriasJuego.map(categoria => categoria.categoriaId)
         imagenes.value = storeImagenes.imagenesJuegos.map(d => 'data:image/png;base64,' + d.datos)
 
+        clearTimeout(timer);
+        isLoading.value = false;
     } catch (error) {
+        isLoading.value = false;
+        hasError.value = true;
         if (error instanceof Error) {
             console.error(error);
             responseMessage.value = error.message || 'Error al cargar datos del juego.';
@@ -85,7 +101,7 @@ const fetchData = async (idJuego: number) => {
             throw new Error(String(error));
         }
     }
-}
+};
 
 const addJuegoCarrito = async () => {
     try {
@@ -151,7 +167,10 @@ const prevImage = () => {
 </script>
 
 <template>
-    <div v-if="!ID">
+    <div v-if="isLoading" style="min-height: 500px; display: flex; justify-content: center; align-items: center;">
+        <h2>Cargando...</h2>
+    </div>
+    <div v-else-if="hasError">
         <ErrorUrlView></ErrorUrlView>
     </div>
     <div v-else class=prodcuto>

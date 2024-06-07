@@ -43,6 +43,11 @@ const isMenuOpen = ref(false);
 const toggleMenu = () => {
     isMenuOpen.value = !isMenuOpen.value;
 };
+
+const isActive = (view: string) => {
+    return opcionActual.value === view;
+};
+
 </script>
 
 <template>
@@ -60,7 +65,7 @@ const toggleMenu = () => {
                         <v-icon class="icono1" :class="{ oculto: cuentaVisible1 }">mdi-chevron-up</v-icon>
                         <v-icon class="icono2" :class="{ oculto: !cuentaVisible1 }">mdi-chevron-down</v-icon>
                     </div>
-                    <p :class="{ activo: cuentaVisible1 }" @click="mostrarView('informacion')">Informacion general</p>
+                    <p :class="{ activo: cuentaVisible1, seleccionado: isActive('informacion') }" @click="mostrarView('informacion')">Informacion general</p>
                 </div>
                 <div class="desplegable mantenerClick" :style="{ backgroundColor: cuentaVisible2 ? '#240C2F' : '' }">
                     <div class="cont-desplegable" :class="{ activo: cuentaVisible2 }"
@@ -69,8 +74,8 @@ const toggleMenu = () => {
                         <v-icon class="icono1" :class="{ oculto: cuentaVisible2 }">mdi-chevron-up</v-icon>
                         <v-icon class="icono2" :class="{ oculto: !cuentaVisible2 }">mdi-chevron-down</v-icon>
                     </div>
-                    <p :class="{ activo: cuentaVisible2 }" @click="mostrarView('listaJuegos')">Lista juegos</p>
-                    <p :class="{ activo: cuentaVisible2 }" @click="mostrarView('crearJuego')">Crear</p>
+                    <p :class="{ activo: cuentaVisible2, seleccionado: isActive('listaJuegos') }" @click="mostrarView('listaJuegos')">Lista juegos</p>
+                    <p :class="{ activo: cuentaVisible2, seleccionado: isActive('crearJuego') }" @click="mostrarView('crearJuego')">Crear</p>
                 </div>
                 <div class="desplegable mantenerClick" :style="{ backgroundColor: cuentaVisible3 ? '#240C2F' : '' }">
                     <div class="cont-desplegable" :class="{ activo: cuentaVisible3 }"
@@ -79,7 +84,7 @@ const toggleMenu = () => {
                         <v-icon class="icono1" :class="{ oculto: cuentaVisible3 }">mdi-chevron-up</v-icon>
                         <v-icon class="icono2" :class="{ oculto: !cuentaVisible3 }">mdi-chevron-down</v-icon>
                     </div>
-                    <p :class="{ activo: cuentaVisible3 }" @click="mostrarView('listaUsuarios')">Lista usuarios</p>
+                    <p :class="{ activo: cuentaVisible3, seleccionado: isActive('listaUsuarios') }" @click="mostrarView('listaUsuarios')">Lista usuarios</p>
                 </div>
                 <div class="desplegable mantenerClick" :style="{ backgroundColor: cuentaVisible4 ? '#240C2F' : '' }">
                     <div class="cont-desplegable" :class="{ activo: cuentaVisible4 }"
@@ -88,7 +93,7 @@ const toggleMenu = () => {
                         <v-icon class="icono1" :class="{ oculto: cuentaVisible4 }">mdi-chevron-up</v-icon>
                         <v-icon class="icono2" :class="{ oculto: !cuentaVisible4 }">mdi-chevron-down</v-icon>
                     </div>
-                    <p :class="{ activo: cuentaVisible4 }" @click="mostrarView('listaPeticiones')">Lista peticiones</p>
+                    <p :class="{ activo: cuentaVisible4, seleccionado: isActive('listaPeticiones') }" @click="mostrarView('listaPeticiones')">Lista peticiones</p>
                 </div>
                 <div class="mantenerClick desplegable" @click="cerrarSesion">
                     <h3>Cerrar</h3>
@@ -130,7 +135,9 @@ const toggleMenu = () => {
     margin-left: 40px;
     padding: 5px 20px;
     font-size: 15px;
+    color: rgb(143, 143, 143);
 }
+
 
 .desplegable:hover {
     background-color: #240C2F;
@@ -143,6 +150,10 @@ const toggleMenu = () => {
 
 .desplegable p {
     display: none;
+}
+
+.desplegable p.seleccionado {
+    color: white;
 }
 
 /* Icono desplegable */

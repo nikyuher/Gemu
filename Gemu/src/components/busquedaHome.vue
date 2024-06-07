@@ -41,40 +41,44 @@ watch(() => props.busqueda, (newVal) => {
 
 <template>
     <div v-if="listaBusqueda != null" class="cont-datos-obtenidos">
-        <div v-for="juegos of listaBusqueda" :key="juegos.idJuego" style="height: 600px;
-    overflow-y: auto;">
-            <div v-for="(juego, index) in juegos.juegos.slice(0, 4)" :key='index'>
-                <RouterLink @click="clickProducto()"
-                    :to="{ name: 'producto', params: { producto: 'juego', id: juego.idJuego } }">
-                    <div class="datos">
-                        <img :src="'data:image/png;base64,' + juego.imgsJuego[0].datos" alt="portada"
-                            style="width: 100px;">
-                        <div>
-                            <p class="titulo-truncado">{{ juego.titulo }}</p>
-                            <p>{{ juego.plataforma }}</p>
+        <div v-for="juegos of listaBusqueda" :key="juegos.idJuego" style="height: 600px; overflow-y: auto;">
+            <div v-if="juegos.juegos.length > 0 || juegos.productos.length > 0">
+                <div v-for="(juego, index) in juegos.juegos.slice(0, 4)" :key='index'>
+                    <RouterLink @click="clickProducto()"
+                        :to="{ name: 'producto', params: { producto: 'juego', id: juego.idJuego } }">
+                        <div class="datos">
+                            <img :src="'data:image/png;base64,' + juego.imgsJuego[0].datos" alt="portada"
+                                style="width: 100px;">
+                            <div>
+                                <p class="titulo-truncado">{{ juego.titulo }}</p>
+                                <p>{{ juego.plataforma }}</p>
+                            </div>
+                            <p style="color: greenyellow; font-size: 16px">
+                                {{ juego.descuento != 0 && juego.descuento != null ? juego.descuento + '%' :
+                                    ''
+                                }}
+                            </p>
+                            <p>{{ juego.precioFinal != 0 ? juego.precioFinal + '€' : 'Gratis' }}</p>
                         </div>
-                        <p style="color: greenyellow; font-size: 16px">
-                            {{ juego.descuento != 0 && juego.descuento != null ? juego.descuento + '%' :
-                                ''
-                            }}
-                        </p>
-                        <p>{{ juego.precioFinal != 0 ? juego.precioFinal + '€' : 'Gratis' }}</p>
-                    </div>
-                </RouterLink>
+                    </RouterLink>
+                </div>
+                <div v-for="(producto, index) in juegos.productos.slice(0, 4)" :key='index'>
+                    <RouterLink @click="clickProducto()"
+                        :to="{ name: 'producto', params: { producto: 'producto', id: producto.idProducto } }">
+                        <div class="datos">
+                            <img :src="'data:image/png;base64,' + producto.imgsProducto[0].datos" alt="portada"
+                                style="width: 100px;">
+                            <div>
+                                <p class="titulo-truncado">{{ producto.nombre }}</p>
+                                <p>{{ producto.estado }}</p>
+                            </div>
+                            <p>{{ producto.precio != 0 ? producto.precio + '€' : 'Gratis' }}</p>
+                        </div>
+                    </RouterLink>
+                </div>
             </div>
-            <div v-for="(producto, index) in juegos.productos.slice(0, 4)" :key='index'>
-                <RouterLink @click="clickProducto()"
-                    :to="{ name: 'producto', params: { producto: 'producto', id: producto.idProducto } }">
-                    <div class="datos">
-                        <img :src="'data:image/png;base64,' + producto.imgsProducto[0].datos" alt="portada"
-                            style="width: 100px;">
-                        <div>
-                            <p class="titulo-truncado">{{ producto.nombre }}</p>
-                            <p>{{ producto.estado }}</p>
-                        </div>
-                        <p>{{ producto.precio != 0 ? producto.precio + '€' : 'Gratis' }}</p>
-                    </div>
-                </RouterLink>
+            <div v-else style="text-align: center; margin: 50px auto;" class="datos">
+                <p>No se encontro ningun resultado.</p>
             </div>
         </div>
     </div>
@@ -93,6 +97,7 @@ watch(() => props.busqueda, (newVal) => {
 .datos {
     background-color: rgb(119, 64, 170);
     width: 400px;
+    min-height: 300px;
     text-align: center;
     align-items: center;
     margin: auto;

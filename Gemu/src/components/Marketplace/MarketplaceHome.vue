@@ -43,7 +43,8 @@ onMounted(async () => {
         <div class="cont-productos">
             <div v-for="seccion in listaSecciones" :key="seccion.idCategoria" class="seccion-productos">
                 <h3>{{ seccion.nombre }}</h3>
-                <div style="display: flex; flex-wrap: wrap;">
+                <div v-if="productos.filter(p => p.productoCategorias.some(c => c.categoriaId === seccion.idCategoria)).length > 0">
+                    <div style="display: flex; flex-wrap: wrap;">
                     <div v-for="producto in productos.filter(p => p.productoCategorias.some(c => c.categoriaId === seccion.idCategoria))
                         .slice(0, 4)" :key="producto.idProducto" class="producto-item">
                         <RouterLink
@@ -66,6 +67,10 @@ onMounted(async () => {
                         Mostrar todo
                     </button>
                 </RouterLink>
+                </div>
+                <div v-else style="text-align: center; margin: 30px auto;">
+                    <p>No hay datos disponibles</p>
+                </div>
             </div>
         </div>
     </div>
